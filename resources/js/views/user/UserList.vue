@@ -1,0 +1,205 @@
+<!--
+  - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+  - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
+<template>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <div class="box-header with-border">
+            <h4>Kullanıcı Listesi</h4>
+          </div>
+          <div class="box-body">
+            <div class="table-responsive">
+              <table
+                id="userList"
+                style="width:100%"
+                class="table table-bordered table-hover dataTable"
+                role="grid"
+              >
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Ad Soyad</th>
+                    <th>Telefon</th>
+                    <th>Branş/Ders</th>
+                    <th>Kurum</th>
+                    <th>Onaylayan</th>
+                    <th
+                      data-type="date"
+                      data-format="DD/MM/YYYY"
+                    >
+                      Kayıt Tarihi
+                    </th>
+                    <th>Aksiyon</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import 'jquery-slimscroll/jquery.slimscroll.min'
+import 'datatables.net-bs/js/dataTables.bootstrap.min'
+import 'datatables.net/js/jquery.dataTables.min'
+import 'datatables.net-responsive-bs/js/responsive.bootstrap.min'
+import 'fastclick/lib/fastclick'
+import Constants from '../../helpers/constants'
+import Auth from '../../services/Auth'
+import UserService from '../../services/UserService'
+import Messenger from '../../helpers/messenger'
+// const tr = require('datatables.net-plugins/i18n/Turkish.lang')
+
+export default {
+  name: 'UserList',
+  data () {
+    return {
+      userList: []
+    }
+  },
+  mounted () {
+    const vm = this
+    let table = $('#userList')
+      .DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+          url: '/api/users',
+          dataType: 'json',
+          type: 'POST',
+          beforeSend (xhr) {
+            Auth.check()
+            const token = localStorage.getItem(Constants.accessToken)
+            xhr.setRequestHeader('Authorization',
+              `Bearer ${token}`)
+          }
+          // error: function (jqXHR, textStatus, errorThrown) {
+          //   console.log(errorThrown)
+          // }
+        },
+        language: {
+          'sDecimal': ',',
+          'sEmptyTable': 'Tabloda herhangi bir veri mevcut değil',
+          'sInfo': '_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor',
+          'sInfoEmpty': 'Kayıt yok',
+          'sInfoFiltered': '(_MAX_ kayıt içerisinden bulunan)',
+          'sInfoPostFix': '',
+          'sInfoThousands': '.',
+          'sLengthMenu': 'Sayfada _MENU_ kayıt göster',
+          'sLoadingRecords': 'Yükleniyor...',
+          'sProcessing': 'İşleniyor...',
+          'sSearch': 'Ara:',
+          'sZeroRecords': 'Eşleşen kayıt bulunamadı',
+          'oPaginate': {
+            'sFirst': 'İlk',
+            'sLast': 'Son',
+            'sNext': 'Sonraki',
+            'sPrevious': 'Önceki'
+          },
+          'oAria': {
+            'sSortAscending': ': artan sütun sıralamasını aktifleştir',
+            'sSortDescending': ': azalan sütun sıralamasını aktifleştir'
+          },
+          'select': {
+            'rows': {
+              '_': '%d kayıt seçildi',
+              '0': '',
+              '1': '1 kayıt seçildi'
+            }
+          }
+        },
+        columns: [
+          {
+            data: 'id',
+            name: 'users.id',
+            visible: false
+          },
+          {
+            data: 'full_name',
+            name: 'users.full_name',
+            searchable: true
+          },
+          {
+            data: 'phone',
+            searchable: true
+          },
+          {
+            data: 'branch_name',
+            name: 'branches.name',
+            searchable: true
+          },
+          {
+            data: 'inst_name',
+            name: 'institutions.name',
+            searchable: true
+          },
+          {
+            data: 'activator_name',
+            name: 'um.full_name',
+            searchable: false
+          },
+          {
+            data: 'created_at',
+            name: 'users.created_at',
+            searchable: true
+          },
+          {
+            data: '',
+            className: 'text-center',
+            width: '15%',
+            render (data, type, row, meta) {
+              if (row['activator_name'] !== null) {
+                return '<div class="btn-group">' +
+                  '<button class="btn btn-xs btn-info">Göster</button>' +
+                  '<button class="btn btn-xs btn-danger">Sil</button>' +
+                  '</div>'
+              }
+              return '<div class="btn-group">' +
+                      '<button class="btn btn-xs btn-info">Göster</button>' +
+                      '<button class="btn btn-xs btn-warning">Onayla</button>' +
+                      '<button class="btn btn-xs btn-danger">Sil</button>' +
+                    '</div>'
+            },
+            searchable: false
+          }
+        ],
+        retrieve: true,
+        searching: true,
+        paging: true
+      })
+
+    // $('.btn, .btn-info').click(() => {
+    //   console.log($(this).attr('id'));
+    // });
+
+    table.on('click', '.btn-info', (e) => {
+      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      // console.log(data);
+      vm.$router.push({ name: 'user', params: { id: data.id } })
+    })
+
+    table.on('click', '.btn-warning', (e) => {
+      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      // console.log(data);
+      UserService.approveUser(data.id, (resp) => {
+        Messenger.showSuccess(resp.message)
+        table.ajax.reload()
+      })
+    })
+  }
+}
+</script>
+
+<style lang="sass">
+  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
+  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+</style>
