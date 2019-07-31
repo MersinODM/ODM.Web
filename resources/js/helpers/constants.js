@@ -7,6 +7,7 @@
 const Constants = {
   accessToken: 'access_token',
   permissions: 'permissions',
+  roles: 'roles',
   expires_in: 'expires_in'
 }
 

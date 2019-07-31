@@ -9,13 +9,12 @@ import Messenger from '../helpers/messenger'
 import { MessengerConstants } from '../helpers/constants'
 
 const UserService = {
-  findById (id, callback) {
-    http.get(`/users/${id}`)
-      .then(response => {
-        callback(response.data)
-      }).catch(error => {
-        console.log(error)
-      })
+  findById (id) {
+    return new Promise((resolve, reject) => {
+      http.get(`/users/${id}`)
+          .then(response => resolve(response.data))
+          .catch(error => reject(error))
+    })
   },
   approveUser (id, callback) {
     http.put(`/users/${id}/confirm_req`)
@@ -23,10 +22,14 @@ const UserService = {
         if (response === undefined) return
         callback(response.data)
       })
-      .catch(error => {
-        console.error(error.response)
-        Messenger.showError(MessengerConstants.errorMessage)
-      })
+      .catch(() => Messenger.showError(MessengerConstants.errorMessage))
+  },
+  update (id, user) {
+    return new Promise((resolve, reject) => {
+      http.post(`/user/${id}`, user)
+        .then(resp => resolve(resp.data))
+        .catch(error => reject(error))
+    })
   }
 }
 

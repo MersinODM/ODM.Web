@@ -284,6 +284,7 @@ import CkEditor from '@ckeditor/ckeditor5-vue'
 import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
 
 export default {
   name: 'NewQuestion',
@@ -454,14 +455,15 @@ export default {
               fd.append(`choices[${i}][file]`, c.file, c.file.name)
             }
           })
-          QuestionService.save(fd, (resp) => {
-            Messenger.showSuccess(resp.message)
-            this.isSending = false
-          }, (progress) => {
+          QuestionService.save(fd, (progress) => {
             this.progressVal = progress
             console.log(progress)
-          }, (e) => {
+          }).then(resp => {
+            Messenger.showSuccess(resp.message)
             this.isSending = false
+          }).catch(e => {
+            this.isSending = false
+            Messenger.showError(MessengerConstants.errorMessage)
           })
         }
       }).catch(e => {

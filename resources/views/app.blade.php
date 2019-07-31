@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="base-url" content="{{url('/')}}">
   <title>Nevşehir ÖDM</title>
-  <link rel="icon" type="image/png" href="{{asset("images/Logo.png")}}">
+  <link rel="icon" type="image/png" href="{{asset('images/Logo.png')}}">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -18,8 +18,14 @@
 <script>
   window.Laravel = { csrfToken: '{{ csrf_token() }}' };
 </script>
-<script src="{{asset('js/manifest.js')}}"></script>
-<script src="{{asset('js/vendor.js')}}"></script>
-<script src="{{asset('js/main.js')}}"></script>
+<script src="{{mix('js/manifest.js')}}"></script>
+<script src="{{mix('js/vendor.js')}}"></script>
+<script src="{{mix('js/main.js')}}"></script>
+{{--@if(env("APP_ENV") == "local")--}}
+{{--    <script id="__bs_script__">//<![CDATA[--}}
+{{--        document.write("<script async src='http://HOST:8090/browser-sync/browser-sync-client.js?v=2.26.7'><\/script>".replace("HOST", location.hostname));--}}
+{{--        //]]></script>--}}
+
+{{--@endif--}}
 </body>
 </html>

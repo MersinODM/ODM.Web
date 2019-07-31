@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Silber\Bouncer\Database\Role;
 
 class RoleController extends Controller
@@ -25,7 +26,15 @@ class RoleController extends Controller
     return response()->json($roles);
   }
 
-  public function allowRoleToUser(Request $request) {
+    public function getCurrentUserRoles() {
+      $userId = Auth::id();
+      $roles = User::findOrFail($userId)->roles()->select(["roles.id","name", "title"])->get();
+      return response()->json($roles);
+    }
+
+
+
+    public function allowRoleToUser(Request $request) {
 
   }
 

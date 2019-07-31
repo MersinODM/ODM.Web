@@ -16,11 +16,12 @@ class NewUserReqReceived extends Event
    */
   private $userReq;
 
-  /**
-   * Create a new event instance.
-   *
-   * @param NewUserReq $userReq
-   */
+    /**
+     * Create a new event instance.
+     *
+     * @param User $userReq
+     * @param $token
+     */
   public function __construct(User $userReq)
   {
     $this->userReq = $userReq;

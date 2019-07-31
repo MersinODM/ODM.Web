@@ -41,13 +41,14 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::get("users/current/permissions", "Auth\PermissionController@getCurrentUserPermissions");
   Route::get("users/{id}", "Auth\UserManagementController@getUser");
   Route::post("users", "Auth\UserManagementController@getUsers");
-  Route::get("roles/{userId}", "Auth\RoleController@getUserRoles");
+  Route::get("users/current/roles", "Auth\RoleController@getCurrentUserRoles");
+  Route::get("users/{userId}/roles", "Auth\RoleController@getUserRoles");
   Route::get("roles", "Auth\RoleController@getAllRoles");
 
-  //Branch Api route tanımlamaları
+  //BranchService Api route tanımlamaları
   Route::post("branches", "Branch\BranchController@create");
   Route::put("branches/{id}", "Branch\BranchController@update");
-  Route::delete("brances/{id}", "Branch\BranchController@delete");
+  Route::delete("branches/{id}", "Branch\BranchController@delete");
   Route::get("branches/with_stats", "Branch\BranchController@getBranchesWithStats");
   Route::get("branches", "Branch\BranchController@getBranches");
 

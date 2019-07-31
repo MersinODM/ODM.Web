@@ -6,7 +6,7 @@
 
 import http from '../helpers/axios'
 
-const Institution = {
+const InstitutionService = {
   findByName (name, callback) {
     if (name.length >= 3) {
       http.get('/auth/institutions', {
@@ -33,4 +33,4 @@ const Institution = {
   }
 }
 
-export default Institution
+export default InstitutionService

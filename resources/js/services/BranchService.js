@@ -8,7 +8,7 @@ import http from '../helpers/axios'
 import Messenger from '../helpers/messenger'
 import { MessengerConstants } from '../helpers/constants'
 
-const Branch = {
+const BranchService = {
   findByName (name, callback) {
     if (name.length >= 3) {
       http.get('/auth/branches', {
@@ -77,4 +77,4 @@ const Branch = {
   }
 }
 
-export default Branch
+export default BranchService

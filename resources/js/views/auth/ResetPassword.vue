@@ -41,7 +41,7 @@
               class="form-control"
               placeholder="Şifrenizi giriniz"
             >
-            <span class="mdi mdi-textbox-password form-control-feedback"></span>
+            <span class="mdi mdi-textbox-password form-control-feedback" />
             <span
               v-if="errors.has('password')"
               class="help-block"
@@ -59,7 +59,7 @@
               class="form-control"
               placeholder="Şifrenizi giriniz"
             >
-            <span class="mdi mdi-textbox-password form-control-feedback"></span>
+            <span class="mdi mdi-textbox-password form-control-feedback" />
             <span
               v-if="errors.has('retypePassword')"
               class="help-block"
@@ -92,6 +92,7 @@
 
 <script>
 import Spinner from '../../components/Spinner'
+import Messenger from '../../helpers/messenger'
 
 export default {
   name: 'ResetPassword',
@@ -118,6 +119,9 @@ export default {
               email: this.email,
               password: this.password,
               password_confirmation: this.retypePassword
+            }).then(res => {
+              Messenger.showSuccess('Şifre değiştirme/kaydetme işlemi başarılı')
+              this.$router.push({ name: 'login' })
             })
           }
         })

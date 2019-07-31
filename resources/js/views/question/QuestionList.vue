@@ -141,8 +141,10 @@
 
 <script>
 import vSelect from 'vue-select'
-import Branch from '../../services/Branch'
+import BranchService from '../../services/BranchService'
 import QuestionService from '../../services/QuestionService'
+import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
 
 export default {
   name: 'QuestionList',
@@ -165,7 +167,7 @@ export default {
   },
   methods: {
     getBranches () {
-      Branch.getBranches(res => {
+      BranchService.getBranches(res => {
         this.branches = res
       })
     },
@@ -177,9 +179,10 @@ export default {
             classLevel: this.selectedClassLevel,
             searchedContent: this.searchedContent
           }
-          QuestionService.searchQuestion(params, res => {
-            this.questionsGroup = _.chunk(res, 3)
-          })
+          QuestionService.searchQuestion(params)
+            .then(res => {
+              this.questionsGroup = _.chunk(res, 3)
+            }).catch(e => Messenger.showError(MessengerConstants.errorMessage))
         }
       })
     }

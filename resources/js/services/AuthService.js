@@ -10,7 +10,7 @@ import http from '../helpers/axios'
 import Constants from '../helpers/constants'
 import jwt from 'jwt-decode'
 
-const Auth = {
+const AuthService = {
   login: (credentials, onError) => {
     http.post('/auth/login', credentials, {
       headers: {
@@ -35,21 +35,38 @@ const Auth = {
     localStorage.removeItem(Constants.accessToken)
     localStorage.removeItem(Constants.expires_in)
     localStorage.removeItem(Constants.permissions)
+    localStorage.removeItem(Constants.roles)
     router.push({ 'name': 'login' })
   },
   check: () => {
 
   },
-  setPermissions: (next) => {
-    http.get('/users/current/permissions')
-      .then(resp => {
-        // console.log(resp.data)
-        localStorage.setItem(Constants.permissions, JSON.stringify(resp.data))
-      })
-      .catch(error => {
+  setRoleAndPermissions () {
+    return new Promise((resolve, reject) => {
+      Promise.all([
+        http.get('/users/current/permissions'),
+        http.get('/users/current/roles')
+      ]).then(([permission, roles]) => {
+        // Hem rol hem izin bilgileri sistemden çekiliyor ve localStorage a yazılıyor
+        localStorage.setItem(Constants.permissions, JSON.stringify(permission.data))
+        localStorage.setItem(Constants.roles, JSON.stringify(roles.data))
+        resolve({ roles: roles.data, permissions: permission.data })
+      }).catch(error => {
         console.log(error)
-        next('/login')
+        reject(error)
       })
+    })
+
+    // http.get('/users/current/permissions')
+    //   .then(resp => {
+    //     // console.log(resp.data)
+    //     localStorage.setItem(Constants.permissions, JSON.stringify(resp.data))
+    //     next()
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //     next('/login')
+    //   })
   },
   getUser: (callback) => {
     let user = null
@@ -67,4 +84,4 @@ const Auth = {
   }
 }
 
-export default Auth
+export default AuthService

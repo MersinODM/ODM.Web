@@ -218,7 +218,7 @@
 </template>
 
 <script>
-import Auth from '../../services/Auth'
+import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
 
 

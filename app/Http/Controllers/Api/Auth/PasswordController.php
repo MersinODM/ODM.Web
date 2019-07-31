@@ -28,8 +28,8 @@ class PasswordController extends ApiController
     }
 
     $user = User::where("email", $request->input("email"));
-    $token = app("auth.password.broker")->createToken($user);
-    event(new NewUserReqReceived($user, $token));
+//    $token = app("auth.password.broker")->createToken($user);
+    event(new NewUserReqReceived($user));
   }
 
   public function resetPassword() {

@@ -11,7 +11,6 @@ namespace App\Http\Controllers\Api\Branch;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Branch;
-use App\Models\Institution;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

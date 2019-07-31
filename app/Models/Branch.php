@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Ders ya da branş bilgisini tutan sınıf
- * Class Branch
+ * Class BranchService
  * @package App\Models
  */
 class Branch extends Model

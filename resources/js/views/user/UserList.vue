@@ -13,7 +13,10 @@
             <h4>Kullanıcı Listesi</h4>
           </div>
           <div class="box-body">
-            <div class="table-responsive">
+            <div
+              class="table-responsive"
+              :class="{ disabled : isApproving }"
+            >
               <table
                 id="userList"
                 style="width:100%"
@@ -53,15 +56,15 @@ import 'datatables.net/js/jquery.dataTables.min'
 import 'datatables.net-responsive-bs/js/responsive.bootstrap.min'
 import 'fastclick/lib/fastclick'
 import Constants from '../../helpers/constants'
-import Auth from '../../services/Auth'
+import Auth from '../../services/AuthService'
 import UserService from '../../services/UserService'
 import Messenger from '../../helpers/messenger'
-// const tr = require('datatables.net-plugins/i18n/Turkish.lang')
 
 export default {
   name: 'UserList',
   data () {
     return {
+      isApproving: false,
       userList: []
     }
   },
@@ -159,15 +162,15 @@ export default {
             render (data, type, row, meta) {
               if (row['activator_name'] !== null) {
                 return '<div class="btn-group">' +
-                  '<button class="btn btn-xs btn-info">Göster</button>' +
-                  '<button class="btn btn-xs btn-danger">Sil</button>' +
-                  '</div>'
+                    '<button class="btn btn-xs btn-info">Göster</button>' +
+                    '<button class="btn btn-xs btn-danger">Sil</button>' +
+                    '</div>'
               }
               return '<div class="btn-group">' +
-                      '<button class="btn btn-xs btn-info">Göster</button>' +
-                      '<button class="btn btn-xs btn-warning">Onayla</button>' +
-                      '<button class="btn btn-xs btn-danger">Sil</button>' +
-                    '</div>'
+                  '<button class="btn btn-xs btn-info">Göster</button>' +
+                  '<button class="btn btn-xs btn-warning">Onayla</button>' +
+                  '<button class="btn btn-xs btn-danger">Sil</button>' +
+                  '</div>'
             },
             searchable: false
           }
@@ -190,9 +193,11 @@ export default {
     table.on('click', '.btn-warning', (e) => {
       let data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
+      vm.isApproving = true
       UserService.approveUser(data.id, (resp) => {
         Messenger.showSuccess(resp.message)
         table.ajax.reload()
+        vm.isApproving = false
       })
     })
   }

@@ -29,8 +29,13 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    // allow async-await
+     // allow:async-await,
     'generator-star-spacing': 'off',
+    'indent': ["error", 2, { "MemberExpression": "off" }],
+    // 'newline-per-chained-call': 'off',
+    // 'eslint-disable-next-line': 'off',
+    //  'handle-callback-err': 'off',
+    // 'vue/script-indent': ["error", 2, {"baseIndent": 1}],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }

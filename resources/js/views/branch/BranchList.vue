@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import Branch from '../../services/Branch'
+import BranchService from '../../services/BranchService'
 
 export default {
   name: 'BranchList',
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     getBranches () {
-      Branch.getBranchesWithStats(data => {
+      BranchService.getBranchesWithStats(data => {
         this.branchGroup = _.chunk(data, 3)
       })
     }

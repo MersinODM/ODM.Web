@@ -33,7 +33,7 @@
             </li>
           </ul>
         </li>
-        <li class="treeview">
+        <li v-if="$isInRole('admin')" class="treeview">
           <a href="#"><i class="mdi mdi-book-open-variant" />
             <span>Sınav Yönetimi</span>
             <span class="pull-right-container">
@@ -54,7 +54,7 @@
             </li>
           </ul>
         </li>
-        <li class="treeview">
+        <li v-if="$isInRole('admin')" class="treeview">
           <a href="#"><i class="mdi mdi-account-settings" />
             <span>Branş/Ders Yönetimi</span>
             <span class="pull-right-container">
@@ -77,7 +77,7 @@
             </li>
           </ul>
         </li>
-        <li class="treeview">
+        <li v-if="$isInRole('admin')" class="treeview">
           <a href="#"><i class="mdi mdi-matrix" />
             <span>Kazanım Yönetimi</span>
             <span class="pull-right-container">
@@ -100,7 +100,7 @@
             </li>
           </ul>
         </li>
-        <li class="treeview">
+        <li v-if="$isInRole('admin')" class="treeview">
           <a href="#"><i class="mdi mdi-account-settings"></i>
             <span>Kullanıcı Yönetimi</span>
             <span class="pull-right-container">

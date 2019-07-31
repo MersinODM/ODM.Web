@@ -136,12 +136,13 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     let questionId = to.params.questionId
-    QuestionService.findById(questionId, (res) => {
-      next(vm => {
-        vm.question = res
-        vm.getFile()
+    QuestionService.findById(questionId)
+      .then((res) => {
+        next(vm => {
+          vm.question = res
+          vm.getFile()
+        })
       })
-    })
   },
   methods: {
     saveComment () {
@@ -151,6 +152,8 @@ export default {
       }
       CommentService.save(suggestion)
         .then(res => {
+          Messenger.showSuccess('Yorum kaydı başarılı')
+          this.getComments()
           console.log(res)
         })
         .catch(e => {
@@ -161,11 +164,13 @@ export default {
       CommentService.getComments(this.$route.params.questionId)
     },
     getFile () {
-      QuestionService.getFile(this.question.id, (res) => {
-        this.image = res
-      }, error => {
-        console.log(error)
-      })
+      QuestionService.getFile(this.question.id)
+        .then((res) => {
+          this.image = res
+        }).catch(error => {
+          Messenger.showError(MessengerConstants.errorMessage)
+          console.log(error)
+        })
     }
   }
 }

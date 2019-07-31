@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import Branch from '../../services/Branch'
+import BranchService from '../../services/BranchService'
 import Messenger from '../../helpers/messenger'
 
 export default {
@@ -94,7 +94,7 @@ export default {
       this.$validator.validateAll()
         .then(valRes => {
           if (valRes) {
-            Branch.save({ name: this.branchName, code: this.code }, (resp) => {
+            BranchService.save({ name: this.branchName, code: this.code }, (resp) => {
               Messenger.showSuccess(resp.message)
             })
           }

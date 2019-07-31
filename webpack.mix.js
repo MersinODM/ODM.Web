@@ -1,5 +1,5 @@
 const mix = require('laravel-mix')
-
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -11,6 +11,14 @@ const mix = require('laravel-mix')
  |
  */
 mix.webpackConfig({
+  // plugins: [
+  //   new BrowserSyncPlugin({
+  //     open: 'external',
+  //     host: 'localhost',
+  //     port: 8090,
+  //     files: ['resources/views/**/*.php', 'app/**/*.php', 'routes/**/*.php']
+  //   })
+  // ],
   module: {
     rules: [
       {
@@ -26,7 +34,7 @@ mix.autoload({
   moment: 'moment' // only one
 })
 
-// mix.copyDirectory('resources/images', 'public/images');
+mix.copyDirectory('resources/images', 'public/images')
 
 mix.js('resources/js/main.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')

@@ -27,7 +27,8 @@
               v-model="email"
               v-validate="'required|email'"
               name="email"
-              class="form-control" autocomplete="username"
+              class="form-control"
+              autocomplete="username"
               placeholder="Kullancı Adı/E-Posta giriniz"
             >
             <span class="glyphicon glyphicon-envelope form-control-feedback" />
@@ -42,10 +43,11 @@
           >
             <input
               v-model="password"
-              v-validate="'required|alpha_num|min:6|max:10'"
+              v-validate="'required|min:6|max:10'"
               name="password"
               type="password"
-              class="form-control" autocomplete="current-password"
+              class="form-control"
+              autocomplete="current-password"
               placeholder="Şifrenizi giriniz"
             >
             <span class="glyphicon glyphicon-lock form-control-feedback" />
@@ -64,7 +66,7 @@
             <!-- /.col -->
             <div class="col-xs-offset-8 col-xs-4">
               <button
-                :class="{ disabled : errors.any() }"
+                :class="{ disabled : errors.any() || isSigningIn }"
                 type="submit"
                 class="btn btn-primary btn-block btn-flat"
                 @click="loginUser"
@@ -102,7 +104,9 @@
 // import { mapGetters, mapActions } from 'vuex';
 // import { createNamespacedHelpers } from 'vuex';
 import Spinner from '../../components/Spinner'
-import Auth from '../../services/Auth'
+import Auth from '../../services/AuthService'
+import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
 
 // const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
@@ -138,16 +142,19 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
-      Auth.setPermissions(next)
-      next()
+      Auth.setRoleAndPermissions()
+        .then(value => next())
+        .catch(reason => {
+          console.log(reason)
+          this.isSigningIn = false
+          Messenger.showError(MessengerConstants.errorMessage)
+          next('/login')
+        })
     }
   }
 }
 </script>
 
-<style scoped>
-  .disabled {
-    pointer-events: none;
-    opacity: 0.4;
-  }
+<style>
+
 </style>
