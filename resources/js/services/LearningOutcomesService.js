@@ -60,6 +60,15 @@ const LearningOutcomesService = {
         Messenger.showError(MessengerConstants.errorMessage)
         console.log(error)
       })
+  },
+  findByCodeOrContent (search) {
+    return new Promise((resolve, reject) => {
+      http.get('learning_outcomes/find_by', {
+        params: search
+      })
+        .then(response => resolve(response.data))
+        .catch(error => reject(error))
+    })
   }
 }
 

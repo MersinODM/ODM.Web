@@ -279,20 +279,20 @@
 </template>
 
 <script>
-import InlineEditor from 'ckeditor5-build-classic-with-alignment'
-import CkEditor from '@ckeditor/ckeditor5-vue'
-import vSelect from 'vue-select'
-import QuestionService from '../../services/QuestionService'
-import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
+// import InlineEditor from 'ckeditor5-build-classic-with-alignment'
+// import CkEditor from '@ckeditor/ckeditor5-vue'
+// import vSelect from 'vue-select'
+// import QuestionService from '../../services/QuestionService'
+// import Messenger from '../../helpers/messenger'
+// import { MessengerConstants } from '../../helpers/constants'
 
 export default {
   name: 'NewQuestion',
   // eslint-disable-next-line vue/no-unused-components
-  components: {
-    ckeditor: CkEditor.component,
-    vSelect
-  },
+  // components: {
+  //   ckeditor: CkEditor.component,
+  //   vSelect
+  // },
   data () {
     return {
       branches: [],
@@ -320,7 +320,7 @@ export default {
       isSending: false,
       progressVal: 0,
 
-      editor: InlineEditor,
+      // editor: InlineEditor,
       editorConfig: {
         // The configuration of the editor.
         language: 'tr',
@@ -455,16 +455,16 @@ export default {
               fd.append(`choices[${i}][file]`, c.file, c.file.name)
             }
           })
-          QuestionService.save(fd, (progress) => {
-            this.progressVal = progress
-            console.log(progress)
-          }).then(resp => {
-            Messenger.showSuccess(resp.message)
-            this.isSending = false
-          }).catch(e => {
-            this.isSending = false
-            Messenger.showError(MessengerConstants.errorMessage)
-          })
+          // QuestionService.save(fd, (progress) => {
+          //   this.progressVal = progress
+          //   console.log(progress)
+          // }).then(resp => {
+          //   // Messenger.showSuccess(resp.message)
+          //   this.isSending = false
+          // }).catch(e => {
+          //   this.isSending = false
+          //   // Messenger.showError(MessengerConstants.errorMessage)
+          // })
         }
       }).catch(e => {
         this.isSending = false

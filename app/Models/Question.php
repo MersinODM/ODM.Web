@@ -13,7 +13,7 @@ class Question extends Model
 {
   protected $fillable = [
     "creator_id", "lesson_id", "learning_outcome_id",
-    "title", "header", "body", "footer", "item_root",
+    "keywords", "difficulty",
     "content_url"
   ];
 }

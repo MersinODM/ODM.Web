@@ -25,7 +25,10 @@
                 <!-- Widget: user widget style 1 -->
                 <div class="box box-widget widget-user-2">
                   <!-- Add the bg color to the header using any of the bg-* classes -->
-                  <div class="widget-user-header" :class="colors[Math.floor(Math.random() * colors.length)]">
+                  <div
+                    class="widget-user-header"
+                    :class="colors[Math.floor(Math.random() * colors.length)]"
+                  >
                     <!-- /.widget-user-image -->
                     <h3 class="widget-user-username">
                       {{ b.name }}
@@ -53,6 +56,8 @@
 
 <script>
 import BranchService from '../../services/BranchService'
+import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
 
 export default {
   name: 'BranchList',
@@ -67,15 +72,19 @@ export default {
   },
   methods: {
     getBranches () {
-      BranchService.getBranchesWithStats(data => {
-        this.branchGroup = _.chunk(data, 3)
-      })
+      BranchService.getBranchesWithStats()
+                   .then(data => {
+                     this.branchGroup = _.chunk(data, 3)
+                   })
+                   .catch(reason => {
+                     Messenger.showError(MessengerConstants.errorMessage)
+                   })
     }
   }
 
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

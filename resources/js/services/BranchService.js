@@ -24,22 +24,24 @@ const BranchService = {
       })
     }
   },
-  getBranchesWithStats (callback) {
-    http.get('/branches/with_stats').then(response => {
-      if (response === undefined) return
-      callback(response.data)
-    }).catch(error => {
-      Messenger.showError(MessengerConstants.errorMessage)
-      console.log(error)
+  getBranchesWithStats () {
+    return new Promise((resolve, reject) => {
+      http.get('/branches/with_stats').then(response => {
+        if (response === undefined) reject(new Error('Tanımsız cevap'))
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
-  getBranches (callback) {
-    http.get('/branches').then(response => {
-      if (response === undefined) return
-      callback(response.data)
-    }).catch(error => {
-      Messenger.showError(MessengerConstants.errorMessage)
-      console.log(error)
+  getBranches () {
+    return new Promise((resolve, reject) => {
+      http.get('/branches').then(response => {
+        if (response === undefined) reject(new Error('Tanımsız cevap'))
+        resolve(response.data)
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
   save: function (branch, callback) {

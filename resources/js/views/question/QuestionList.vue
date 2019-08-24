@@ -9,7 +9,7 @@
           <div class="box-body">
             <div class="row">
               <div class="col-md-12">
-                <div class="col-md-4">
+                <div class="col-md-4" v-if="$isInRole('admin')">
                   <div
                     class="form-group has-feedback"
                     :class="{'has-error': errors.has('selectedBranch')}"
@@ -66,7 +66,7 @@
                     class="form-group has-feedback"
                     :class="{'has-error': errors.has('searchedContent')}"
                   >
-                    <label>Aranacak içerik</label>
+                    <label>Arama metni (Enter ile arayabilirsiniz)</label>
                     <input
                       v-model="searchedContent"
                       v-validate="'required'"
@@ -112,7 +112,9 @@
                       :class="colors[Math.floor(Math.random() * colors.length)]"
                     >
                       <!-- /.widget-user-image -->
-                      <h5 v-html="b.item_root" />
+                      <h3 v-html="b.code" />
+                      <h4 v-html="b.content" />
+                      <h5 v-html="b.keywords" />
                     <!--                    <h5>{{ b.code }}</h5>-->
                     </div>
                     <div class="box-footer no-padding">
@@ -120,6 +122,11 @@
                         <li>
                           <router-link :to="{ name: 'showQuestion', params: { questionId: b.id }}">
                             İncele
+                          </router-link>
+                        </li>
+                        <li v-if="$isInRole('admin') || $isInRole('elector')">
+                          <router-link :to="{ name: 'questionEvaluation', params: { questionId: b.id }}">
+                            Değerlendir
                           </router-link>
                         </li>
                         <!--                        <li><a href="#">Öğretmen Sayısı <span class="pull-right badge bg-aqua">{{ b.userCount }}</span></a></li>-->
@@ -154,7 +161,7 @@ export default {
   data () {
     return {
       branches: [],
-      selectedBranch: null,
+      selectedBranch: '',
       classLevels: _.range(4, 13),
       selectedClassLevel: null,
       searchedContent: null,
@@ -167,9 +174,13 @@ export default {
   },
   methods: {
     getBranches () {
-      BranchService.getBranches(res => {
-        this.branches = res
-      })
+      BranchService.getBranches()
+                   .then(data => {
+                     this.branches = data
+                   })
+                   .catch(() => {
+                     Messenger.showError(MessengerConstants.errorMessage)
+                   })
     },
     searchQuestions () {
       this.$validator.validateAll().then(value => {

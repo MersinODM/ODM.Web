@@ -22,13 +22,15 @@ class RoleController extends Controller
   }
 
   public function getUserRoles($userId) {
-    $roles = User::findOrFail($userId)->roles()->select(["roles.id","name", "title"])->get();
+//    $roles = User::findOrFail($userId)->roles()->select(["roles.id","name", "title"])->get();
+    $roles = User::findOrFail($userId)->getRoles();
     return response()->json($roles);
   }
 
     public function getCurrentUserRoles() {
-      $userId = Auth::id();
-      $roles = User::findOrFail($userId)->roles()->select(["roles.id","name", "title"])->get();
+//      $userId = Auth::user()->id;
+//      $roles = User::findOrFail($userId)->roles()->select(["roles.id","name", "title"])->get();
+      $roles = Auth::user()->getRoles();
       return response()->json($roles);
     }
 

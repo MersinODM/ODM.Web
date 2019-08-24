@@ -18,12 +18,13 @@ const dictionary = {
       branch: 'Alan/Ders',
       code: 'Kod',
       content: 'İçerik',
-      choiceFile: 'Seçenek grafği dosyası',
-      questionFile: 'Soru grafiği dosyası',
+      questionFile: 'Soru dosyası',
       selectedClassLevel: 'Sınıf seviyesi',
       learningOutCome: 'Kazanım',
       itemRoot: 'Soru kökü',
-      searchedContent: 'Aranacak metin'
+      searchedContent: 'Aranacak metin',
+      difficulty: 'Zorluk seviyesi',
+      correctAnswer: 'Doğru cevap'
     }
   }
 }

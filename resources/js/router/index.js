@@ -15,6 +15,8 @@ import BranchList from '../views/branch/BranchList'
 import NewLearningOutcome from '../views/learningOutcome/NewLearningOutcome'
 import QuestionList from '../views/question/QuestionList'
 import ShowQuestion from '../views/question/ShowQuestion'
+import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
+import QuestionEvaluation from '../views/question/QuestionEvaluation'
 
 Vue.use(Router)
 
@@ -61,7 +63,7 @@ const router = new Router({
         {
           path: 'new_question',
           name: 'newQuestion',
-          component: NewQuestion
+          component: SimpleNewQuestion
         },
         {
           path: 'question_list',
@@ -72,6 +74,11 @@ const router = new Router({
           path: 'question/:questionId',
           name: 'showQuestion',
           component: ShowQuestion
+        },
+        {
+          path: 'question/:questionId/evaluate',
+          name: 'questionEvaluation',
+          component: QuestionEvaluation
         },
         {
           path: 'new_learning_outcome',

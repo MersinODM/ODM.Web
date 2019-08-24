@@ -19,11 +19,11 @@
           <div class="box-body">
             <div class="row">
               <div class="col-md-12">
-                <img
-                  :src="image"
-                  class="img-responsive"
-                  style="width: 100%"
-                >
+                <object
+                  type="application/pdf"
+                  :data="questionFile"
+                  height="600pt"
+                  style="width: 100%"></object>
               </div>
             </div>
             <div class="row">
@@ -33,7 +33,7 @@
                 </h5>
                 <p
                   v-if="question != null"
-                  v-html="question.item_root"
+                  v-html="question.keywords"
                 />
                 <h5 style="font-weight: bold">
                   Soru yazarı
@@ -125,7 +125,7 @@ export default {
   data () {
     return {
       question: null,
-      image: null,
+      questionFile: null,
       comment: null
     }
   },
@@ -166,7 +166,13 @@ export default {
     getFile () {
       QuestionService.getFile(this.question.id)
         .then((res) => {
-          this.image = res
+          // let fr = new FileReader()
+          // let b = new Blob([res], { type: 'application/pdf' })
+          // fr.readAsDataURL(b)
+          // // let fileURL = URL.createObjectURL(b)
+          // // window.open(fileURL)
+          // fr.onloadend = (e) => { this.questionFile = e.target.result }
+          this.questionFile = res
         }).catch(error => {
           Messenger.showError(MessengerConstants.errorMessage)
           console.log(error)

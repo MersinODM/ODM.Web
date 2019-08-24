@@ -18,9 +18,9 @@
 <script>
   window.Laravel = { csrfToken: '{{ csrf_token() }}' };
 </script>
-<script src="{{mix('js/manifest.js')}}"></script>
-<script src="{{mix('js/vendor.js')}}"></script>
-<script src="{{mix('js/main.js')}}"></script>
+<script src="{{asset('js/manifest.js')}}"></script>
+<script src="{{asset('js/vendor.js')}}"></script>
+<script src="{{asset('js/main.js')}}"></script>
 {{--@if(env("APP_ENV") == "local")--}}
 {{--    <script id="__bs_script__">//<![CDATA[--}}
 {{--        document.write("<script async src='http://HOST:8090/browser-sync/browser-sync-client.js?v=2.26.7'><\/script>".replace("HOST", location.hostname));--}}

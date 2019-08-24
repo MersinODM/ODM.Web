@@ -51,7 +51,8 @@ const QuestionService = {
     return new Promise(function (resolve, reject) {
       http.get(`/questions/${id}/file`, {
         headers: {
-          'cache-control': 'no-cache'
+          'cache-control': 'no-cache',
+          'responseType': 'blob'
         }
       })
         .then(response => resolve(response.data))

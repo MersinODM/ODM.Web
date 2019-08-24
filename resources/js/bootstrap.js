@@ -6,8 +6,8 @@
      * for JavaScript based Bootstrap features such as modals and tabs. This
      * code may be modified to fit the specific needs of your application.
      */
-window._ = require('lodash');
-window.$ = window.jQuery = require('jquery');
+window._ = require('lodash')
+window.$ = window.jQuery = require('jquery')
 // require('jquery-ui')
 // let swal = require('sweetalert')
 
@@ -20,7 +20,7 @@ window.$ = window.jQuery = require('jquery');
 
 // window.Vue = require('vue')
 // const axios = require('./helpers/axios')
-require('./helpers/filters');
+require('./helpers/filters')
 // console.log(window.axios)
 //
 // /**

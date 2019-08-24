@@ -58,6 +58,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::delete("learning_outcomes/{id}", "LO\LearningOutcomeController@delete");
   Route::get("learning_outcomes/findByClassLevelAndLessonId", "LO\LearningOutcomeController@findByClassLevelAndLessonId");
   Route::post("learning_outcomes/find_by/content_lesson_id_class_level", "LO\LearningOutcomeController@findByContentAndLessonIdAndClassLevel");
+  Route::get("learning_outcomes/find_by", "LO\LearningOutcomeController@findBy");
 
   // Question Api route tanımlamaları
   Route::post("questions", "Question\QuestionController@create");

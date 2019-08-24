@@ -21,6 +21,8 @@ import VueMask from 'v-mask'
 import ACL from './plugins/ACL'
 import VueAxios from 'vue-axios'
 
+Window.Vue = Vue
+
 Vue.use(VueAxios, axios)
 Vue.use(ACL)
 Vue.use(PrettyCheckbox)
@@ -30,6 +32,7 @@ Vue.use(VueMask)
 Validator.localize('tr', tr)
 Validator.localize(dictionary)
 
+// eslint-disable-next-line no-unused-vars
 const main = new Vue({
   router,
   store,
@@ -37,5 +40,3 @@ const main = new Vue({
   components: { App },
   template: '<App/>'
 }).$mount('#app')
-
-window.Vue = main

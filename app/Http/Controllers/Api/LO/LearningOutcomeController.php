@@ -13,6 +13,7 @@ use App\Http\Controllers\ResponseHelper;
 use App\Models\LearningOutcome;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -108,5 +109,34 @@ class LearningOutcomeController extends ApiController
       ->get();
     return response()->json($lo, 200);
 
+  }
+
+  public function findBy(Request $request) {
+      $validationResult = $this->apiValidator($request, [
+          "content" => "required",
+          "class_level" => "required",
+      ]);
+
+      if ($validationResult) {
+          return response()->json($validationResult,422);
+      }
+
+      $content = $request->query("content");
+      $lesson_id = $request->query("lesson_id");
+      $class_level = $request->query("class_level");
+
+      if (!isset($lesson_id)) {
+          $lesson_id = Auth::user()->branch_id;
+      }
+
+      $lo = LearningOutcome::where([
+          ["branch_id", "=", $lesson_id],
+          ["class_level", "=", $class_level],
+          ["content", "like", "%".$content."%"]
+      ])
+          ->orWhere("code", "like", "%".$content."%")
+          ->select("id", "code", "content")
+          ->get();
+      return response()->json($lo, 200);
   }
 }
