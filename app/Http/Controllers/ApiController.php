@@ -14,7 +14,13 @@ use Illuminate\Support\Facades\Validator;
 class ApiController extends Controller
 {
   public function apiValidator(Request $request, $props) {
-    $validator = Validator::make($request->all(), $props);
+      $attributes = [
+          'learning_outcome_id' => 'Kazanım',
+          'difficulty' => 'Zorluk',
+          'question_file' => 'Soru dosyası',
+      ];
+
+    $validator = Validator::make($request->all(), $props, [], $attributes);
     if ($validator->fails()) {
       return $validator->errors();
     }

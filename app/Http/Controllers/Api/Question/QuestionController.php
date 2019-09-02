@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Api\Question;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
-use App\Models\AnswerChoice;
 use App\Models\Branch;
 use App\Models\LearningOutcome;
 use App\Models\Question;
@@ -28,7 +27,7 @@ class QuestionController extends ApiController
       $validationResult = $this->apiValidator($request, [
         'learning_outcome_id' => 'required',
         'difficulty' => 'required',
-        'question_file' => 'required'
+        'question_file' => 'required|mimes:pdf|max:1024'
       ]);
       if ($validationResult) {
         return response()->json($validationResult,422);
@@ -104,6 +103,7 @@ class QuestionController extends ApiController
       }
       catch (Exception $exception) {
         DB::rollBack();
+        Storage::delete($path);
         return response()->json($this->apiException($exception), 500);
       }
       return response()->json([ResponseHelper::MESSAGE => "Soru ekleme işlemi başarılı."], 201);
@@ -121,8 +121,9 @@ class QuestionController extends ApiController
           "q.keywords",
           "q.difficulty",
           "q.correct_answer",
+          "q.is_passed",
           DB::raw("DATE_FORMAT(q.created_at, '%d.%m.%Y') as created_at"),
-          "lo.content as learning_outcome",
+          DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
           "lo.class_level",
           "u.full_name as creator",
           "b.name as branch"
@@ -136,7 +137,6 @@ class QuestionController extends ApiController
 
     public function findByContentAndClassLevelAndBranch(Request $request)
     {
-
         $validationResult = $this->apiValidator($request, [
             'class_level' => 'required'
         ]);
@@ -186,9 +186,8 @@ class QuestionController extends ApiController
                     "sc3" => $searched_content,
                 ]);
             return response()->json($res, 200);
-
         }
-        return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulmadık!"], 404);
+        return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulamadık!"], 404);
 
     }
 

@@ -221,7 +221,6 @@
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
 
-
 export default {
   name: 'NHeader',
   data () {

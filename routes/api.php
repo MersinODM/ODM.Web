@@ -66,5 +66,10 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::get("questions", "Question\QuestionController@findByContentAndClassLevelAndBranch");
   Route::get("questions/{id}", "Question\QuestionController@findById");
   Route::get("questions/{id}/file", "Question\QuestionController@getFile");
+  Route::post("questions/{id}/evaluations", "Question\QuestionEvalController@create");
+  Route::get("questions/{id}/evaluations", "Question\QuestionEvalController@findByQuestionId");
+  Route::post("questions/{id}/revisions", "Question\QuestionRevisionController@create");
+  Route::get("questions/{id}/revisions", "Question\QuestionRevisionController@findByQuestionId");
+
 });
 

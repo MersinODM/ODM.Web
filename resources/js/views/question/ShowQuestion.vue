@@ -11,9 +11,15 @@
         <div class="box">
           <div class="box-header with-border">
             <h4>
-              Soru İnceleme<button class="btn btn-danger pull-right">
-                Silme Talep Et
-              </button>
+              Soru İnceleme
+              <div class="pull-right">
+                <button
+                  class="btn btn-danger pull-right"
+                  style="margin-right: 10px"
+                >
+                  Silme Talep Et
+                </button>
+              </div>
             </h4>
           </div>
           <div class="box-body">
@@ -21,9 +27,10 @@
               <div class="col-md-12">
                 <object
                   type="application/pdf"
-                  :data="questionFile"
+                  :data="questionFileURL"
                   height="600pt"
-                  style="width: 100%"></object>
+                  style="width: 100%"
+                />
               </div>
             </div>
             <div class="row">
@@ -33,8 +40,9 @@
                 </h5>
                 <p
                   v-if="question != null"
-                  v-html="question.keywords"
-                />
+                >
+                  {{ question.keywords }}
+                </p>
                 <h5 style="font-weight: bold">
                   Soru yazarı
                 </h5>
@@ -58,11 +66,11 @@
             <div class="row">
               <div class="col-md-offset-5 col-md-2">
                 <button
-                  v-if="!hasCommentRequest"
+                  v-if="!question.is_passed && !hasCommentRequest"
                   class="btn btn-warning btn-block"
                   @click="comment = ''"
                 >
-                  Düzeltme Öner
+                  Revizyon Ekle
                 </button>
               </div>
             </div>
@@ -76,37 +84,107 @@
                 class="row"
               >
                 <div class="col-md-12">
-                  <label>Düzeltme metni</label>
                   <div class="row">
-                    <div class="col-md-10">
-                      <div class="form-group has-feedback">
+                    <div class="col-md-offset-2 col-md-8">
+                      <div class="form-group has-feedback"
+                           :class="{'has-error': errors.has('comment')}">
+                        <label>Gözden geçirme metni</label>
                         <textarea
                           v-model="comment"
+                          v-validate="'required'"
+                          name="comment"
                           class="form-control"
                           style="max-width: 100%; min-width: 100%; min-height: 60px"
-                          placeholder="Önerinizi yazınız"
+                          placeholder="Gözden geçirmenizi kısaca yazınız"
                         />
-                        <span class="glyphicon glyphicon-magnet form-control-feedback" />
+                        <span class="mdi mdi-comment form-control-feedback" />
+                        <span
+                          v-if="errors.has('comment')"
+                          class="help-block"
+                        >{{ errors.first('comment') }}</span>
                       </div>
                     </div>
-                    <div class="col-md-2">
-                      <button
-                        class="btn btn-primary btn-block btn-sm"
-                        @click="saveComment"
-                      >
-                        Kaydet
-                      </button>
-                      <button
-                        class="btn btn-danger btn-block btn-sm"
-                        @click="comment = null"
-                      >
-                        İptal Et
-                      </button>
+                  </div>
+                  <div
+                    v-if="errors.has('questionFile')"
+                    class="row"
+                  >
+                    <div class="text-center">
+                      <span class="badge alert-error">{{ errors.first('questionFile') }}</span>
+                    </div>
+                    <br>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-offset-2 col-md-8">
+                      <div class="text-center">
+                        <label class="btn btn-success">
+                          <input
+                            ref="qFile"
+                            v-validate="'required|size:1024'"
+                            name="questionFile"
+                            type="file"
+                            style="display: none !important;"
+                            accept="application/pdf"
+                            @change="selectFile($event)"
+                          >Dosya seçiniz
+                        </label>
+                        <button
+                          class="btn btn-primary"
+                          @click="save"
+                        >
+                          Kaydet
+                        </button>
+                        <button
+                          class="btn btn-danger"
+                          @click="cancel"
+                        >
+                          İptal Et
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </transition>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="revisions !== null && revisions.length > 0"
+         class="row"
+    >
+      <div class="col-md-12">
+        <div class="box box-primary direct-chat direct-chat-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              Gözden geçirmeler
+            </h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <!-- Conversations are loaded here -->
+            <div class="direct-chat-messages">
+              <!-- Message. Default to the left -->
+              <div
+                      v-for="rev in revisions"
+                      :key="rev.id"
+                      class="direct-chat-msg"
+              >
+                <div class="direct-chat-info clearfix">
+                  <span class="direct-chat-name pull-left">{{ rev.title }}</span>
+                  <span class="direct-chat-timestamp pull-right">{{ rev.date }}</span>
+                </div>
+                <img
+                        class="direct-chat-img"
+                        :src="userImage"
+                        alt="Message User Image"
+                >
+                <div class="direct-chat-text">
+                  {{ rev.comment }}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -118,7 +196,8 @@
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
-import CommentService from '../../services/CommentService'
+import RevisionService from '../../services/CommentService'
+import usersImg from '../../../images/users.png'
 
 export default {
   name: 'ShowQuestion',
@@ -126,7 +205,12 @@ export default {
     return {
       question: null,
       questionFile: null,
-      comment: null
+      oldQuestionFile: null,
+      questionFileURL: null,
+      comment: null,
+      changeCount: 0,
+      revisions: [],
+      userImage: usersImg
     }
   },
   computed: {
@@ -136,48 +220,89 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     let questionId = to.params.questionId
-    QuestionService.findById(questionId)
-      .then((res) => {
-        next(vm => {
-          vm.question = res
-          vm.getFile()
-        })
+    Promise.all([
+      QuestionService.findById(questionId),
+      QuestionService.getFile(questionId),
+      RevisionService.getRevisions(questionId)
+    ]).then(([question, file, revisions]) => {
+      next(vm => {
+        vm.question = question
+        vm.questionFileURL = file
+        vm.revisions = revisions
       })
+    })
+  },
+  watch: {
+    questionFile: function (val) {
+      this.changeCount++
+      this.questionFileURL = URL.createObjectURL(val)
+    }
   },
   methods: {
-    saveComment () {
-      let suggestion = {
-        questionId: this.$route.params.questionId,
-        comment: this.comment
+    save () {
+      this.$validator.validateAll()
+              .then(value => {
+                if (value) {
+                  let msg = 'Gözden geçrimeniz ve yeni soru dosyanız kayıt edilecek.\n' +
+                          'Eski soru dosyanıza ulaşamayacaksınız\n' +
+                          'Kayıt işlemini onaylıyor musunuz?'
+                  let promptButtons = {
+                    cancel: 'İptal',
+                    ok: {
+                      text: 'Tamam',
+                      value: true
+                    }
+                  }
+                  Messenger.showPrompt(msg, promptButtons)
+                           .then(promptRes => {
+                             if (promptRes) {
+                               let fd = new FormData()
+                               fd.append('comment', this.comment)
+                               fd.append('question_file', this.questionFile, this.questionFile.name)
+                               RevisionService.save(this.$route.params.questionId, fd)
+                                              .then(res => {
+                                                Messenger.showSuccess('Gözden geçirme kaydı başarılı')
+                                                this.getRevisions()
+                                              })
+                                              .catch(e => {
+                                                Messenger.showError(MessengerConstants.errorMessage)
+                                              })
+                             }
+                           })
+                }
+              })
+    },
+    selectFile ($event) {
+      if (this.changeCount === 0) {
+        this.oldQuestionFile = this.questionFileURL
       }
-      CommentService.save(suggestion)
-        .then(res => {
-          Messenger.showSuccess('Yorum kaydı başarılı')
-          this.getComments()
-          console.log(res)
-        })
-        .catch(e => {
-          Messenger.showError(MessengerConstants.errorMessage)
-        })
+      URL.revokeObjectURL(this.questionFile)
+      this.questionFile = $event.target.files[0]
     },
-    getComments () {
-      CommentService.getComments(this.$route.params.questionId)
+    cancel () {
+      this.comment = null
+      URL.revokeObjectURL(this.questionFile)
+      this.questionFileURL = this.oldQuestionFile
     },
-    getFile () {
-      QuestionService.getFile(this.question.id)
-        .then((res) => {
-          // let fr = new FileReader()
-          // let b = new Blob([res], { type: 'application/pdf' })
-          // fr.readAsDataURL(b)
-          // // let fileURL = URL.createObjectURL(b)
-          // // window.open(fileURL)
-          // fr.onloadend = (e) => { this.questionFile = e.target.result }
-          this.questionFile = res
-        }).catch(error => {
-          Messenger.showError(MessengerConstants.errorMessage)
-          console.log(error)
-        })
+    getRevisions () {
+      RevisionService.getRevisions(this.$route.params.questionId)
+              .then((revisions) => { this.revisions = revisions })
     }
+    // getFile () {
+    //   QuestionService.getFile(this.question.id)
+    //     .then((res) => {
+    // let fr = new FileReader()
+    // let b = new Blob([res], { type: 'application/pdf' })
+    // fr.readAsDataURL(b)
+    // // let fileURL = URL.createObjectURL(b)
+    // // window.open(fileURL)
+    // fr.onloadend = (e) => { this.questionFile = e.target.result }
+    //   this.questionFile = res
+    // }).catch(error => {
+    //   Messenger.showError(MessengerConstants.errorMessage)
+    //   console.log(error)
+    // })
+    // }
   }
 }
 </script>

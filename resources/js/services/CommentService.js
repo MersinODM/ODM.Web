@@ -6,21 +6,24 @@
 
 import http from '../helpers/axios'
 
-const CommentService = {
-  save (suggestion) {
+const RevisionService = {
+  save (id, revision) {
     return new Promise(function (resolve, reject) {
-      http.post(`questions/${suggestion.questionId}/suggestions`, {
-        content: suggestion.content
-      }).then(response => {
-        resolve(response.data)
-      }).catch(e => {
-        reject(e)
+      http.post(`questions/${id}/revisions`, revision, {
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${revision._boundary}`
+        }
       })
+          .then(response => {
+            resolve(response.data)
+          }).catch(e => {
+            reject(e)
+          })
     })
   },
-  getComments (questionId) {
+  getRevisions (questionId) {
     return new Promise(function (resolve, reject) {
-      http.get(`questions/${questionId}/suggestions`)
+      http.get(`questions/${questionId}/revisions`)
         .then(response => {
           resolve(response.data)
         }).catch(e => {
@@ -30,4 +33,4 @@ const CommentService = {
   }
 }
 
-export default CommentService
+export default RevisionService

@@ -57,6 +57,34 @@ http.interceptors.response.use(function (response) {
   }
 })
 
+http.interceptors.response.use(function (response) {
+  pace.stop()
+  return response
+}, function (error) {
+  if (error.response.status === 422) {
+    console.log(error)
+    let msg = 'Aşağıdaki doğrulama hataları giderilmelidir.'
+    Object.keys(error.response.data)
+          .forEach((value, index) => msg + `\n${index + 1} - ${value}`)
+    swal({
+      title: 'Veri doğrulama hatası!',
+      text: msg,
+      icon: 'warning',
+      buttons: {
+        confirm: {
+          text: 'Tamam',
+          color: '#DD6B55'
+        }
+      }
+    }).then(() => {
+      pace.stop()
+    })
+  } else {
+    pace.stop()
+    return Promise.reject(error)
+  }
+})
+
 // window.axios = http
 
 export default http

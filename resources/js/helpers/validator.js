@@ -24,7 +24,8 @@ const dictionary = {
       itemRoot: 'Soru kökü',
       searchedContent: 'Aranacak metin',
       difficulty: 'Zorluk seviyesi',
-      correctAnswer: 'Doğru cevap'
+      correctAnswer: 'Doğru cevap',
+      comment: 'Gözden geçirme yorumu'
     }
   }
 }

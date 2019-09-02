@@ -31,7 +31,7 @@
               autocomplete="username"
               placeholder="Kullancı Adı/E-Posta giriniz"
             >
-            <span class="glyphicon glyphicon-envelope form-control-feedback" />
+            <span class="mdi mdi-email form-control-feedback" />
             <span
               v-if="errors.has('email')"
               class="help-block"
@@ -50,7 +50,7 @@
               autocomplete="current-password"
               placeholder="Şifrenizi giriniz"
             >
-            <span class="glyphicon glyphicon-lock form-control-feedback" />
+            <span class="mdi mdi-lock form-control-feedback" />
             <span
               v-if="errors.has('password')"
               class="help-block"
@@ -86,7 +86,7 @@
           class="text-center"
         >
           Yeni kayıt talebi oluştur
-          <span class="fa fa-user-secret" />
+          <span class="mdi mdi-account-plus" />
         </router-link>
       </div>
       <spinner
@@ -104,7 +104,7 @@
 // import { mapGetters, mapActions } from 'vuex';
 // import { createNamespacedHelpers } from 'vuex';
 import Spinner from '../../components/Spinner'
-import Auth from '../../services/AuthService'
+import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 
@@ -132,17 +132,23 @@ export default {
               email: this.email,
               password: this.password
             }
-            Auth.login(credentials, () => {
-              this.isSigningIn = !this.isSigningIn
-            })
+            this.isSigningIn = true
+            AuthService.login(credentials)
+                       .then(value => {
+                         this.isSigningIn = false
+                       })
+                       .catch(() => {
+                         this.isSigningIn = false
+                         Messenger.showWarning('Oturumunuz açılmadı, e-posta ve şifrenizi kontrol ediniz.\n' +
+                                 'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
+                       })
           }
         })
-      this.isSigningIn = !this.isSigningIn
     }
   },
   beforeRouteLeave (to, from, next) {
     if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
-      Auth.setRoleAndPermissions()
+      AuthService.setRoleAndPermissions()
         .then(value => next())
         .catch(reason => {
           console.log(reason)

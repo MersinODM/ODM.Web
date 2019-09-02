@@ -22,6 +22,7 @@ Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
+  base: 'otomasyon',
   routes: [
     {
       path: '/login',

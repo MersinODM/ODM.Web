@@ -1,5 +1,8 @@
 const mix = require('laravel-mix')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+// require("./node_modules/@mdi/font/fonts/")
+
+// mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -35,8 +38,14 @@ mix.autoload({
 })
 
 mix.copyDirectory('resources/images', 'public/images')
+mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
+// mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 
 mix.js('resources/js/main.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')
+   .options({
+     processCssUrls: false
+   })
   .extract(['vue'])
-  .sourceMaps()
+
+if (!mix.inProduction()) { mix.sourceMaps() }

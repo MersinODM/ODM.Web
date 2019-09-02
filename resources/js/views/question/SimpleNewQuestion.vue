@@ -101,6 +101,12 @@
                     >
                       {{ option.code }} - {{ option.content }}
                     </template>
+                    <template
+                            slot="selected-option"
+                            slot-scope="option"
+                    >
+                      {{ option.code }} - {{ option.content }}
+                    </template>
                   </v-select>
                   <span
                     v-if="errors.has('learningOutCome')"
@@ -155,7 +161,7 @@
                   v-if="selectedCorrectAnswer !== ''"
                   class="form-group"
                 >
-                  <label>Anahtar Kelimeler</label>
+                  <label>Soru Kökü/Anahtar Kelimeler</label>
                   <textarea
                     class="form-control"
                     rows="3"

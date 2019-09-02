@@ -11,23 +11,19 @@ import Constants from '../helpers/constants'
 import jwt from 'jwt-decode'
 
 const AuthService = {
-  login: (credentials, onError) => {
-    http.post('/auth/login', credentials, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => {
-      localStorage.setItem(Constants.accessToken, response.data.access_token)
-      localStorage.setItem(Constants.expires_in, response.data.expires_in)
-      router.push({ 'name': 'main' })
-    }).catch((error) => {
-      console.log(error)
-      onError(error)
-      swal({
-        title: 'Oturum açma hatası!',
-        text: 'Oturumunuz açılmadı, e-posta ve şifrenizi kontrol ediniz. Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.',
-        icon: 'warning',
-        button: 'Tamam'
+  login: (credentials) => {
+    return new Promise((resolve, reject) => {
+      http.post('/auth/login', credentials, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        localStorage.setItem(Constants.accessToken, response.data.access_token)
+        localStorage.setItem(Constants.expires_in, response.data.expires_in)
+        router.push({ 'name': 'main' })
+        resolve(response.data)
+      }).catch((error) => {
+        reject(error)
       })
     })
   },

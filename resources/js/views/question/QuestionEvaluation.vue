@@ -77,12 +77,24 @@
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                   </div>
+                  <div class="form-group has-feedback">
+                    <textarea
+                      v-model="comment"
+                      class="form-control"
+                      style="max-width: 100%; min-width: 100%; min-height: 60px"
+                      placeholder="Değerlendirmenizi kısaca açıklayınız."
+                    />
+                    <span class="glyphicon glyphicon-magnet form-control-feedback" />
+                  </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-offset-5 col-md-2">
                   <div class="text-center">
-                    <button class="btn btn-success">
+                    <button
+                      class="btn btn-success"
+                      @click="saveEval"
+                    >
                       KAYDET
                     </button>
                   </div>
@@ -90,6 +102,69 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="evaluationList !== null && evaluationList.length > 0"
+      class="row"
+    >
+      <div class="col-md-12">
+        <div class="box box-primary direct-chat direct-chat-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              Değerlendirmeler
+            </h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <!-- Conversations are loaded here -->
+            <div class="direct-chat-messages">
+              <!-- Message. Default to the left -->
+              <div
+                v-for="(evaluation, index) in evaluationList"
+                :key="evaluation.id"
+                class="direct-chat-msg"
+              >
+                <div class="direct-chat-info clearfix">
+                  <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
+                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
+                </div>
+                <!-- /.direct-chat-info -->
+                <img
+                  class="direct-chat-img"
+                  :src="userImage"
+                  alt="Message User Image"
+                ><!-- /.direct-chat-img -->
+                <div class="direct-chat-text">
+                  {{ evaluation.comment }}
+                </div>
+                <!-- /.direct-chat-text -->
+              </div>
+              <!-- /.direct-chat-msg -->
+
+              <!-- Message to the right -->
+              <!--              <div class="direct-chat-msg right">-->
+              <!--                <div class="direct-chat-info clearfix">-->
+              <!--                  <span class="direct-chat-name pull-right">Sarah Bullock</span>-->
+              <!--                  <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>-->
+              <!--                </div>-->
+              <!--                &lt;!&ndash; /.direct-chat-info &ndash;&gt;-->
+              <!--                <img class="direct-chat-img" :src="userImage"  alt="Message User Image">&lt;!&ndash; /.direct-chat-img &ndash;&gt;-->
+              <!--                <div class="direct-chat-text">-->
+              <!--                  You better believe it!-->
+              <!--                </div>-->
+              <!--                &lt;!&ndash; /.direct-chat-text &ndash;&gt;-->
+              <!--              </div>-->
+              <!-- /.direct-chat-msg -->
+            </div>
+            <!--/.direct-chat-messages-->
+
+            <!-- Contacts are loaded here -->
+            <!-- /.direct-chat-pane -->
+          </div>
+          <!-- /.box-body -->
+          <!-- /.box-footer-->
         </div>
       </div>
     </div>
@@ -101,6 +176,8 @@ import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
+import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+import usersImg from '../../../images/users.png'
 
 export default {
   name: 'QuestionEvaluation',
@@ -116,7 +193,10 @@ export default {
         { key: 4, title: 'Kullanılabilir' },
         { key: 5, title: 'Kesinlikle Kullanılmalı' }
       ],
-      point: ''
+      point: '',
+      comment: '',
+      evaluationList: [],
+      userImage: usersImg
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -126,18 +206,34 @@ export default {
                        next(vm => {
                          vm.question = res
                          vm.getFile()
+                         vm.getEvals()
                        })
                      })
   },
   methods: {
     getFile () {
       QuestionService.getFile(this.question.id)
-                     .then((res) => {
-                       this.questionFile = res
-                     }).catch(error => {
+                     .then((res) => { this.questionFile = res })
+                     .catch(error => {
                        Messenger.showError(MessengerConstants.errorMessage)
                        console.log(error)
                      })
+    },
+    getEvals () {
+      QuestionEvaluationService.findByQuestionId(this.question.id)
+                               .then(qeList => { this.evaluationList = qeList })
+                               .catch(() => Messenger.showError(MessengerConstants.errorMessage))
+    },
+    saveEval () {
+      let data = { point: this.point, comment: this.comment }
+      QuestionEvaluationService.save(this.question.id, data)
+                               .then(res => {
+                                 Messenger.showInfo(res.message)
+                                 if (res.eval_count > 0) {
+                                   this.getEvals()
+                                 }
+                               })
+                               .catch(() => { Messenger.showError(Messenger.showError(MessengerConstants.errorMessage)) })
     }
   }
 }

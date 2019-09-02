@@ -47,14 +47,15 @@ const Messenger = {
       if (callback !== null) callback(value)
     })
   },
-  showPrompt (message, buttons, callback = null) {
-    swal({
-      title: 'Dikkat!',
-      text: message,
-      icon: 'warning',
-      buttons: buttons
-    }).then(value => {
-      if (callback !== null) callback(value)
+  showPrompt (message, buttons) {
+    return new Promise((resolve, reject) => {
+      swal({
+        title: 'Dikkat!',
+        text: message,
+        icon: 'warning',
+        buttons: buttons
+      }).then(value => resolve(value))
+        .catch(reason => reject(reason))
     })
   }
 }

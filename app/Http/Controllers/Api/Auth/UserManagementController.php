@@ -59,6 +59,7 @@ class UserManagementController extends ApiController
       $requestedUser = $request->only("full_name", "inst_id", "branch_id", "email", "phone");
       $model->fill($requestedUser);
       $model->save();
+      $model->assign('teacher');
 
       //Burada kullanıca şifre oluşturma maili atılıyor
       event(new NewUserReqReceived($model));

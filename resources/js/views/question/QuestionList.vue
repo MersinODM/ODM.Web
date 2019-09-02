@@ -9,7 +9,10 @@
           <div class="box-body">
             <div class="row">
               <div class="col-md-12">
-                <div class="col-md-4" v-if="$isInRole('admin')">
+                <div
+                  v-if="$isInRole('admin')"
+                  class="col-md-4"
+                >
                   <div
                     class="form-group has-feedback"
                     :class="{'has-error': errors.has('selectedBranch')}"
@@ -82,60 +85,69 @@
                       class="help-block"
                     >{{ errors.first('searchedContent') }}</span>
                   </div>
+                  <p-check
+                    class="p-switch p-fill"
+                    name="check"
+                    color="success"
+                  >
+                    Havuzda mı?
+                  </p-check>
                 </div>
               </div>
             </div>
-            <div class="col-md-12">
-              <div
-                v-if="questionsGroup === null || questionsGroup.length <= 0"
-                class="row"
-              >
-                <div class="col-md-12">
-                  <h4>Burada henüz bir şey bulamadık!</h4>
-                </div>
-              </div>
-              <div
-                v-for="ques in questionsGroup"
-                v-else
-                class="row"
-              >
+            <div class="row">
+              <div class="col-md-12">
                 <div
-                  v-for="b in ques"
-                  :key="b.id"
-                  class="col-md-4"
+                  v-if="questionsGroup === null || questionsGroup.length <= 0"
+                  class="row"
                 >
-                  <!-- Widget: user widget style 1 -->
-                  <div class="box box-widget widget-user-2">
-                    <!-- Add the bg color to the header using any of the bg-* classes -->
-                    <div
-                      class="widget-user-header"
-                      :class="colors[Math.floor(Math.random() * colors.length)]"
-                    >
-                      <!-- /.widget-user-image -->
-                      <h3 v-html="b.code" />
-                      <h4 v-html="b.content" />
-                      <h5 v-html="b.keywords" />
-                    <!--                    <h5>{{ b.code }}</h5>-->
-                    </div>
-                    <div class="box-footer no-padding">
-                      <ul class="nav nav-stacked">
-                        <li>
-                          <router-link :to="{ name: 'showQuestion', params: { questionId: b.id }}">
-                            İncele
-                          </router-link>
-                        </li>
-                        <li v-if="$isInRole('admin') || $isInRole('elector')">
-                          <router-link :to="{ name: 'questionEvaluation', params: { questionId: b.id }}">
-                            Değerlendir
-                          </router-link>
-                        </li>
+                  <div class="col-md-12">
+                    <h4>Burada henüz bir şey bulamadık!</h4>
+                  </div>
+                </div>
+                <div
+                  v-for="ques in questionsGroup"
+                  v-else
+                  class="row"
+                >
+                  <div
+                    v-for="b in ques"
+                    :key="b.id"
+                    class="col-md-4"
+                  >
+                    <!-- Widget: user widget style 1 -->
+                    <div class="box box-widget widget-user-2">
+                      <!-- Add the bg color to the header using any of the bg-* classes -->
+                      <div
+                        class="widget-user-header"
+                        :class="colors[Math.floor(Math.random() * colors.length)]"
+                      >
+                        <!-- /.widget-user-image -->
+                        <h3>{{ b.code }}</h3>
+                        <h4>{{ b.content }}</h4>
+                        <h5>{{ b.keywords }}</h5>
+                        <!--                    <h5>{{ b.code }}</h5>-->
+                      </div>
+                      <div class="box-footer no-padding">
+                        <ul class="nav nav-stacked">
+                          <li>
+                            <router-link :to="{ name: 'showQuestion', params: { questionId: b.id }}">
+                              İncele
+                            </router-link>
+                          </li>
+                          <li v-if="$isInRole('admin') || $isInRole('elector')">
+                            <router-link :to="{ name: 'questionEvaluation', params: { questionId: b.id }}">
+                              Değerlendir
+                            </router-link>
+                          </li>
                         <!--                        <li><a href="#">Öğretmen Sayısı <span class="pull-right badge bg-aqua">{{ b.userCount }}</span></a></li>-->
                         <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
                         <!--                      <li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
-                      </ul>
+                        </ul>
+                      </div>
                     </div>
+                    <!-- /.widget-user -->
                   </div>
-                <!-- /.widget-user -->
                 </div>
               </div>
             </div>
@@ -166,7 +178,7 @@ export default {
       selectedClassLevel: null,
       searchedContent: null,
       questionsGroup: [],
-      colors: ['bg-yellow', 'bg-green', 'bg-yellow', 'bg-red', 'bg-aqua', 'bg-purple', 'bg-blue', 'bg-teal', 'bg-maroon', 'bg-black', 'bg-gray', 'bg-olive', 'bg-orange', 'bg-fuchsia']
+      colors: ['bg-yellow', 'bg-green', 'bg-yellow', 'bg-red', 'bg-aqua', 'bg-purple', 'bg-blue', 'bg-teal', 'bg-maroon', 'bg-gray', 'bg-olive', 'bg-orange', 'bg-fuchsia']
     }
   },
   created () {
