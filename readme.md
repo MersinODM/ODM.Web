@@ -1,4 +1,4 @@
-<p align="center"><img src=https://nevsehirodm.meb.gov.tr/meb_iys_dosyalar/2019_09/20125242_Logo.png"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/electropsycho/ODM.Web/master/resources/images/Logo.png"></p>
     
 # Ölçme Değerlendirme Merkezleri Web Yazılımı(ODM.Web)
 
