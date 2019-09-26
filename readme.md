@@ -1,4 +1,4 @@
-<p align="center"><img src=https://nevsehirodm.meb.gov.tr/otomasyon/images/Logo.png"></p>
+<p align="center"><img src=http://nevsehirodm.meb.gov.tr/otomasyon/images/Logo.png"></p>
     
 # Ölçme Değerlendirme Merkezleri Web Yazılımı(ODM.Web)
 
