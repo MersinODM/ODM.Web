@@ -370,7 +370,7 @@
                       </tr>
                       <tr>
                         <td class="button">
-                            <a href="{{url('password', $token).'?email='.urlencode($user->getEmailForPasswordReset())}}" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:'Cabin', Helvetica, Arial, sans-serif;font-size:14px;font-weight:initial;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">Şifre Oluştur</a>
+                            <a href="{{url('password/reset', $token).'?email='.urlencode($user->getEmailForPasswordReset())}}" style="background-color:#ff6f6f;border-radius:5px;color:#ffffff;display:inline-block;font-family:'Cabin', Helvetica, Arial, sans-serif;font-size:14px;font-weight:initial;line-height:45px;text-align:center;text-decoration:none;width:155px;-webkit-text-size-adjust:none;mso-hide:all;">Şifre Oluştur</a>
                         </td>
                       </tr>
                     </table>

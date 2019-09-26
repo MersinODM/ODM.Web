@@ -28,7 +28,7 @@
           <!--            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
           <!--          </div>-->
           <div
-            :class="{'has-error': errors.has('password')}"
+            :class="{'has-error': errors.has('password') || isSending}"
             class="form-group has-feedback"
           >
             <input
@@ -48,7 +48,7 @@
             >{{ errors.first('password') }}</span>
           </div>
           <div
-            :class="{'has-error': errors.has('retypePassword')}"
+            :class="{'has-error': errors.has('retypePassword') || isSending }"
             class="form-group has-feedback"
           >
             <input
@@ -68,7 +68,7 @@
           <div class="row">
             <div class="col-xs-offset-4 col-xs-4">
               <button
-                :class="{ disabled : errors.any() }"
+                :class="{ disabled : errors.any() || isSending }"
                 type="submit"
                 class="btn btn-primary btn-block btn-flat"
                 @click="sendPassword"
@@ -114,14 +114,21 @@ export default {
       this.$validator.validateAll()
         .then(res => {
           if (res) {
-            this.$http.post('/auth/reset_password', {
+            this.isSending = true
+            this.$http.put('/auth/password/reset', {
               token: this.$route.params.token,
               email: this.email,
               password: this.password,
               password_confirmation: this.retypePassword
+            },
+            {
+              headers: {
+                'cache-control': 'no-cache'
+              }
             }).then(res => {
               Messenger.showSuccess('Şifre değiştirme/kaydetme işlemi başarılı')
               this.$router.push({ name: 'login' })
+              this.isSending = false
             })
           }
         })

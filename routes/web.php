@@ -22,8 +22,10 @@ use Illuminate\Support\Facades\Route;
 //  $setting = Setting::all()->first();
 //  return view('mails.NewUserRequestReceived', ["setting" => $setting, "user" => $user]);
 //});
+Route::get('/password/reset/{token}', 'Auth\CustomPasswordResetController@showResetForm')->name("show_password_reset");
+Route::post('/password/reset', 'Auth\CustomPasswordResetController@reset')->name("reset_password");
 
 Route::get('/{any?}', function () {
   return view('app');
-})->where('any', '^(?!api).*$')->name("management");
+})->where('any', '^(?!api|password\/reset).*$')->name("management");
 

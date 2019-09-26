@@ -6,8 +6,12 @@
      * for JavaScript based Bootstrap features such as modals and tabs. This
      * code may be modified to fit the specific needs of your application.
      */
-window._ = require('lodash')
-window.$ = window.jQuery = require('jquery')
+// window._ = require('lodash')
+import $ from 'jquery/dist/jquery.min'
+window.$ = window.jQuery = $
+window.moment = require('moment/min/moment.min')
+// const momentTR = require('moment/locale/tr')
+moment.locale('tr')
 // require('jquery-ui')
 // let swal = require('sweetalert')
 
@@ -21,6 +25,13 @@ window.$ = window.jQuery = require('jquery')
 // window.Vue = require('vue')
 // const axios = require('./helpers/axios')
 require('./helpers/filters')
+require('bootstrap/dist/js/bootstrap.min')
+require('jquery-ui')
+require('jquery-slimscroll/jquery.slimscroll.min')
+require('fastclick/lib/fastclick')
+require('admin-lte/dist/js/adminlte.min')
+require('pace-js/pace.min')
+
 // console.log(window.axios)
 //
 // /**

@@ -1,39 +1,41 @@
 <template>
   <div>
-    <n-header></n-header>
-    <n-sidebar></n-sidebar>
-    <div class="content-wrapper" style="min-height: 0 !important;">
+    <n-header />
+    <n-sidebar />
+    <div
+      class="content-wrapper"
+      style="min-height: 0 !important;"
+    >
       <!-- Content Header (Page header) -->
       <!--<section class="content-header">-->
-        <!--<h1>-->
-          <!--Page Header-->
-          <!--<small>Optional description</small>-->
-        <!--</h1>-->
-        <!--<ol class="breadcrumb">-->
-          <!--<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>-->
-          <!--<li class="active">Here</li>-->
-        <!--</ol>-->
+      <!--<h1>-->
+      <!--Page Header-->
+      <!--<small>Optional description</small>-->
+      <!--</h1>-->
+      <!--<ol class="breadcrumb">-->
+      <!--<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>-->
+      <!--<li class="active">Here</li>-->
+      <!--</ol>-->
       <!--</section>-->
 
       <!-- Main content -->
       <section class="content container-fluid">
-
         <!--------------------------
           | Your Page Content Here |
           -------------------------->
         <!--<transition-->
-          <!--name="custom-classes-transition"-->
-          <!--enter-to-class="animated slideInLeft"-->
-          <!--leave-to-class="animated slideOutRight"-->
+        <!--name="custom-classes-transition"-->
+        <!--enter-to-class="animated slideInLeft"-->
+        <!--leave-to-class="animated slideOutRight"-->
         <!--&gt;-->
-<!--        <keep-alive>-->
-            <router-view></router-view>
-<!--        </keep-alive>-->
+        <!--        <keep-alive>-->
+        <router-view />
+        <!--        </keep-alive>-->
         <!--</transition>-->
       </section>
       <!-- /.content -->
     </div>
-    <n-footer></n-footer>
+    <n-footer />
   </div>
 </template>
 

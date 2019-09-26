@@ -4,7 +4,6 @@
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-import swal from 'sweetalert'
 import router from '../router'
 import http from '../helpers/axios'
 import Constants from '../helpers/constants'
@@ -20,7 +19,6 @@ const AuthService = {
       }).then(response => {
         localStorage.setItem(Constants.accessToken, response.data.access_token)
         localStorage.setItem(Constants.expires_in, response.data.expires_in)
-        router.push({ 'name': 'main' })
         resolve(response.data)
       }).catch((error) => {
         reject(error)

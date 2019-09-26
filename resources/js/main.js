@@ -5,13 +5,6 @@ import router from './router'
 import App from './App'
 import store from './store'
 
-import 'bootstrap/dist/js/bootstrap.min'
-import 'jquery-ui'
-import 'jquery-slimscroll/jquery.slimscroll.min'
-import 'fastclick/lib/fastclick'
-import 'admin-lte/dist/js/adminlte.min'
-import 'pace-js/pace.min'
-
 import PrettyCheckbox from 'pretty-checkbox-vue'
 import tr from 'vee-validate/dist/locale/tr'
 import { dictionary } from './helpers/validator'
@@ -20,11 +13,13 @@ import axios from './helpers/axios'
 import VueMask from 'v-mask'
 import ACL from './plugins/ACL'
 import VueAxios from 'vue-axios'
+import PathManPlugin from './plugins/PathManPlugin'
 
 Window.Vue = Vue
 
 Vue.use(VueAxios, axios)
 Vue.use(ACL)
+Vue.use(PathManPlugin)
 Vue.use(PrettyCheckbox)
 Vue.use(VeeValidate)
 Vue.use(VueMask)

@@ -16,6 +16,7 @@
                 <button
                   class="btn btn-danger pull-right"
                   style="margin-right: 10px"
+                  @click="deleteRequest"
                 >
                   Silme Talep Et
                 </button>
@@ -86,8 +87,10 @@
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col-md-offset-2 col-md-8">
-                      <div class="form-group has-feedback"
-                           :class="{'has-error': errors.has('comment')}">
+                      <div
+                        class="form-group has-feedback"
+                        :class="{'has-error': errors.has('comment')}"
+                      >
                         <label>Gözden geçirme metni</label>
                         <textarea
                           v-model="comment"
@@ -136,6 +139,7 @@
                         </button>
                         <button
                           class="btn btn-danger"
+                          :class="{'disabled': changeCount === 0}"
                           @click="cancel"
                         >
                           İptal Et
@@ -150,8 +154,46 @@
         </div>
       </div>
     </div>
-    <div v-show="revisions !== null && revisions.length > 0"
-         class="row"
+    <div
+      v-show="evaluationList !== null && evaluationList.length > 0"
+      class="row"
+    >
+      <div class="col-md-12">
+        <div class="box box-primary direct-chat direct-chat-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              Değerlendirmeler
+            </h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <div class="direct-chat-messages">
+              <div
+                v-for="(evaluation, index) in evaluationList"
+                :key="evaluation.id"
+                class="direct-chat-msg"
+              >
+                <div class="direct-chat-info clearfix">
+                  <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
+                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
+                </div>
+                <img
+                  class="direct-chat-img"
+                  src="/otomasyon/images/users.png"
+                  alt="Message User Image"
+                >
+                <div class="direct-chat-text">
+                  {{ evaluation.comment }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="revisions !== null && revisions.length > 0"
+      class="row"
     >
       <div class="col-md-12">
         <div class="box box-primary direct-chat direct-chat-primary">
@@ -166,25 +208,24 @@
             <div class="direct-chat-messages">
               <!-- Message. Default to the left -->
               <div
-                      v-for="rev in revisions"
-                      :key="rev.id"
-                      class="direct-chat-msg"
+                v-for="rev in revisions"
+                :key="rev.id"
+                class="direct-chat-msg"
               >
                 <div class="direct-chat-info clearfix">
                   <span class="direct-chat-name pull-left">{{ rev.title }}</span>
                   <span class="direct-chat-timestamp pull-right">{{ rev.date }}</span>
                 </div>
                 <img
-                        class="direct-chat-img"
-                        :src="userImage"
-                        alt="Message User Image"
+                  class="direct-chat-img"
+                  src="/otomasyon/images/users.png"
+                  alt="Message User Image"
                 >
                 <div class="direct-chat-text">
                   {{ rev.comment }}
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -198,6 +239,8 @@ import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import RevisionService from '../../services/CommentService'
 import usersImg from '../../../images/users.png'
+import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+import swal from 'sweetalert'
 
 export default {
   name: 'ShowQuestion',
@@ -210,6 +253,7 @@ export default {
       comment: null,
       changeCount: 0,
       revisions: [],
+      evaluationList: [],
       userImage: usersImg
     }
   },
@@ -223,12 +267,14 @@ export default {
     Promise.all([
       QuestionService.findById(questionId),
       QuestionService.getFile(questionId),
-      RevisionService.getRevisions(questionId)
-    ]).then(([question, file, revisions]) => {
+      RevisionService.getRevisions(questionId),
+      QuestionEvaluationService.findByQuestionId(questionId)
+    ]).then(([question, file, revisions, evalutaions]) => {
       next(vm => {
         vm.question = question
         vm.questionFileURL = file
         vm.revisions = revisions
+        vm.evaluationList = evalutaions
       })
     })
   },
@@ -280,29 +326,24 @@ export default {
       this.questionFile = $event.target.files[0]
     },
     cancel () {
-      this.comment = null
-      URL.revokeObjectURL(this.questionFile)
-      this.questionFileURL = this.oldQuestionFile
+      if (this.changeCount !== 0) {
+        this.comment = null
+        URL.revokeObjectURL(this.questionFile)
+        this.questionFileURL = this.oldQuestionFile
+      }
     },
     getRevisions () {
       RevisionService.getRevisions(this.$route.params.questionId)
               .then((revisions) => { this.revisions = revisions })
+    },
+    deleteRequest () {
+      swal('Silme talebinizin nedeninin kısaca yazınız', {
+        content: 'input'
+      })
+              .then((value) => {
+                swal(`Silme talebiniz değerlendirilmek üzere tarafımıza ulaşmıştır.`)
+              })
     }
-    // getFile () {
-    //   QuestionService.getFile(this.question.id)
-    //     .then((res) => {
-    // let fr = new FileReader()
-    // let b = new Blob([res], { type: 'application/pdf' })
-    // fr.readAsDataURL(b)
-    // // let fileURL = URL.createObjectURL(b)
-    // // window.open(fileURL)
-    // fr.onloadend = (e) => { this.questionFile = e.target.result }
-    //   this.questionFile = res
-    // }).catch(error => {
-    //   Messenger.showError(MessengerConstants.errorMessage)
-    //   console.log(error)
-    // })
-    // }
   }
 }
 </script>

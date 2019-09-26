@@ -33,7 +33,10 @@
             </li>
           </ul>
         </li>
-        <li v-if="$isInRole('admin')" class="treeview">
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview"
+        >
           <a href="#"><i class="mdi mdi-book-open-variant" />
             <span>Sınav Yönetimi</span>
             <span class="pull-right-container">
@@ -54,7 +57,10 @@
             </li>
           </ul>
         </li>
-        <li v-if="$isInRole('admin')" class="treeview">
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview"
+        >
           <a href="#"><i class="mdi mdi-account-settings" />
             <span>Branş/Ders Yönetimi</span>
             <span class="pull-right-container">
@@ -77,7 +83,10 @@
             </li>
           </ul>
         </li>
-        <li v-if="$isInRole('admin')" class="treeview">
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview"
+        >
           <a href="#"><i class="mdi mdi-matrix" />
             <span>Kazanım Yönetimi</span>
             <span class="pull-right-container">
@@ -100,18 +109,21 @@
             </li>
           </ul>
         </li>
-        <li v-if="$isInRole('admin')" class="treeview">
-          <a href="#"><i class="mdi mdi-account-settings"></i>
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview"
+        >
+          <a href="#"><i class="mdi mdi-account-settings" />
             <span>Kullanıcı Yönetimi</span>
             <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
+              <i class="fa fa-angle-left pull-right" />
             </span>
           </a>
           <ul class="treeview-menu">
             <li>
               <router-link :to="{name: 'users' }">
                 <!-- Add a Font Awesome icon -->
-                <span class="mdi mdi-account-group"></span>
+                <span class="mdi mdi-account-group" />
                 Kullanıcıları Listele
               </router-link>
             </li>

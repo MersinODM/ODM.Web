@@ -118,9 +118,7 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body">
-            <!-- Conversations are loaded here -->
             <div class="direct-chat-messages">
-              <!-- Message. Default to the left -->
               <div
                 v-for="(evaluation, index) in evaluationList"
                 :key="evaluation.id"
@@ -130,41 +128,17 @@
                   <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
                   <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
                 </div>
-                <!-- /.direct-chat-info -->
                 <img
                   class="direct-chat-img"
-                  :src="userImage"
+                  src="/otomasyon/images/users.png"
                   alt="Message User Image"
-                ><!-- /.direct-chat-img -->
+                >
                 <div class="direct-chat-text">
                   {{ evaluation.comment }}
                 </div>
-                <!-- /.direct-chat-text -->
               </div>
-              <!-- /.direct-chat-msg -->
-
-              <!-- Message to the right -->
-              <!--              <div class="direct-chat-msg right">-->
-              <!--                <div class="direct-chat-info clearfix">-->
-              <!--                  <span class="direct-chat-name pull-right">Sarah Bullock</span>-->
-              <!--                  <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>-->
-              <!--                </div>-->
-              <!--                &lt;!&ndash; /.direct-chat-info &ndash;&gt;-->
-              <!--                <img class="direct-chat-img" :src="userImage"  alt="Message User Image">&lt;!&ndash; /.direct-chat-img &ndash;&gt;-->
-              <!--                <div class="direct-chat-text">-->
-              <!--                  You better believe it!-->
-              <!--                </div>-->
-              <!--                &lt;!&ndash; /.direct-chat-text &ndash;&gt;-->
-              <!--              </div>-->
-              <!-- /.direct-chat-msg -->
             </div>
-            <!--/.direct-chat-messages-->
-
-            <!-- Contacts are loaded here -->
-            <!-- /.direct-chat-pane -->
           </div>
-          <!-- /.box-body -->
-          <!-- /.box-footer-->
         </div>
       </div>
     </div>

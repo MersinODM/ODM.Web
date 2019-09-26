@@ -148,7 +148,7 @@
 </template>
 
 <script>
-
+import debounce from 'lodash/debounce'
 import vSelect from 'vue-select'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
@@ -174,9 +174,10 @@ export default {
     document.body.classList.add('hold-transition', 'register-page')
   },
   methods: {
-    searchInstitutions (search, loading) {
+    searchInstitutions: debounce(function (search, loading) {
       // console.log(this.$http)
       if (search.length >= 3) {
+        loading(true)
         this.$http.get('/auth/institutions', {
           params: {
             searchTerm: search
@@ -185,11 +186,15 @@ export default {
           .then(result => {
             console.log(result)
             this.institutions = result.data
+            loading(false)
           })
-          .catch(res => console.log(res))
+          .catch(res => {
+            loading(false)
+            console.log(res)
+          })
       }
-    },
-    searchBranches (search, loading) {
+    }, 800),
+    searchBranches: debounce(function (search, loading) {
       if (search.length >= 3) {
         this.$http.get('/auth/branches', {
           params: {
@@ -199,10 +204,14 @@ export default {
           .then(result => {
             // console.log(result)
             this.branches = result.data
+            loading(false)
           })
-          .catch(res => console.log(res))
+          .catch(res => {
+            console.log(res)
+            loading(false)
+          })
       }
-    },
+    }, 800),
     sendRegisterRequest () {
       this.$validator.validateAll()
         .then(res => {

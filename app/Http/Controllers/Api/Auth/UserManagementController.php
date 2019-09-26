@@ -79,17 +79,16 @@ class UserManagementController extends ApiController
    * @return \Illuminate\Http\JsonResponse
    */
   public function confirmNewUserReq(Request $request, $id) {
-//    if (!$request->exists("id")) {
-//      return response()->json([
-//        ResponseHelper::MESSAGE => "Gönderilen veri sunucuyla uyumsuz!"
-//        ], 406);
-//    }
+
     DB::beginTransaction();
     try {
 //      $newUserReqId = $id;
-      $newUserReq = User::where("id", $id)->first();
-      $newUserReq->activator_id = Auth::user()->id;
-      $newUserReq->save();
+       User::find($id)->update([
+           "activator_id" =>  Auth::id()
+       ]);
+       $newUserReq = User::find($id);
+//      $newUserReq->activator_id = Auth::id();
+//      $newUserReq->save();
       //TODO: Bu sırada kullanıcıya şifre email olarak atılacak önemli!!!
       //Bu işlem normalde java gibi dillerde asenkron yapılabilirdi ya da PHP 7 uyumlu laravel ile
       event(new ResetPasswordEvent($newUserReq));
@@ -108,7 +107,7 @@ class UserManagementController extends ApiController
 
     $validationResult = $this->apiValidator($request, [
       'token' => 'required',
-      'email' => 'required|string|email|max:255',
+      'email' => 'required|email|max:255',
       "password" => "required|confirmed|min:6",
     ]);
 
@@ -176,5 +175,18 @@ class UserManagementController extends ApiController
 
   public function getUser($id) {
       return User::with('branch', 'institution')->findOrFail($id);
+  }
+
+  public function forgetPassword(Request $request) {
+      if ($request->has("email")) {
+          $email = base64_decode($request->query("email"));
+          $user= User::where("email", $email)->first();
+          if (isset($user)) {
+              event(new ResetPasswordEvent($user));
+              return response()->json([ResponseHelper::MESSAGE => "Size şifrenizi oluşturabileceğiniz bir mail gönderdik.\nİyi çalışmalar..."]);
+          }
+          return response()->json([ResponseHelper::MESSAGE => "E-Posta adresiniz sistemde bulunamadı! Lütfen doğru e posta adresini gönderdiğinizden emin olunuz doğru gönderdiğinizi düşünüyorsanız sistem yönetininize başvurunuz. İyi çalışmalar.."]);
+      }
+      return response()->json([ResponseHelper::MESSAGE => "Tarafımıza mail adresiniz ulaşmadı!"]);
   }
 }

@@ -58,6 +58,7 @@
 import BranchService from '../../services/BranchService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
+import chunk from 'lodash/chunk'
 
 export default {
   name: 'BranchList',
@@ -74,7 +75,7 @@ export default {
     getBranches () {
       BranchService.getBranchesWithStats()
                    .then(data => {
-                     this.branchGroup = _.chunk(data, 3)
+                     this.branchGroup = chunk(data, 3)
                    })
                    .catch(reason => {
                      Messenger.showError(MessengerConstants.errorMessage)

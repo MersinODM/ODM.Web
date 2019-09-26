@@ -28,11 +28,12 @@ class NewUserReqListener
    */
   public function handle(NewUserReqReceived $event)
   {
-    $user = $event->getUserReq();
-    $setting = Setting::first();
-    Mail::send("mails.NewUserRequestReceived", ['setting' => $setting, "user" => $user], function ($m) use ($setting, $user) {
-      $m->from($setting->email, $setting->inst_name);
-      $m->to($user->email, $user->full_name)->subject('Talebinizi aldık ;-)');
-    });
+      $user = $event->getUserReq();
+      $setting = Setting::first();
+      Mail::send("mails.NewUserRequestReceived", ['setting' => $setting, "user" => $user],
+          function ($m) use ($setting, $user) {
+              $m->from($setting->email, $setting->inst_name);
+              $m->to($user->email, $user->full_name)->subject('Talebinizi aldık ;-)');
+          });
   }
 }

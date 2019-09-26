@@ -50,15 +50,14 @@
 </template>
 
 <script>
-import 'jquery-slimscroll/jquery.slimscroll.min'
-import 'datatables.net-bs/js/dataTables.bootstrap.min'
-import 'datatables.net/js/jquery.dataTables.min'
-import 'datatables.net-responsive-bs/js/responsive.bootstrap.min'
-import 'fastclick/lib/fastclick'
+// import 'jquery-slimscroll/jquery.slimscroll.min'
+// import 'fastclick/lib/fastclick'
 import Constants from '../../helpers/constants'
 import Auth from '../../services/AuthService'
 import UserService from '../../services/UserService'
 import Messenger from '../../helpers/messenger'
+require('datatables.net-bs/js/dataTables.bootstrap.min')
+require('datatables.net-responsive-bs/js/responsive.bootstrap.min')
 
 export default {
   name: 'UserList',
@@ -76,7 +75,7 @@ export default {
         serverSide: true,
         responsive: true,
         ajax: {
-          url: '/api/users',
+          url: `${vm.$getBasePath()}/api/users`,
           dataType: 'json',
           type: 'POST',
           beforeSend (xhr) {

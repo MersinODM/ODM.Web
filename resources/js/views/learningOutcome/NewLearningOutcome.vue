@@ -75,7 +75,8 @@
                     class="form-control"
                     rows="2"
                     style="max-width: 100%; min-width: 100%; min-height: 50px"
-                    placeholder="Kazanım içeriğini giriniz"></textarea>
+                    placeholder="Kazanım içeriğini giriniz"
+                  />
                   <span class="glyphicon glyphicon-book form-control-feedback" />
                   <span
                     v-if="errors.has('content')"
@@ -88,7 +89,8 @@
                     v-model="description"
                     class="form-control"
                     style="max-width: 100%; min-width: 100%; min-height: 50px"
-                    placeholder="İsteğe bağlı"></textarea>
+                    placeholder="İsteğe bağlı"
+                  />
                   <span class="glyphicon glyphicon-magnet form-control-feedback" />
                 </div>
                 <div class="row">

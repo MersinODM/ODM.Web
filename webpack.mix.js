@@ -1,6 +1,8 @@
 const mix = require('laravel-mix')
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
-// require("./node_modules/@mdi/font/fonts/")
+// const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin
+const webpack = require('webpack')
 
 // mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
@@ -14,19 +16,19 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
  |
  */
 mix.webpackConfig({
-  // plugins: [
-  //   new BrowserSyncPlugin({
-  //     open: 'external',
-  //     host: 'localhost',
-  //     port: 8090,
-  //     files: ['resources/views/**/*.php', 'app/**/*.php', 'routes/**/*.php']
-  //   })
-  // ],
+  plugins: [new BundleAnalyzerPlugin(),
+    new webpack.IgnorePlugin(/\.\/locale$/),
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /tr/)],
   module: {
     rules: [
       {
         test: /\.lang$/,
         loader: 'file-loader'
+      },
+      {
+        test: /\.png$/,
+        loader: 'url-loader?name=images/[name].[ext]'
+        // loader: "file-loader?name=images/[name].[ext]"
       }
     ]
   }

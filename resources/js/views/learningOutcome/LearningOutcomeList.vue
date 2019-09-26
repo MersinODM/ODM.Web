@@ -71,7 +71,7 @@
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                   </div>
                 </div>
-                <div class="col-md-4"></div>
+                <div class="col-md-4" />
               </div>
             </div>
           </div>

@@ -24,7 +24,8 @@ Route::group([
 
 //Bu iksi için doğrulama ihtiyacına gerek yok
   Route::post('register', 'Auth\UserManagementController@registerRequest');
-  Route::post('reset_password', 'Auth\UserManagementController@resetPassword');
+//  Route::put('password/reset', 'Auth\UserManagementController@resetPassword');
+  Route::get('password/forget', 'Auth\UserManagementController@forgetPassword');
   Route::post('login', 'Auth\AuthController@login');
   Route::get('institutions', 'Inst\InstitutionController@findByNameInstitutions');
   Route::get('branches', 'Branch\BranchController@findByNameBranches');
@@ -71,5 +72,9 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::post("questions/{id}/revisions", "Question\QuestionRevisionController@create");
   Route::get("questions/{id}/revisions", "Question\QuestionRevisionController@findByQuestionId");
 
-});
+  Route::get("stats/question_counts/total", "Stats\StatController@getQuestionCounts");
+//  Route::get("stats/question_counts/by_lo/{lo_id}", "Stats\StatController@getQuestionCountByLO");
+  Route::get("stats/classes", "Stats\StatController@getClasses");
+  Route::get("stats/lo_count_by", "Stats\StatController@getQuestionCountByLO");
 
+});

@@ -102,8 +102,8 @@
                       {{ option.code }} - {{ option.content }}
                     </template>
                     <template
-                            slot="selected-option"
-                            slot-scope="option"
+                      slot="selected-option"
+                      slot-scope="option"
                     >
                       {{ option.code }} - {{ option.content }}
                     </template>
@@ -215,6 +215,9 @@
 </template>
 
 <script>
+
+import debounce from 'lodash/debounce'
+import range from 'lodash/range'
 import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import BranchService from '../../services/BranchService'
@@ -247,7 +250,7 @@ export default {
       questionFileURL: null,
       selectedClassLevel: null,
 
-      classLevels: _.range(4, 13),
+      classLevels: range(4, 13),
       selectedLearningOutCome: null,
       learningOutComes: [],
       isSending: false
@@ -268,7 +271,7 @@ export default {
                          Messenger.showError(MessengerConstants.errorMessage)
                        })
     },
-    searchLearningOutcomes: _.debounce(function (search, loading) {
+    searchLearningOutcomes: debounce(function (search, loading) {
       if (search.length < 3) return
       loading(true)
       let data = {

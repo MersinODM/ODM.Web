@@ -17,6 +17,8 @@ import QuestionList from '../views/question/QuestionList'
 import ShowQuestion from '../views/question/ShowQuestion'
 import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
 import QuestionEvaluation from '../views/question/QuestionEvaluation'
+import Stats from '../views/info/Stats'
+// import Stats from '../views/info/Stats'
 
 Vue.use(Router)
 
@@ -51,58 +53,61 @@ const router = new Router({
           // console.log('To Token: ' + to.params.token)
           // console.log('From: ' + from.query.email)
         } else {
-          next('/')
+          next('/login')
         }
       }
     },
     {
-      alias: '/',
-      path: '/main',
-      name: 'main',
+      path: '/',
       component: MasterView,
       children: [
         {
-          path: 'new_question',
+          path: '',
+          name: 'stats',
+          component: Stats
+        },
+        {
+          path: '/new_question',
           name: 'newQuestion',
           component: SimpleNewQuestion
         },
         {
-          path: 'question_list',
+          path: '/question_list',
           name: 'questionList',
           component: QuestionList
         },
         {
-          path: 'question/:questionId',
+          path: '/question/:questionId',
           name: 'showQuestion',
           component: ShowQuestion
         },
         {
-          path: 'question/:questionId/evaluate',
+          path: '/question/:questionId/evaluate',
           name: 'questionEvaluation',
           component: QuestionEvaluation
         },
         {
-          path: 'new_learning_outcome',
+          path: '/new_learning_outcome',
           name: 'newLO',
           component: NewLearningOutcome
         },
         {
-          path: 'user_list',
+          path: '/user_list',
           name: 'users',
           component: UserList
         },
         {
-          path: 'user/:id',
+          path: '/user/:id',
           name: 'user',
           component: User
         },
         {
-          path: 'new_branch',
+          path: '/new_branch',
           name: 'newBranch',
           component: NewBranch
         },
         {
-          path: 'branch_list',
+          path: '/branch_list',
           name: 'branchList',
           component: BranchList
         }

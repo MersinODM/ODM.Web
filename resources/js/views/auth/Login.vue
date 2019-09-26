@@ -80,7 +80,11 @@
 
         <!-- /.social-auth-links -->
 
-        <a href="#">Şifremi unuttum</a><br>
+        <router-link :to="{ name: 'forgotMyPassword' }">
+          Şifremi unuttum
+          <span class="mdi mdi-passport-biometric" />
+        </router-link>
+        <br>
         <router-link
           :to="{ name: 'register' }"
           class="text-center"
@@ -135,6 +139,7 @@ export default {
             this.isSigningIn = true
             AuthService.login(credentials)
                        .then(value => {
+                         this.$router.push({ name: 'stats' })
                          this.isSigningIn = false
                        })
                        .catch(() => {

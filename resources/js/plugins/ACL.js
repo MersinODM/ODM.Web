@@ -6,7 +6,6 @@
 
 // Access Control Logic Plugin
 
-
 export default {
   install (Vue, options) {
     // Burada İzinler localStorage içine almak sıkıntı yaratabilir

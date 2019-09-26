@@ -76,22 +76,22 @@
                       name="searchedContent"
                       type="text"
                       class="form-control"
-                      placeholder="Aranacak içeriği giriniz"
+                      placeholder="Metni girin ve ⏎ tuşuna basın"
                       @keypress.enter="searchQuestions"
                     >
-                    <span class="glyphicon glyphicon-search form-control-feedback" />
+                    <span class="mdi mdi-search-web form-control-feedback" />
                     <span
                       v-if="errors.has('searchedContent')"
                       class="help-block"
                     >{{ errors.first('searchedContent') }}</span>
                   </div>
-                  <p-check
-                    class="p-switch p-fill"
-                    name="check"
-                    color="success"
-                  >
-                    Havuzda mı?
-                  </p-check>
+                  <!--                  <p-check-->
+                  <!--                    class="p-switch p-fill"-->
+                  <!--                    name="check"-->
+                  <!--                    color="success"-->
+                  <!--                  >-->
+                  <!--                    Havuzda mı?-->
+                  <!--                  </p-check>-->
                 </div>
               </div>
             </div>
@@ -159,6 +159,9 @@
 </template>
 
 <script>
+
+import chunk from 'lodash/chunk'
+import range from 'lodash/range'
 import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
 import QuestionService from '../../services/QuestionService'
@@ -174,7 +177,7 @@ export default {
     return {
       branches: [],
       selectedBranch: '',
-      classLevels: _.range(4, 13),
+      classLevels: range(4, 13),
       selectedClassLevel: null,
       searchedContent: null,
       questionsGroup: [],
@@ -204,7 +207,7 @@ export default {
           }
           QuestionService.searchQuestion(params)
             .then(res => {
-              this.questionsGroup = _.chunk(res, 3)
+              this.questionsGroup = chunk(res, 3)
             }).catch(e => Messenger.showError(MessengerConstants.errorMessage))
         }
       })
