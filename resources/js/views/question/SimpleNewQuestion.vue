@@ -45,6 +45,7 @@
                     label="name"
                     name="branch"
                     placeholder="Alan/Ders adının en az 3 harfini girin"
+                    @input="clearClasses"
                   >
                     <div slot="no-options">
                       Burada bişey bulamadık :-(
@@ -63,11 +64,13 @@
                 >
                   <label>Sınıf Seviyesi Seçimi</label>
                   <v-select
+                    ref="classLevelDD"
                     v-model="selectedClassLevel"
                     v-validate="'required'"
                     :options="classLevels"
                     name="selectedClassLevel"
                     placeholder="Sınıf seviyesini seçiniz"
+                    @input="clearLearningOutCome"
                   />
                   <span
                     v-if="errors.has('selectedClassLevel')"
@@ -83,6 +86,7 @@
                 >
                   <label>Kazanım Seçimi</label>
                   <v-select
+                    ref="loDD"
                     v-model="selectedLearningOutCome"
                     v-validate="'required'"
                     :options="learningOutComes"
@@ -262,6 +266,19 @@ export default {
     }
   },
   methods: {
+    clearClasses () {
+      if (this.selectedClassLevel !== null) {
+        this.selectedClassLevel = null
+        this.$refs.classLevelDD.clearSelection()
+      }
+    },
+    clearLearningOutCome () {
+      if (this.selectedLearningOutCome !== null) {
+        this.learningOutComes = []
+        this.selectedLearningOutCome = null
+        this.$refs.loDD.clearSelection()
+      }
+    },
     getBranches () {
       BranchService.getBranches()
                        .then(data => {

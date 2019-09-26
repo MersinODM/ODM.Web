@@ -42,7 +42,7 @@ mix.autoload({
 mix.copyDirectory('resources/images', 'public/images')
 mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 // mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
-
+mix.setResourceRoot('/css')
 mix.js('resources/js/main.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')
    .options({
