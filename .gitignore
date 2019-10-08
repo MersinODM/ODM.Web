@@ -11,3 +11,14 @@ npm-debug.log
 yarn-error.log
 /public/
 /.idea/
+.idea/.gitignore
+.idea/ODM.Web.iml
+.idea/composerJson.xml
+.idea/dataSources.xml
+.idea/inspectionProfiles/
+.idea/laravel-plugin.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/php-test-framework.xml
+.idea/php.xml
+package-lock.json
