@@ -1,4 +1,11 @@
 <!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
+<!--
   - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
   - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -24,23 +31,47 @@
                 >
                   <label>Ders/Alan Seçimi</label>
                   <v-select
+                    ref="branchRef"
                     v-model="branch"
                     v-validate="'required'"
                     :options="branches"
                     :reduce="branch => branch.id"
                     label="name"
                     name="branch"
-                    placeholder="Alan/Ders adının en az 3 harfini girin"
-                    @search="searchBranches"
+                    placeholder="Alan/Ders seçimini yapınız"
                   >
                     <div slot="no-options">
-                      Burada bişey bulamadık :-(
+                      Burada bişey bulamadık
                     </div>
                   </v-select>
                   <span
                     v-if="errors.has('branch')"
                     class="help-block"
                   >{{ errors.first('branch') }}</span>
+                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
+                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
+                </div>
+                <div
+                  class="form-group has-feedback"
+                  :class="{'has-error': errors.has('selectedClassLevel')}"
+                >
+                  <label>Sınıf Seviyesi Seçimi</label>
+                  <v-select
+                    ref="classLevelRef"
+                    v-model="selectedClassLevel"
+                    v-validate="'required'"
+                    :options="classLevels"
+                    name="selectedClassLevel"
+                    placeholder="Sınıf seviyesini seçiniz"
+                  >
+                    <div slot="no-options">
+                      Burada bişey bulamadık
+                    </div>
+                  </v-select>
+                  <span
+                    v-if="errors.has('selectedClassLevel')"
+                    class="help-block"
+                  >{{ errors.first('selectedClassLevel') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                 </div>
@@ -57,7 +88,7 @@
                     class="form-control"
                     placeholder="Kazanım kodunu giriniz"
                   >
-                  <span class="glyphicon glyphicon-book form-control-feedback" />
+                  <span class="mdi mdi-barcode form-control-feedback" />
                   <span
                     v-if="errors.has('code')"
                     class="help-block"
@@ -75,9 +106,8 @@
                     class="form-control"
                     rows="2"
                     style="max-width: 100%; min-width: 100%; min-height: 50px"
-                    placeholder="Kazanım içeriğini giriniz"
-                  />
-                  <span class="glyphicon glyphicon-book form-control-feedback" />
+                    placeholder="Kazanım içeriğini giriniz"></textarea>
+                  <span class="mdi mdi-flagform-control-feedback"></span>
                   <span
                     v-if="errors.has('content')"
                     class="help-block"
@@ -91,7 +121,7 @@
                     style="max-width: 100%; min-width: 100%; min-height: 50px"
                     placeholder="İsteğe bağlı"
                   />
-                  <span class="glyphicon glyphicon-magnet form-control-feedback" />
+                  <span class="mdi mdi-file-edit form-control-feedback" />
                 </div>
                 <div class="row">
                   <div class="col-xs-offset-4 col-xs-4">
@@ -119,6 +149,8 @@
 import vSelect from 'vue-select'
 import LearningOutcomesService from '../../services/LearningOutcomesService'
 import Messenger from '../../helpers/messenger'
+import range from 'lodash/range'
+import BranchService from '../../services/BranchService'
 
 export default {
   name: 'NewLearningOutcome',
@@ -126,12 +158,22 @@ export default {
   data () {
     return {
       isSending: false,
-      code: null,
-      content: null,
-      description: null,
+      code: '',
+      content: '',
+      description: '',
       branches: [],
-      branch: null
+      branch: '',
+      selectedClassLevel: '',
+      classLevels: range(4, 13)
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    BranchService.getBranches()
+           .then((branches) => {
+             next(vm => {
+               vm.branches = branches
+             })
+           })
   },
   methods: {
     save () {
@@ -142,28 +184,22 @@ export default {
             LearningOutcomesService.save({
               branch_id: this.branch,
               code: this.code,
+              class_level: this.selectedClassLevel,
               content: this.content,
               description: this.description
-            }, (res) => {
+            }).then((res) => {
               this.isSending = false
               Messenger.showSuccess(res.message)
+              this.clear()
             })
           }
         })
     },
-    searchBranches (search, loading) {
-      if (search.length >= 3) {
-        this.$http.get('/auth/branches', {
-          params: {
-            searchTerm: search
-          }
-        })
-          .then(result => {
-            // console.log(result)
-            this.branches = result.data
-          })
-          .catch(res => console.log(res))
-      }
+    clear () {
+      this.$refs.branchRef.clearSelection()
+      this.$refs.classLevelRef.clearSelection()
+      this.selectedClassLevel = ''
+      this.branch = this.code = this.content = this.description = ''
     }
   }
 }

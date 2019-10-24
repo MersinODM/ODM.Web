@@ -1,3 +1,10 @@
+/*
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '../views/auth/Login'
@@ -5,7 +12,7 @@ import MasterView from '../views/master/MasterView'
 import RegisterRequest from '../views/auth/RegisterRequest'
 import NotFound from '../views/utils/NotFound'
 import ResetPassword from '../views/auth/ResetPassword'
-import NewQuestion from '../views/question/NewQuestion'
+// import NewQuestion from '../views/question/NewQuestion'
 import UserList from '../views/user/UserList'
 import ForgotMyPassword from '../views/auth/ForgotMyPassword'
 import Constants from '../helpers/constants'
@@ -18,6 +25,7 @@ import ShowQuestion from '../views/question/ShowQuestion'
 import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
 import QuestionEvaluation from '../views/question/QuestionEvaluation'
 import Stats from '../views/info/Stats'
+import LearningOutcomeList from '../views/learningOutcome/LearningOutcomeList'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -67,47 +75,52 @@ const router = new Router({
           component: Stats
         },
         {
-          path: '/new_question',
+          path: '/questions/new',
           name: 'newQuestion',
           component: SimpleNewQuestion
         },
         {
-          path: '/question_list',
+          path: '/questions/list',
           name: 'questionList',
           component: QuestionList
         },
         {
-          path: '/question/:questionId',
+          path: '/questions/:questionId',
           name: 'showQuestion',
           component: ShowQuestion
         },
         {
-          path: '/question/:questionId/evaluate',
+          path: '/questions/:questionId/evaluate',
           name: 'questionEvaluation',
           component: QuestionEvaluation
         },
         {
-          path: '/new_learning_outcome',
+          path: '/learning_outcomes/new',
           name: 'newLO',
           component: NewLearningOutcome
         },
         {
-          path: '/user_list',
+          path: '/learning_outcomes/list',
+          name: 'loList',
+          component: LearningOutcomeList
+        },
+        {
+          path: '/users/list',
           name: 'users',
           component: UserList
         },
         {
-          path: '/user/:id',
+          path: '/users/:id',
           name: 'user',
           component: User
         },
         {
-          path: '/new_branch',
+          path: '/branches/new',
           name: 'newBranch',
           component: NewBranch
         },
         {
-          path: '/branch_list',
+          path: '/branches/list',
           name: 'branchList',
           component: BranchList
         }

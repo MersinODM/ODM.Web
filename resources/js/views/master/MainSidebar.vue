@@ -1,3 +1,10 @@
+<!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
 <template>
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -95,15 +102,14 @@
           </a>
           <ul class="treeview-menu">
             <li>
-              <a>
-                <!-- Add a Font Awesome icon -->
-                <span class="mdi mdi-math-sin" />
+              <router-link :to="{name: 'loList' }">
+                <span class="mdi mdi-format-list-checkbox" />
                 Kazanım Listele
-              </a>
+              </router-link>
             </li>
             <li>
               <router-link :to="{name: 'newLO' }">
-                <span class="mdi mdi-math-cos" />
+                <span class="mdi mdi-math-integral" />
                 Kazanım Ekle
               </router-link>
             </li>

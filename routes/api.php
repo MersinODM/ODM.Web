@@ -1,4 +1,10 @@
 <?php
+/**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +66,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::get("learning_outcomes/findByClassLevelAndLessonId", "LO\LearningOutcomeController@findByClassLevelAndLessonId");
   Route::post("learning_outcomes/find_by/content_lesson_id_class_level", "LO\LearningOutcomeController@findByContentAndLessonIdAndClassLevel");
   Route::get("learning_outcomes/find_by", "LO\LearningOutcomeController@findBy");
+    Route::get("learning_outcomes/find_by/content", "LO\LearningOutcomeController@findByContentWithPaging");
+    Route::get("learning_outcomes/last_saved/{size}", "LO\LearningOutcomeController@getLastSavedRecords");
 
   // Question Api route tanımlamaları
   Route::post("questions", "Question\QuestionController@create");

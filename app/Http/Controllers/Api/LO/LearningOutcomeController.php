@@ -1,5 +1,12 @@
 <?php
 /**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/**
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -10,8 +17,10 @@ namespace App\Http\Controllers\Api\LO;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
+use App\Models\LearningOutcome;
 use App\Models\LearningOutcome as LearningOutcomeAlias;
 use Exception;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +37,7 @@ class LearningOutcomeController extends ApiController
 
         $validationResult = $this->apiValidator($request, [
             'branch_id' => 'required',
+            "class_level" => "required",
             "code" => "required",
             "content" => "required"
         ]);
@@ -36,7 +46,7 @@ class LearningOutcomeController extends ApiController
             return response()->json($validationResult, 422);
         }
 
-        $data = $request->only(["branch_id", "code", "content", "description"]);
+        $data = $request->only(["branch_id", "class_level", "code", "content", "description"]);
 
         try {
 
@@ -108,6 +118,50 @@ class LearningOutcomeController extends ApiController
         $lo = $this->findLO($lesson_id, $class_level, $content);
         return response()->json($lo, 200);
 
+    }
+
+    public function findByContentWithPaging(Request $request)
+    {
+        $validationResult = $this->apiValidator($request, [
+            "searched_content" => "required",
+        ]);
+
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
+        }
+
+        $content = $request->query("searched_content");
+
+        $result = DB::table("learning_outcomes as lo")
+            ->join("branches as b", "lo.branch_id", "=", "b.id")
+            ->where("lo.code", "like", "%" . $content . "%")
+            ->orWhere("lo.content", "like", "%" . $content . "%")
+            ->select("lo.id",
+                DB::raw("b.name as branch_name"),
+                "lo.class_level",
+                "lo.code",
+                "lo.content",
+                "lo.description")
+            ->get();
+
+        return response()->json($result);
+    }
+
+    public function getLastSavedRecords($size) {
+        !isset($size) ? $size = 18 : null;
+        $result = DB::table("learning_outcomes as lo")
+            ->join("branches as b", "lo.branch_id", "=", "b.id")
+            ->where("lo.created_at", "!=", null)
+            ->orderBy("lo.created_at", "desc")
+            ->take($size)
+            ->select("lo.id",
+                DB::raw("b.name as branch_name"),
+                "lo.class_level",
+                "lo.code",
+                "lo.content",
+                "lo.description")
+            ->get();
+        return response()->json($result);
     }
 
     public function findBy(Request $request)
