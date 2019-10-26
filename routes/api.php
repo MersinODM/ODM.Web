@@ -6,6 +6,13 @@
  *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
+/**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +80,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
   Route::post("questions", "Question\QuestionController@create");
   //TODO Alttaki route tanımı gözden geçirilmelidir
   Route::get("questions", "Question\QuestionController@findByContentAndClassLevelAndBranch");
+  Route::get("questions/last_saved/{size}", "Question\QuestionController@getLastQuestions");
   Route::get("questions/{id}", "Question\QuestionController@findById");
   Route::get("questions/{id}/file", "Question\QuestionController@getFile");
   Route::post("questions/{id}/evaluations", "Question\QuestionEvalController@create");

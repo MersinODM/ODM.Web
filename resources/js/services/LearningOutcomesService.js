@@ -6,6 +6,13 @@
  */
 
 /*
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/*
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -46,11 +53,9 @@ const LearningOutcomesService = {
   },
   findByCodeOrContent (search) {
     return new Promise((resolve, reject) => {
-      http.get('learning_outcomes/find_by', {
-        params: search
-      })
-                .then(response => resolve(response.data))
-                .catch(error => reject(error))
+      http.get('learning_outcomes/find_by', { params: search })
+          .then(response => resolve(response.data))
+          .catch(error => reject(error))
     })
   },
   findByCodeOrContentWithPaging (search) {

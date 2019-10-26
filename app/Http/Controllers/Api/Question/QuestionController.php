@@ -1,5 +1,12 @@
 <?php
 /**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/**
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -188,6 +195,36 @@ class QuestionController extends ApiController
             return response()->json($res, 200);
         }
         return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulamadık!"], 404);
+
+    }
+
+    public function getLastQuestions($size) {
+
+        $user = Auth::user();
+        if ($user->isAn('admin') || $user->isAn('elector')) {
+            $res = DB::table("questions as q")
+                ->join("learning_outcomes as l", "l.id", "=", "q.learning_outcome_id")
+                ->orderBy("q.created_at", "desc")
+                ->take($size)
+                ->select("q.id", "q.keywords", "l.code", "l.content")
+                ->get();
+            return response()->json($res, 200);
+        }
+        if ($user->isAn('teacher')) {
+            $id = $user->id;
+            $branch_id = $user->branch_id;
+            // PArametre sayısı aynı olmazsa ve eşsiz parametre adı olmazsa hata basıypor
+            $res = DB::table("questions as q")
+                ->join("learning_outcomes as l", "l.id", "=", "q.learning_outcome_id")
+                ->where("q.lesson_id", $branch_id)
+                ->where("q.creator_id", $id)
+                ->orderBy("q.created_at", "desc")
+                ->take($size)
+                ->select("q.id", "q.keywords", "l.code", "l.content")
+                ->get();
+            return response()->json($res, 200);
+        }
+        return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulamadık!"], 200);
 
     }
 

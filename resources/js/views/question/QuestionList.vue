@@ -1,3 +1,10 @@
+<!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
 <template>
   <section class="content">
     <div class="row">
@@ -85,13 +92,6 @@
                       class="help-block"
                     >{{ errors.first('searchedContent') }}</span>
                   </div>
-                  <!--                  <p-check-->
-                  <!--                    class="p-switch p-fill"-->
-                  <!--                    name="check"-->
-                  <!--                    color="success"-->
-                  <!--                  >-->
-                  <!--                    Havuzda mı?-->
-                  <!--                  </p-check>-->
                 </div>
               </div>
             </div>
@@ -184,18 +184,23 @@ export default {
       colors: ['bg-yellow', 'bg-green', 'bg-yellow', 'bg-red', 'bg-aqua', 'bg-purple', 'bg-blue', 'bg-teal', 'bg-maroon', 'bg-gray', 'bg-olive', 'bg-orange', 'bg-fuchsia']
     }
   },
+  beforeRouteEnter (to, from, next) {
+    QuestionService.getLastSavedQuestions(30)
+            .then(value => {
+              next(vm => {
+                vm.questionsGroup = chunk(value, 3)
+              })
+            })
+            .catch(err => Messenger.showError(err.message))
+  },
   created () {
     this.getBranches()
   },
   methods: {
     getBranches () {
       BranchService.getBranches()
-                   .then(data => {
-                     this.branches = data
-                   })
-                   .catch(() => {
-                     Messenger.showError(MessengerConstants.errorMessage)
-                   })
+                   .then(data => { this.branches = data })
+                   .catch(() => { Messenger.showError(MessengerConstants.errorMessage) })
     },
     searchQuestions () {
       this.$validator.validateAll().then(value => {
@@ -206,9 +211,8 @@ export default {
             searchedContent: this.searchedContent
           }
           QuestionService.searchQuestion(params)
-            .then(res => {
-              this.questionsGroup = chunk(res, 3)
-            }).catch(e => Messenger.showError(MessengerConstants.errorMessage))
+                         .then(res => { this.questionsGroup = chunk(res, 3) })
+                         .catch(e => Messenger.showError(MessengerConstants.errorMessage))
         }
       })
     }

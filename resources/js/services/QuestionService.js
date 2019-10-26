@@ -1,4 +1,11 @@
 /*
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/*
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -45,6 +52,13 @@ const QuestionService = {
       http.get('/questions', { params })
         .then(response => resolve(response.data))
         .catch(e => reject(e))
+    })
+  },
+  getLastSavedQuestions (size) {
+    return new Promise((resolve, reject) => {
+      http.get(`/questions/last_saved/${size}`)
+        .then(resp => resolve(resp.data))
+        .catch(err => reject(err))
     })
   },
   getFile (id) {
