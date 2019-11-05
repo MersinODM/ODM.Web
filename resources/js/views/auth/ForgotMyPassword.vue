@@ -1,4 +1,11 @@
 <!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
+<!--
   - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
   - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -45,10 +52,26 @@
               class="help-block"
             >{{ errors.first('email') }}</span>
           </div>
+          <div
+            :class="{'has-error': !recaptchaVerified}"
+            class="form-group has-feedback"
+          >
+            <div style="text-align: center;">
+              <vueRecaptcha
+                style="display: inline-block;"
+                sitekey="6LdWF8AUAAAAACRraqjw-IJFoL5iiR6ybzBBFtya"
+                @verify="markRecaptchaAsVerified"
+              />
+              <span
+                v-if="!recaptchaVerified"
+                class="help-block"
+              >Lütfen robot olmadığınızı doğrulayın!</span>
+            </div>
+          </div>
           <div class="row">
             <div class="col-xs-offset-4 col-xs-4">
               <button
-                :class="{ disabled : errors.any() || isSending }"
+                :class="{ disabled : errors.any() ||!recaptchaVerified || isSending }"
                 type="submit"
                 class="btn btn-primary btn-block btn-flat"
                 @click="sendEmail"
@@ -73,14 +96,19 @@
 <script>
 import Spinner from '../../components/Spinner'
 import Messenger from '../../helpers/messenger'
+import vueRecaptcha from 'vue-recaptcha'
+import AuthService from "../../services/AuthService";
+import {MessengerConstants} from "../../helpers/constants";
 
 export default {
   name: 'ResetPassword',
-  components: { Spinner },
+  components: { Spinner, vueRecaptcha },
   data () {
     return {
       email: '',
-      isSending: false
+      isSending: false,
+      recaptchaVerified: false,
+      captchaToken: ''
     }
   },
   beforeCreate () {
@@ -93,18 +121,25 @@ export default {
             .then(res => {
               if (res) {
                 this.isSending = true
-                this.$http.get('/auth/password/forget', {
-                  params: {
-                    email: btoa(this.email)
-                  }
-                }).then(res => {
-                  Messenger.showInfo(res.data.message, () => {
-                    this.$router.push({ name: 'login' })
-                  })
-                  this.isSending = false
-                })
+                let data = { email: this.email, recaptcha: this.captchaToken }
+                AuthService.forgetPassword(data)
+                           .then(value => {
+                             Messenger.showInfo(value.message, () => {
+                               this.$router.push({ name: 'login' })
+                             })
+                             this.isSending = false
+                           })
+                           .catch(() => {
+                             Messenger.showError(MessengerConstants.errorMessage)
+                             this.isSending = false
+                           })
               }
             })
+    },
+    markRecaptchaAsVerified (response) {
+      // console.log(response)
+      this.captchaToken = response
+      this.recaptchaVerified = true
     }
   }
 }

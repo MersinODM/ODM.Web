@@ -7,6 +7,13 @@
  */
 
 /**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/**
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -16,6 +23,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 
 use App\Http\Controllers\Controller;
+use App\Rules\Recaptcha;
 use Exception;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
@@ -35,11 +43,12 @@ class AuthController extends Controller
    * @param Request $request
    * @return \Illuminate\Http\JsonResponse
    */
-  public function login(Request $request)
+  public function login(Request $request, Recaptcha $recaptcha)
   {
     $validator = Validator::make($request->all(), [
       'email' => 'required|string|email|max:255',
-      'password'=> 'required'
+      'password'=> 'required',
+      //'recaptcha' => ['required', $recaptcha]
     ]);
     if ($validator->fails()) {
       return response()->json($validator->errors(),422);

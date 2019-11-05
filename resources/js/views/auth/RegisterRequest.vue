@@ -1,3 +1,10 @@
+<!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
 <template>
   <div class="register-box">
     <div class="register-logo">
@@ -27,10 +34,6 @@
             class="help-block"
           >{{ errors.first('full_name') }}</span>
         </div>
-        <!--        <div class="form-group has-feedback">-->
-        <!--          <input v-model="tcId" type="text" class="form-control" placeholder="T.C. Kimlik No">-->
-        <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-        <!--        </div>-->
         <div
           class="form-group has-feedback"
           :class="{'has-error': errors.has('inst')}"
@@ -54,11 +57,6 @@
             class="help-block"
           >{{ errors.first('inst') }}</span>
         </div>
-        <!--        <div class="form-group has-feedback">-->
-        <!--          <input v-model="title" class="form-control"-->
-        <!--                 placeholder="Görevi/Unvanı(Öğretmen, Okul Müdürü vb.)">-->
-        <!--          <span class="fa fa-user-times form-control-feedback"></span>-->
-        <!--        </div>-->
         <div
           class="form-group has-feedback"
           :class="{'has-error': errors.has('branch')}"
@@ -70,8 +68,7 @@
             :reduce="branch => branch.id"
             label="name"
             name="branch"
-            placeholder="Alan/Ders adını en az 3 harf girin"
-            @search="searchBranches"
+            placeholder="Alan/Ders seçiniz"
           >
             <div slot="no-options">
               Burada bişey bulamadık :-(
@@ -109,7 +106,7 @@
           <input
             v-model="phone"
             v-mask="'(###)-###-####'"
-            v-validate="'required'"
+            v-validate="{ required: true, regex:/[(][0-9]{1,3}[)][-][0-9]{1,3}[-][0-9]{4}$/ }"
             type="text"
             name="phone"
             class="form-control"
@@ -121,11 +118,27 @@
             class="help-block"
           >{{ errors.first('phone') }}</span>
         </div>
+        <div
+          :class="{'has-error': !recaptchaVerified}"
+          class="form-group has-feedback"
+        >
+          <div style="text-align: center;">
+            <vueRecaptcha
+              style="display: inline-block;"
+              sitekey="6LdWF8AUAAAAACRraqjw-IJFoL5iiR6ybzBBFtya"
+              @verify="markRecaptchaAsVerified"
+            />
+            <span
+              v-if="!recaptchaVerified"
+              class="help-block"
+            >Lütfen robot olmadığınızı doğrulayın!</span>
+          </div>
+        </div>
         <div class="row">
           <!-- /.col -->
           <div class="col-xs-offset-3 col-xs-6">
             <button
-              :class="{ disabled: errors.any() || isSending }"
+              :class="{ disabled: errors.any() ||!recaptchaVerified || isSending }"
               class="btn btn-primary btn-block btn-flat"
               @click="sendRegisterRequest"
             >
@@ -141,7 +154,7 @@
         exact
       >
         Halihazırda bir hesabım var
-        <span class="fa fa-user-secret" />
+        <span class="mdi mdi-passport" />
       </router-link>
     </div>
   </div>
@@ -152,10 +165,14 @@ import debounce from 'lodash/debounce'
 import vSelect from 'vue-select'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
+import vueRecaptcha from 'vue-recaptcha'
+import BranchService from '../../services/BranchService'
+import InstitutionService from '../../services/InstitutionService'
+import AuthService from '../../services/AuthService';
 
 export default {
   name: 'RegisterRequest',
-  components: { vSelect },
+  components: { vSelect, vueRecaptcha },
   data () {
     return {
       full_name: '',
@@ -166,79 +183,69 @@ export default {
       phone: '',
       institutions: [],
       branches: [],
-      isSending: false
+      isSending: false,
+      recaptchaVerified: false,
+      captchaToken: ''
     }
   },
   beforeCreate () {
     document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'login-page')/* , 'fixed' */
     document.body.classList.add('hold-transition', 'register-page')
   },
+  beforeRouteEnter (to, from, next) {
+    BranchService.getAllForRegisterReq()
+                 .then((branches) => {
+                   next(vm => {
+                     vm.branches = branches
+                   })
+                 })
+  },
   methods: {
     searchInstitutions: debounce(function (search, loading) {
-      // console.log(this.$http)
-      if (search.length >= 3) {
-        loading(true)
-        this.$http.get('/auth/institutions', {
-          params: {
-            searchTerm: search
-          }
-        })
-          .then(result => {
-            console.log(result)
-            this.institutions = result.data
-            loading(false)
-          })
-          .catch(res => {
-            loading(false)
-            console.log(res)
-          })
-      }
-    }, 800),
-    searchBranches: debounce(function (search, loading) {
-      if (search.length >= 3) {
-        this.$http.get('/auth/branches', {
-          params: {
-            searchTerm: search
-          }
-        })
-          .then(result => {
-            // console.log(result)
-            this.branches = result.data
-            loading(false)
-          })
-          .catch(res => {
-            console.log(res)
-            loading(false)
-          })
-      }
+      loading(true)
+      InstitutionService.findByName(search)
+                        .then(value => {
+                          this.institutions = value
+                          loading(false)
+                        })
+                        .catch(err => {
+                          loading(false)
+                          Messenger.showError(err.message)
+                        })
     }, 800),
     sendRegisterRequest () {
       this.$validator.validateAll()
         .then(res => {
           if (res) {
             this.isSending = true
-            this.$http.post('/auth/register', {
+            let data = {
               email: this.email,
               full_name: this.full_name,
               inst_id: this.inst,
               branch_id: this.branch,
-              phone: this.phone.replace(/[^0-9]/gi, '')
-            })
-              .then(response => {
-                this.isSending = false
-                Messenger.showSuccess(response.data.message)
-              })
-              .catch(error => {
-                console.log(error)
-                this.isSending = false
-                if (error.response.status === 409) {
-                  Messenger.showWarning(error.response.data.message)
-                  return
-                }
-                Messenger.showError(MessengerConstants.errorMessage)
-              })
+              phone: this.phone.replace(/[^0-9]/gi, ''),
+              recaptcha: this.captchaToken
+            }
+            AuthService.createRegisterRequest(data)
+                       .then(value => {
+                         this.isSending = false
+                         Messenger.showSuccess(value.message)
+                       })
+                       .catch(error => {
+                         this.isSending = false
+                         if (error.response.status === 409) {
+                           Messenger.showWarning(error.response.data.message)
+                           return
+                         }
+                         Messenger.showError(MessengerConstants.errorMessage)
+                       })
           }
         })
+    },
+    markRecaptchaAsVerified (response) {
+    // console.log(response)
+      this.captchaToken = response
+      this.recaptchaVerified = true
     }
   }
 }

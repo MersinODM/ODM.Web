@@ -1,4 +1,11 @@
 /*
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
+/*
  * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -50,17 +57,6 @@ const AuthService = {
         reject(error)
       })
     })
-
-    // http.get('/users/current/permissions')
-    //   .then(resp => {
-    //     // console.log(resp.data)
-    //     localStorage.setItem(Constants.permissions, JSON.stringify(resp.data))
-    //     next()
-    //   })
-    //   .catch(error => {
-    //     console.log(error)
-    //     next('/login')
-    //   })
   },
   getUser: (callback) => {
     let user = null
@@ -75,6 +71,28 @@ const AuthService = {
         callback(e, null)
         // console.log(e)
       })
+  },
+  createRegisterRequest(data) {
+    return new Promise((resolve, reject) => {
+      http.post('/auth/register', data)
+          .then(response => {
+            resolve(response.data)
+          })
+          .catch(reason => {
+            reject(reason)
+          })
+    })
+  },
+  forgetPassword (data) {
+    return new Promise((resolve, reject) => {
+      http.post('/auth/password/forget', data)
+          .then(response => {
+            resolve(response.data)
+          })
+          .catch(reason => {
+            reject(reason)
+          })
+    })
   }
 }
 

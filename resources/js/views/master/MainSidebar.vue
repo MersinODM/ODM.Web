@@ -5,6 +5,13 @@
   -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
   -->
 
+<!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
 <template>
   <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -111,6 +118,24 @@
               <router-link :to="{name: 'newLO' }">
                 <span class="mdi mdi-math-integral" />
                 Kazanım Ekle
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview">
+          <a href="#"><i class="mdi mdi-school" />
+            <span>Kurum Yönetimi</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right" />
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <router-link :to="{name: 'newInst' }">
+                <span class="mdi mdi-bank-plus" />
+                Okul/Kurum Ekle
               </router-link>
             </li>
           </ul>

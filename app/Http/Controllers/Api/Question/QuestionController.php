@@ -14,7 +14,6 @@
 
 namespace App\Http\Controllers\Api\Question;
 
-
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Branch;
@@ -25,7 +24,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
 
 class QuestionController extends ApiController
 {

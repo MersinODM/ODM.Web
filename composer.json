@@ -16,7 +16,8 @@
         "laravel/tinker": "^1.0",
         "silber/bouncer": "v1.0.0-rc.5",
         "tymon/jwt-auth": "1.0.0-rc.4.1",
-        "yajra/laravel-datatables-oracle": "^9.4.1"
+        "yajra/laravel-datatables-oracle": "^9.7.1",
+        "kitetail/zttp": "0.6.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

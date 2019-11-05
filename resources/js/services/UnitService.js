@@ -1,38 +1,36 @@
-/*!
+/*
  *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
  *  geliştirilen bütün kaynak kodlar
  *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-/*!
+/*
  *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
  *  geliştirilen bütün kaynak kodlar
  *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
  *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-// Fonts
-// @import url('https://fonts.googleapis.com/css?family=Nunito');
+import http from '../helpers/axios'
 
-// Variables
-@import 'variables';
+const UnitService = {
+  create () {
 
-//@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~admin-lte/dist/css/AdminLTE.min.css';
-@import '~admin-lte/dist/css/skins/_all-skins.min.css';
-//@import '~font-awesome/css/font-awesome.min.css';
-//@import '~ionicons/dist/css/ionicons.min.css';
-//@import '~@mdi/font/css/materialdesignicons.min.css';
-@import '~pretty-checkbox/src/pretty-checkbox';
-@import '~pace-js/themes/orange/pace-theme-minimal.css';
-@import "~animate.css/animate.min.css";
-@import '~vue-select/dist/vue-select.css';
+  },
+  update () {
 
+  },
+  delete () {
 
-
-.disabled {
-  pointer-events: none;
-  opacity: 0.4;
+  },
+  getAllUnits () {
+    return new Promise((resolve, reject) => {
+      http.get('/units')
+        .then(response => { resolve(response.data) })
+        .catch(err => { reject(err) })
+    })
+  }
 }
 
+export default UnitService

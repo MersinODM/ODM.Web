@@ -13,6 +13,13 @@
  *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
+/**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+ *  geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ */
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,10 +45,10 @@ Route::group([
 //Bu iksi için doğrulama ihtiyacına gerek yok
   Route::post('register', 'Auth\UserManagementController@registerRequest');
 //  Route::put('password/reset', 'Auth\UserManagementController@resetPassword');
-  Route::get('password/forget', 'Auth\UserManagementController@forgetPassword');
+  Route::post('password/forget', 'Auth\UserManagementController@forgetPassword');
   Route::post('login', 'Auth\AuthController@login');
   Route::get('institutions', 'Inst\InstitutionController@findByNameInstitutions');
-  Route::get('branches', 'Branch\BranchController@findByNameBranches');
+  Route::get('branches', 'Branch\BranchController@getBranches');
 //  Route::post('refresh', 'AuthController@refresh');
 //  Route::post('me', 'AuthController@me');
 
@@ -92,5 +99,12 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 //  Route::get("stats/question_counts/by_lo/{lo_id}", "Stats\StatController@getQuestionCountByLO");
   Route::get("stats/classes", "Stats\StatController@getClasses");
   Route::get("stats/lo_count_by", "Stats\StatController@getQuestionCountByLO");
+
+
+  //Birim api route tanımlamaları
+    Route::get("units", "Inst\UnitController@getAllUnits");
+
+    //Okul/Kurum api route tanımlamaları
+    Route::post("institutions", "Inst\InstitutionController@create");
 
 });

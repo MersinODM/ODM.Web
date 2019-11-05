@@ -1,3 +1,10 @@
+<!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
+  -  geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+  -->
+
 <template>
   <div class="hold-transition login-page">
     <div class="login-box">
@@ -56,17 +63,26 @@
               class="help-block"
             >{{ errors.first('password') }}</span>
           </div>
+          <div
+            :class="{'has-error': !recaptchaVerified}"
+            class="form-group has-feedback"
+          >
+            <div style="text-align: center;">
+              <vueRecaptcha
+                style="display: inline-block;"
+                sitekey="6LdWF8AUAAAAACRraqjw-IJFoL5iiR6ybzBBFtya"
+                @verify="markRecaptchaAsVerified"
+              />
+              <span
+                v-if="!recaptchaVerified"
+                class="help-block"
+              >Lütfen robot olmadığınızı doğrulayın!</span>
+            </div>
+          </div>
           <div class="row">
-            <!--<div class="col-xs-8">-->
-            <!--<p-check v-model="isChecked" class="p-icon p-smooth" color="primary">-->
-            <!--<i slot="extra" class="icon fa fa-check"></i>-->
-            <!--fa-check-->
-            <!--</p-check>-->
-            <!--</div>-->
-            <!-- /.col -->
             <div class="col-xs-offset-8 col-xs-4">
               <button
-                :class="{ disabled : errors.any() || isSigningIn }"
+                :class="{ disabled : errors.any() || !recaptchaVerified || isSigningIn }"
                 type="submit"
                 class="btn btn-primary btn-block btn-flat"
                 @click="loginUser"
@@ -111,13 +127,16 @@ import Spinner from '../../components/Spinner'
 import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
+import vueRecaptcha from 'vue-recaptcha'
 
 // const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
   name: 'Login',
-  components: { Spinner },
+  components: { Spinner, vueRecaptcha },
   data () {
     return {
+      recaptchaVerified: false,
+      captchaToken: '',
       email: '',
       password: '',
       isSigningIn: false
@@ -127,6 +146,13 @@ export default {
     document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
     document.body.classList.add('hold-transition', 'login-page')
   },
+  // created () {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     this.siteKey = process.env.MIX_GOOGLE_RECAPTCHA_KEY
+  //   } else {
+  //     this.siteKey = process.env.MIX_GOOGLE_RECAPTCHA_KEY_LOCAL
+  //   }
+  // },
   methods: {
     loginUser () {
       this.$validator.validateAll()
@@ -134,7 +160,8 @@ export default {
           if (valRes) {
             let credentials = {
               email: this.email,
-              password: this.password
+              password: this.password,
+              recaptcha: this.captchaToken
             }
             this.isSigningIn = true
             AuthService.login(credentials)
@@ -142,13 +169,18 @@ export default {
                          this.$router.push({ name: 'stats' })
                          this.isSigningIn = false
                        })
-                       .catch(() => {
+                       .catch((err) => {
                          this.isSigningIn = false
-                         Messenger.showWarning('Oturumunuz açılmadı, e-posta ve şifrenizi kontrol ediniz.\n' +
+                         Messenger.showWarning('Oturumunuz açılmadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
                                  'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
                        })
           }
         })
+    },
+    markRecaptchaAsVerified (response) {
+      // console.log(response)
+      this.captchaToken = response
+      this.recaptchaVerified = true
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -167,5 +199,12 @@ export default {
 </script>
 
 <style>
-
+  @media screen and (max-width: 575px) {
+    #rc-imageselect, .g-recaptcha
+    {
+      transform:scale(0.77);
+      -webkit-transform:scale(0.77);transform-origin:0 0;
+      -webkit-transform-origin:0 0;
+    }
+  }
 </style>
