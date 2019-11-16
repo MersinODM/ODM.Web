@@ -4,7 +4,7 @@ Bu yazılım açık kaynak kodlu olarak [CC BY-NC-SA 4.0](https://creativecommon
 
 1. Öğretmenlerimizin yerleşim yerinden bağımsız soru havuzuna katkı verebilmeleri
 2. Hızlı bir şekilde gönüllü öğretmenlerimizden soru talep edilebilmesi
-3. MEB sunucularında barınmaya olnaka sağlayacak şekilde kodlanması
+3. MEB sunucularında barınmaya olnak sağlayacak şekilde kodlanması
 4. Sınav oluşturulabilmesi
 5. Kullanıcıların yönetilebilmesi
 6. Soruların değerlendirilmesi, geri dönüş verilmesi ayrıca gerekiyorsa revize edilebilmesi

@@ -5,6 +5,7 @@
 ## Geliştiriciler İçin
 
 * [Başlarken](gelistiriciler-icin/baslarken.md)
+* [Gereksinimler](gelistiriciler-icin/gereksinimler.md)
 
 ## Kullanıcılar İçin
 
