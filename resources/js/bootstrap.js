@@ -7,9 +7,9 @@
      * code may be modified to fit the specific needs of your application.
      */
 // window._ = require('lodash')
-import $ from 'jquery/dist/jquery.min'
-window.$ = window.jQuery = $
-window.moment = require('moment/min/moment.min')
+// import $ from 'jquery/dist/jquery.min'
+// window.$ = window.jQuery = $
+// window.moment = require('moment/min/moment.min')
 // const momentTR = require('moment/locale/tr')
 moment.locale('tr')
 // require('jquery-ui')

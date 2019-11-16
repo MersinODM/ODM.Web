@@ -50,14 +50,10 @@
 </template>
 
 <script>
-// import 'jquery-slimscroll/jquery.slimscroll.min'
-// import 'fastclick/lib/fastclick'
 import Constants from '../../helpers/constants'
 import Auth from '../../services/AuthService'
 import UserService from '../../services/UserService'
 import Messenger from '../../helpers/messenger'
-require('datatables.net-bs/js/dataTables.bootstrap.min')
-require('datatables.net-responsive-bs/js/responsive.bootstrap.min')
 
 export default {
   name: 'UserList',
@@ -162,7 +158,7 @@ export default {
               if (row['activator_name'] !== null) {
                 return '<div class="btn-group">' +
                     '<button class="btn btn-xs btn-info">Göster</button>' +
-                    '<button class="btn btn-xs btn-danger">Sil</button>' +
+                    '<button class="btn btn-xs btn-danger">Pasif.</button>' +
                     '</div>'
               }
               return '<div class="btn-group">' +
@@ -187,6 +183,31 @@ export default {
       let data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       vm.$router.push({ name: 'user', params: { id: data.id } })
+    })
+
+    table.on('click', '.btn-danger', (e) => {
+      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      // console.log(data);
+      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
+        {
+          cancel: 'İptal',
+          ok: {
+            text: 'Evet',
+            value: true
+          }
+        }).then(value => {
+        if (value) {
+          UserService.delete(data.id)
+                     .then(res => {
+                       Messenger.showSuccess(res)
+                       table.ajax.reload()
+                     })
+                     .catch(err => {
+                       Messenger.showError(err)
+                       table.ajax.reload()
+                     })
+        }
+      })
     })
 
     table.on('click', '.btn-warning', (e) => {

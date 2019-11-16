@@ -97,8 +97,8 @@
 import Spinner from '../../components/Spinner'
 import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
-import AuthService from "../../services/AuthService";
-import {MessengerConstants} from "../../helpers/constants";
+import AuthService from '../../services/AuthService'
+import { MessengerConstants } from '../../helpers/constants'
 
 export default {
   name: 'ResetPassword',

@@ -24,6 +24,10 @@
 <script>
   window.Laravel = { csrfToken: '{{ csrf_token() }}' };
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.20/r-2.2.3/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/tr.js" integrity="sha256-nVA6aRSQuRLGLSqtxE/RRKTymG1QwvyvvH5w8jORUwM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <script src="{{asset('js/manifest.js')}}" type="application/javascript"></script>
 <script src="{{asset('js/vendor.js')}}" type="application/javascript"></script>
 <script src="{{asset('js/main.js')}}" type="application/javascript"></script>

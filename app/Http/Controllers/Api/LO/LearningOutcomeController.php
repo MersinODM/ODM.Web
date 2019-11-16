@@ -1,22 +1,8 @@
 <?php
 /**
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
- *  geliştirilen bütün kaynak kodlar
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
- */
-
-/**
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
- *  geliştirilen bütün kaynak kodlar
- *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
- */
-
-/**
- * Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
- * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
  */
 
 namespace App\Http\Controllers\Api\LO;
@@ -25,9 +11,7 @@ namespace App\Http\Controllers\Api\LO;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\LearningOutcome;
-use App\Models\LearningOutcome as LearningOutcomeAlias;
 use Exception;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +23,10 @@ use Illuminate\Support\Facades\DB;
  */
 class LearningOutcomeController extends ApiController
 {
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request)
     {
         $validationResult = $this->apiValidator($request, [
@@ -52,22 +40,27 @@ class LearningOutcomeController extends ApiController
             return response()->json($validationResult, 422);
         }
 
-        $data = $request->only(["branch_id", "class_level", "code", "content", "description"]);
+        $data = $request->only("branch_id", "code", "class_level", "content", "description");
 
         try {
-
-            $branch = new LearningOutcomeAlias();
-            $branch->fill($data);
+            DB::beginTransaction();
+            $branch = new LearningOutcome($data);
             $branch->save();
+            DB::commit();
+            return response()->json([ResponseHelper::MESSAGE => "Kazanım kayıt işlemi başarılı."], 201);
         } catch (Exception $exception) {
+            DB::rollBack();
             return response()->json($this->apiException($exception), 500);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Kazanım kayıt işlemi başarılı."], 201);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id)
     {
-
         $validationResult = $this->apiValidator($request, [
             'branch_id' => 'required',
             "content" => "required"
@@ -79,7 +72,7 @@ class LearningOutcomeController extends ApiController
 
         try {
 
-            $lo = LearningOutcomeAlias::findOrFail($id);
+            $lo = LearningOutcome::findOrFail($id);
             $lo->branch_id = $request->input("branch_id");
             $lo->content = $request->input("content");
             $lo->description = $request->input("description");
@@ -91,19 +84,23 @@ class LearningOutcomeController extends ApiController
         return response()->json([ResponseHelper::MESSAGE => "Kazanım güncelleme işlemi başarılı."], 201);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete($id)
     {
-        $res = LearningOutcomeAlias::destroy($id);
+        $res = LearningOutcome::destroy($id);
         if ($res)
             return response()->json([ResponseHelper::MESSAGE => "Kazanım silme işlemi başarılı."], 200);
         return response()->json([ResponseHelper::MESSAGE => "Kazanım silme işlemi başarısız."], 450);
     }
 
-    public function getByClassLevelAndLessonId()
-    {
 
-    }
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function findByContentAndLessonIdAndClassLevel(Request $request)
     {
 
@@ -126,6 +123,10 @@ class LearningOutcomeController extends ApiController
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function findByContentWithPaging(Request $request)
     {
         $validationResult = $this->apiValidator($request, [
@@ -153,6 +154,10 @@ class LearningOutcomeController extends ApiController
         return response()->json($result);
     }
 
+    /**
+     * @param $size
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getLastSavedRecords($size) {
         !isset($size) ? $size = 18 : null;
         $result = DB::table("learning_outcomes as lo")
@@ -170,6 +175,10 @@ class LearningOutcomeController extends ApiController
         return response()->json($result);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function findBy(Request $request)
     {
         $validationResult = $this->apiValidator($request, [
@@ -201,7 +210,7 @@ class LearningOutcomeController extends ApiController
      */
     protected function findLO($lesson_id, $class_level, $content)
     {
-        $lo = LearningOutcomeAlias::where([
+        $lo = LearningOutcome::where([
             ["branch_id", "=", $lesson_id],
             ["class_level", "=", $class_level]
         ])

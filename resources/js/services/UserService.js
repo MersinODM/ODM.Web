@@ -26,9 +26,16 @@ const UserService = {
   },
   update (id, user) {
     return new Promise((resolve, reject) => {
-      http.post(`/user/${id}`, user)
+      http.put(`/users/${id}`, user)
         .then(resp => resolve(resp.data))
         .catch(error => reject(error))
+    })
+  },
+  delete (id) {
+    return new Promise((resolve, reject) => {
+      http.delete(`/users/${id}`)
+          .then(resp => resolve(resp.data))
+          .catch(error => reject(error))
     })
   }
 }

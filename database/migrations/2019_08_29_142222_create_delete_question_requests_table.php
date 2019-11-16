@@ -14,10 +14,12 @@ class CreateDeleteQuestionRequestsTable extends Migration
     public function up()
     {
         Schema::create('question_delete_requests', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('id')->unsigned();
             $table->unsignedInteger("question_id")->nullable(true);
             $table->unsignedInteger("creator_id");
+            $table->unsignedInteger("lo_id");
             $table->string("comment", 500);
+            $table->string("keywords", 500);
             $table->boolean("is_accepted")->nullable(true);
             $table->boolean("acceptor_id")->nullable(true);
             $table->timestamps();

@@ -9,28 +9,31 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
-  public function apiValidator(Request $request, $props) {
-      $attributes = [
-          'learning_outcome_id' => 'Kazanım',
-          'difficulty' => 'Zorluk',
-          'question_file' => 'Soru dosyası',
-      ];
+    public function apiValidator(Request $request, $props)
+    {
+        $attributes = [
+            'learning_outcome_id' => 'Kazanım',
+            'difficulty' => 'Zorluk',
+            'question_file' => 'Soru dosyası',
+        ];
 
-    $validator = Validator::make($request->all(), $props, [], $attributes);
-    if ($validator->fails()) {
-      return $validator->errors();
+        $validator = Validator::make($request->all(), $props, [], $attributes);
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+        return null;
     }
-    return null;
-  }
 
-  public function apiException($exception) {
-    return [
-      ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
-      "exception" => $exception->getMessage()
-    ];
-  }
+    public function apiException($exception)
+    {
+        return [
+            ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
+            "exception" => $exception->getMessage()
+        ];
+    }
 }

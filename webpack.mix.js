@@ -19,6 +19,11 @@ mix.webpackConfig({
   plugins: [new BundleAnalyzerPlugin(),
     new webpack.IgnorePlugin(/\.\/locale$/),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /tr/)],
+  externals: {
+    jquery: 'jQuery',
+    'jquery.dataTables': 'jquery.dataTables',
+    moment: 'moment'
+  },
   module: {
     rules: [
       {
@@ -34,10 +39,10 @@ mix.webpackConfig({
   }
 })
 
-mix.autoload({
-  jquery: ['$', 'window.jQuery', 'jQuery'], // more than one
-  moment: 'moment' // only one
-})
+// mix.autoload({
+//   jquery: ['$', 'window.jQuery', 'jQuery'], // more than one
+//   moment: 'moment' // only one
+// })
 
 mix.copyDirectory('resources/images', 'public/images')
 mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')

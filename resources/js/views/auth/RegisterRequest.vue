@@ -168,7 +168,7 @@ import { MessengerConstants } from '../../helpers/constants'
 import vueRecaptcha from 'vue-recaptcha'
 import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
-import AuthService from '../../services/AuthService';
+import AuthService from '../../services/AuthService'
 
 export default {
   name: 'RegisterRequest',
@@ -202,17 +202,19 @@ export default {
   },
   methods: {
     searchInstitutions: debounce(function (search, loading) {
-      loading(true)
-      InstitutionService.findByName(search)
-                        .then(value => {
-                          this.institutions = value
-                          loading(false)
-                        })
-                        .catch(err => {
-                          loading(false)
-                          Messenger.showError(err.message)
-                        })
-    }, 800),
+      if (search) {
+        loading(true)
+        InstitutionService.findByName(search)
+                          .then(value => {
+                            this.institutions = value
+                            loading(false)
+                          })
+                          .catch(err => {
+                            loading(false)
+                            Messenger.showError(err.message)
+                          })
+      }
+    }, 1000),
     sendRegisterRequest () {
       this.$validator.validateAll()
         .then(res => {

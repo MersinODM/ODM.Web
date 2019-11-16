@@ -5,6 +5,7 @@ namespace App;
 use App\Models\Branch;
 use App\Models\Institution;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -12,6 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
 
+    use SoftDeletes;
     use CanResetPassword;
     use HasRolesAndAbilities;
     /**

@@ -169,7 +169,7 @@ export default {
                          this.$router.push({ name: 'stats' })
                          this.isSigningIn = false
                        })
-                       .catch((err) => {
+                       .catch(() => {
                          this.isSigningIn = false
                          Messenger.showWarning('Oturumunuz açılmadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
                                  'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')

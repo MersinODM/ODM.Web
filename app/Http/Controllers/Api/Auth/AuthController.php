@@ -23,6 +23,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ResponseHelper;
 use App\Rules\Recaptcha;
 use Exception;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -59,11 +60,12 @@ class AuthController extends Controller
     try {
       // Kullanıcı biliglerinin veri tabanından doğrulaması yapılıyor
       if (!$token = auth()->attempt($credentials)) {
-        return response()->json(['error' => 'Hatalı kullanıcı adı ya da şifre!'], 401);
+          //TODO json düzenlemesi yapılcak
+        return response()->json(["error" => 'Hatalı kullanıcı adı ya da şifre!'],401);
       }
     } catch (Exception $e) {
       // Bişeyler ters giderse ;-)
-      return response()->json(['message' => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()], 500);
+      return response()->json([ResponseHelper::MESSAGE => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()], 500);
     }
 
     // Herşey normal ise jetonu geri döndürelim
