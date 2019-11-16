@@ -6,6 +6,7 @@
 
 * [Başlarken](gelistiriciler-icin/baslarken.md)
 * [Gereksinimler](gelistiriciler-icin/gereksinimler.md)
+* [Kurulum İşlemleri](gelistiriciler-icin/kurulum-islemleri.md)
 
 ## Kullanıcılar İçin
 
