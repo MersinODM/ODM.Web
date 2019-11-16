@@ -4,7 +4,7 @@ Bu yazılım ölçme değerlendirme merkezlerinin işlerini kolaylaştırmak ama
 
 ## Dökümanlar
 
-Dökümanlar en kısa sürede eklenecektir. [Hazırlanıyor](./).
+Dökümanlar için GitBook [bağlantısı](https://hgulen33.gitbook.io/odm-web/).
 
 ## Nasıl katkıda bulunurum?
 
