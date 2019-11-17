@@ -39,8 +39,12 @@ const QuestionService = {
         .catch(e => reject(e))
     })
   },
-  delete (id) {
-
+  sendDeleteRequest (id, data) {
+    return new Promise((resolve, reject) => {
+      http.post(`/questions/${id}/delete_request`, data)
+        .then(response => resolve(response.data))
+        .catch(err => reject(err))
+    })
   },
   searchQuestion (searchParams) {
     let params = {

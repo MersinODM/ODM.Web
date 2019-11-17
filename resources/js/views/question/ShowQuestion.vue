@@ -36,32 +36,25 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <h5 style="font-weight: bold">
-                  Madde Kökü/Anahtar Kelimeler
-                </h5>
-                <p
-                  v-if="question != null"
-                >
-                  {{ question.keywords }}
-                </p>
-                <h5 style="font-weight: bold">
-                  Soru yazarı
-                </h5>
-                <p v-if="question != null">
-                  {{ question.creator }}
-                </p>
-                <h5 style="font-weight: bold">
-                  Kazanım
-                </h5>
-                <p v-if="question != null">
-                  {{ question.learning_outcome }}
-                </p>
-                <h5 style="font-weight: bold">
-                  Sınıf seviyesi
-                </h5>
-                <p v-if="question != null">
-                  {{ question.class_level }}
-                </p>
+                <h4 v-if="question != null">
+                  <span style="font-weight: bold">Madde Kökü/Anahtar Kelimeler: </span>{{ question.keywords == null ?
+                    'Girilmemiş' : question.keywords }}
+                </h4>
+                <h4 v-if="question !== null && $isInRole('admin')">
+                  <span style="font-weight: bold">Soru yazarı: </span>{{ question.creator }}
+                </h4>
+                <h4 v-if="question != null">
+                  <span style="font-weight: bold">Kazanım: </span>{{ question.learning_outcome }}
+                </h4>
+                <h4 v-if="question != null">
+                  <span style="font-weight: bold">Sınıf seviyesi: </span>{{ question.class_level }} .Sınıf
+                </h4>
+                <h4 v-if="question != null">
+                  <span style="font-weight: bold">Doğru Cevap: </span>{{ question.correct_answer }}
+                </h4>
+                <h4 v-if="question != null">
+                  <span style="font-weight: bold">Zorluk Seviyesi: </span>{{ getDifficulty() }}
+                </h4>
               </div>
             </div>
             <div class="row">
@@ -155,7 +148,7 @@
       </div>
     </div>
     <div
-      v-show="evaluationList !== null && evaluationList.length > 0"
+      v-show="checkEvals"
       class="row"
     >
       <div class="col-md-12">
@@ -234,15 +227,14 @@
 </template>
 
 <script>
-import QuestionService from '../../services/QuestionService'
-import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
-import RevisionService from '../../services/CommentService'
-import usersImg from '../../../images/users.png'
-import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-import swal from 'sweetalert'
+  import QuestionService from '../../services/QuestionService'
+  import Messenger from '../../helpers/messenger'
+  import {MessengerConstants} from '../../helpers/constants'
+  import RevisionService from '../../services/CommentService'
+  import usersImg from '../../../images/users.png'
+  import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 
-export default {
+  export default {
   name: 'ShowQuestion',
   data () {
     return {
@@ -254,12 +246,22 @@ export default {
       changeCount: 0,
       revisions: [],
       evaluationList: [],
-      userImage: usersImg
+      userImage: usersImg,
+      difficultyLevels: [
+        { degree: 1, content: 'Çok Kolay' },
+        { degree: 2, content: 'Kolay' },
+        { degree: 3, content: 'Normal' },
+        { degree: 4, content: 'Zor' },
+        { degree: 5, content: 'Çok Zor' }
+      ]
     }
   },
   computed: {
     hasCommentRequest () {
       return this.comment !== null
+    },
+    checkEvals () {
+      return this.evaluationList !== null && this.evaluationList.length > 0
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -285,6 +287,9 @@ export default {
     }
   },
   methods: {
+    getDifficulty () {
+      return this.difficultyLevels.filter(diff => diff.degree === this.question.difficulty)[0].content
+    },
     save () {
       this.$validator.validateAll()
               .then(value => {
@@ -337,11 +342,16 @@ export default {
               .then((revisions) => { this.revisions = revisions })
     },
     deleteRequest () {
-      swal('Silme talebinizin nedeninin kısaca yazınız', {
-        content: 'input'
-      })
-              .then((value) => {
-                swal(`Silme talebiniz değerlendirilmek üzere tarafımıza ulaşmıştır.`)
+      Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
+              .then(result => {
+                if (result) {
+                  QuestionService.sendDeleteRequest(this.question.id, { reason: result })
+                          .then(resp => {
+                            Messenger.showInfoV2(resp.message)
+                                    .then(() => this.$router.push({ name: 'stats' }))
+                          })
+                          .catch(err => Messenger.showError(err.message))
+                }
               })
     }
   }

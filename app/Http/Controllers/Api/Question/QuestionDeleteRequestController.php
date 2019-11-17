@@ -13,29 +13,35 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\DataTables;
 
 class QuestionDeleteRequestController extends ApiController
 {
-    public function createDeleteRequest(Request $request) {
+    public function create($id, Request $request) {
         $validationResult = $this->apiValidator($request, [
-            'question_id' => 'required',
-            'comment' => 'required'
+            'reason' => 'required'
         ]);
         if ($validationResult) {
             return response()->json($validationResult,422);
         }
-        $data = $request->only("question_id", "comment");
+        $reason = $request->input("reason");
+        $loId = Question::find($id)->learning_outcome_id;
         try {
             DB::beginTransaction();
-            $qdr = new QuestionDeleteRequest($data);
-            $qdr->creator_id = Auth::id();
+            $qdr = new QuestionDeleteRequest([
+                'question_id' => $id,
+                'creator_id' => Auth::id(),
+                'learning_outcome_id' => $loId,
+                'comment' => $reason
+                ]);
             $qdr->save();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Soru silme isteği kaydı alınmıştır."]);
+            return response()->json([ResponseHelper::MESSAGE => "Soru silme isteği incelenmek üzere tarafımıza ulaşmıştır."]);
         }
         catch (\Exception $exception){
             DB::rollBack();
@@ -60,6 +66,43 @@ class QuestionDeleteRequestController extends ApiController
     }
 
     public function getDeleteRequests() {
+        //Gate tanımlamaları ile daha sistematik çözülebilirdi
+        $user = Auth::user();
+        if($user->isAn("admin")) {
+            $res = DB::table('users')
+                ->join(DB::raw('question_delete_requests as qdr'), 'qdr.creator_id', '=', 'users.id')
+                ->join(DB::raw('learning_outcomes as lo'), 'lo.id', '=', 'qdr.learning_outcome_id')
+                ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
+                ->where("users.deleted_at", "=", null)
+                ->select(
+                    'users.id',
+                    'qdr.comment',
+                    'qdr.is_accepted',
+                    'users.full_name',
+                    DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
+                    DB::raw('um.full_name as acceptor_name'),
+                    'qdr.created_at');
+//            return $res;
 
+            return Datatables::of($res)
+                ->editColumn('created_at', function ($a) {
+                    Carbon::setLocale("tr-TR");
+                    $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
+                    return $d;
+                })
+                ->filterColumn('created_at', function ($query, $keyword) {
+                    $query->whereRaw("DATE_FORMAT(created_at,'%d.%m.%Y') like ?", ["%{$keyword}%"]);
+                })
+                ->make(true);
+        }
+        else if ($user->isAn('elector')) {
+
+        }
+        else if ($user->isA('teacher')) {
+
+        }
+        else {
+
+        }
     }
 }

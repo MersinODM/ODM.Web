@@ -27,6 +27,17 @@ const Messenger = {
       if (callback !== null) callback(value)
     })
   },
+  showInfoV2 (message) {
+    return new Promise((resolve, reject) => {
+      swal({
+        title: 'Bilgi mesajı!',
+        text: message,
+        icon: 'info',
+        button: 'Tamam'
+      }).then(value => resolve(value))
+        .catch(err => reject(err))
+    })
+  },
   showSuccess (message, callback = null) {
     swal({
       title: 'Başarı mesajı!',
@@ -56,6 +67,28 @@ const Messenger = {
         buttons: buttons
       }).then(value => resolve(value))
         .catch(reason => reject(reason))
+    })
+  },
+  showInput (message) {
+    return new Promise((resolve, reject) => {
+      swal({
+        title: 'Dikkat!',
+        text: message,
+        icon: 'warning',
+        showCancelButton: true,
+        closeOnConfirm: false,
+        content: 'input',
+        buttons: {
+          cancel: 'İptal',
+          confirm: {
+            text: 'Tamam'
+          }
+        }
+      }).then((value) => {
+        resolve(value)
+      }).catch(reason => {
+        reject(reason)
+      })
     })
   }
 }

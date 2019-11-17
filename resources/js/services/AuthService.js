@@ -78,6 +78,13 @@ const AuthService = {
         // console.log(e)
       })
   },
+  getUserId () {
+    let token = localStorage.getItem(Constants.accessToken)
+    if (token) {
+      return jwt(localStorage.getItem(Constants.accessToken)).sub
+    }
+    return null
+  },
   createRegisterRequest (data) {
     return new Promise((resolve, reject) => {
       http.post('/auth/register', data)

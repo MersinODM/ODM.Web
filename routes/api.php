@@ -77,16 +77,18 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get("learning_outcomes/find_by/content", "LO\LearningOutcomeController@findByContentWithPaging");
     Route::get("learning_outcomes/last_saved/{size}", "LO\LearningOutcomeController@getLastSavedRecords");
 
-    // Question Api route tanımlamaları
+    // Question Api route tanımlamaları aslında users/{id}/questions şeklinde url tanımlamaları yapılabilirdi
     Route::post("questions", "Question\QuestionController@create");
     Route::get("questions", "Question\QuestionController@findByContentAndClassLevelAndBranch");
     Route::get("questions/last_saved/{size}", "Question\QuestionController@getLastQuestions");
+    Route::get("questions/delete_requests", "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
     Route::get("questions/{id}", "Question\QuestionController@findById");
     Route::get("questions/{id}/file", "Question\QuestionController@getFile");
     Route::post("questions/{id}/evaluations", "Question\QuestionEvalController@create");
     Route::get("questions/{id}/evaluations", "Question\QuestionEvalController@findByQuestionId");
     Route::post("questions/{id}/revisions", "Question\QuestionRevisionController@create");
     Route::get("questions/{id}/revisions", "Question\QuestionRevisionController@findByQuestionId");
+    Route::post("questions/{id}/delete_request", "Question\QuestionDeleteRequestController@create"); //Silme isteği api route
 
     Route::get("stats/question_counts/total", "Stats\StatController@getQuestionCounts");
 //  Route::get("stats/question_counts/by_lo/{lo_id}", "Stats\StatController@getQuestionCountByLO");

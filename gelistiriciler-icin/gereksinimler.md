@@ -1,8 +1,8 @@
 # Gereksinimler
 
-## ODM.Web'i kendi sunucumuzda\(MEB\) kullanabilmem için en başta ne yapmam gerekiyor?
+## ODM.Web'i kendi sunucumuzda\(MEB\) kullanabilmemiz için en başta ne yapmam gerekiyor?
 
-Öncelikle bağlı bulunduğunuz Milli Eğitim Müdürlüğünün Bilgi İşlem Sorumlusundan sunucuya kuracağımız yazılım için modul kaydı yapmasını istememiz gerekiyor. Bu modül kaydına ilişkin bilgliler mail ya da whatsapp yoluyla tarafınıza verilebilir.
+Öncelikle bağlı bulunduğunuz Milli Eğitim Müdürlüğünün Bilgi İşlem Sorumlusundan sunucuya kuracağımız yazılım için modül kaydı yapmasını istememiz gerekiyor. Bu modül kaydına ilişkin bilgliler mail ya da whatsapp yoluyla tarafınıza verilebilir.
 
 Burada biraz daha bilgi vemenin yararlı olacağını düşünüyoruz. Geliştirdiğimiz yazılım modern web teknolojilerini\(webpack, Vue.js, Laravel 5.8 gibi\) desteklediği için modern bir PHP sürümüne ihtiyacımız olacak ayrıca aşağıda belirtilen maddeler olmazsa olmazlardan;
 

@@ -71,7 +71,7 @@ class AuthController extends Controller
                 //TODO json düzenlemesi yapılcak
                 return response()->json([
                     ResponseHelper::CODE => ResponseHelper::UN_AUTHORIZED,
-                    ResponseHelper::MESSAGE => 'Hatalı kullanıcı adı/şifre kullanmış olabilirsiniz veya hesabınız sistem yöneticileri tarafından engellenmiş olabilir!']);
+                    ResponseHelper::MESSAGE => 'Hatalı kullanıcı adı/şifre kullanmış olabilirsiniz veya hesabınız sistem yöneticileri tarafından etkisizleştirilmiş olabilir!']);
             }
         } catch (Exception $e) {
             // Bişeyler ters giderse ;-)

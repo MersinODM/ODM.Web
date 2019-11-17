@@ -135,7 +135,7 @@
                               İncele
                             </router-link>
                           </li>
-                          <li v-if="$isInRole('admin') || $isInRole('elector')">
+                          <li v-if="$isInRole('admin') || ($isInRole('elector') && userId !== b.creator_id)">
                             <router-link :to="{ name: 'questionEvaluation', params: { questionId: b.id }}">
                               Değerlendir
                             </router-link>
@@ -167,6 +167,7 @@ import BranchService from '../../services/BranchService'
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
+import AuthService from '../../services/AuthService'
 
 export default {
   name: 'QuestionList',
@@ -175,6 +176,7 @@ export default {
   },
   data () {
     return {
+      userId: '',
       branches: [],
       selectedBranch: '',
       classLevels: range(4, 13),
@@ -185,23 +187,17 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    QuestionService.getLastSavedQuestions(30)
-            .then(value => {
-              next(vm => {
-                vm.questionsGroup = chunk(value, 3)
-              })
-            })
-            .catch(err => Messenger.showError(err.message))
-  },
-  created () {
-    this.getBranches()
+    Promise.all([BranchService.getBranches(), QuestionService.getLastSavedQuestions(30)])
+           .then(([branches, questions]) => {
+             next(vm => {
+               vm.questionsGroup = chunk(questions, 3)
+               vm.branches = branches
+               vm.userId = AuthService.getUserId()
+             })
+           })
+           .catch(err => Messenger.showError(err.message))
   },
   methods: {
-    getBranches () {
-      BranchService.getBranches()
-                   .then(data => { this.branches = data })
-                   .catch(() => { Messenger.showError(MessengerConstants.errorMessage) })
-    },
     searchQuestions () {
       this.$validator.validateAll().then(value => {
         if (value) {
