@@ -5,6 +5,12 @@
   -->
 
 <!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
+  -->
+
+<!--
   - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
   - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -77,7 +83,7 @@ export default {
         serverSide: true,
         responsive: true,
         ajax: {
-          url: `${vm.$getBasePath()}/api/users`,
+          url: `${vm.$getBasePath()}/api/users/passives`,
           dataType: 'json',
           type: 'POST',
           beforeSend (xhr) {
@@ -161,16 +167,15 @@ export default {
             className: 'text-center',
             width: '15%',
             render (data, type, row, meta) {
-              if (row['activator_name'] !== null) {
-                return '<div class="btn-group">' +
-                    '<button class="btn btn-xs btn-info">Göster</button>' +
-                    '<button class="btn btn-xs btn-danger">Pasif.</button>' +
-                    '</div>'
-              }
+              // if (row['activator_name'] !== null) {
+              //   return '<div class="btn-group">' +
+              //       '<button class="btn btn-xs btn-info">Göster</button>' +
+              //       '<button class="btn btn-xs btn-danger">Pasif.</button>' +
+              //       '</div>'
+              // }
               return '<div class="btn-group">' +
-                  '<button class="btn btn-xs btn-info">Göster</button>' +
-                  '<button class="btn btn-xs btn-warning">Onayla</button>' +
-                  '<button class="btn btn-xs btn-danger">Sil</button>' +
+                  '<button class="btn btn-xs btn-info">Atifleştir</button>' +
+                  '<button class="btn btn-xs btn-danger">Tamamen Sil</button>' +
                   '</div>'
             },
             searchable: false,
@@ -204,15 +209,15 @@ export default {
           }
         }).then(value => {
         if (value) {
-          UserService.delete(data.id)
-                     .then(res => {
-                       Messenger.showSuccess(res)
-                       table.ajax.reload()
-                     })
-                     .catch(err => {
-                       Messenger.showError(err)
-                       table.ajax.reload()
-                     })
+          // UserService.delete(data.id)
+          //            .then(res => {
+          //              Messenger.showSuccess(res)
+          //              table.ajax.reload()
+          //            })
+          //            .catch(err => {
+          //              Messenger.showError(err)
+          //              table.ajax.reload()
+          //            })
         }
       })
     })
@@ -220,12 +225,12 @@ export default {
     table.on('click', '.btn-warning', (e) => {
       let data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
-      vm.isApproving = true
-      UserService.approveUser(data.id, (resp) => {
-        Messenger.showSuccess(resp.message)
-        table.ajax.reload()
-        vm.isApproving = false
-      })
+      // vm.isApproving = true
+      // UserService.approveUser(data.id, (resp) => {
+      //   Messenger.showSuccess(resp.message)
+      //   table.ajax.reload()
+      //   vm.isApproving = false
+      // })
     })
   }
 }

@@ -1,4 +1,10 @@
 <!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
+  -->
+
+<!--
   -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
   -  geliştirilen bütün kaynak kodlar
   -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
@@ -166,12 +172,18 @@ export default {
             this.isSigningIn = true
             AuthService.login(credentials)
                        .then(value => {
-                         this.$router.push({ name: 'stats' })
-                         this.isSigningIn = false
+                         if (value.code === 401) {
+                           Messenger.showWarning(value.message)
+                           this.isSigningIn = false
+                         } else {
+                           this.$router.push({ name: 'stats' })
+                           this.isSigningIn = false
+                         }
                        })
-                       .catch(() => {
+                       .catch((err) => {
+                         console.log(err)
                          this.isSigningIn = false
-                         Messenger.showWarning('Oturumunuz açılmadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
+                         Messenger.showWarning('Oturumunuz açılamadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
                                  'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
                        })
           }

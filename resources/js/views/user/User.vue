@@ -1,4 +1,10 @@
 <!--
+  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+  -  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
+  -->
+
+<!--
   - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
   - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -254,7 +260,7 @@ export default {
       })
     },
     save () {
-      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
+      Messenger.showPrompt('Kullanıcı bilgilerini güncellemek istediğinize emin misiniz?',
         {
           cancel: 'İptal',
           ok: {
@@ -272,7 +278,7 @@ export default {
             role: this.selectedRole
           }
           UserService.update(this.user.id, data)
-                     .then(() => Messenger.showSuccess('Kayıt başarılı'))
+                     .then((resp) => Messenger.showSuccess(resp.message))
                      .catch(() => Messenger.showError('Kayıt işlemi başarısız!'))
         }
       })

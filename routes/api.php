@@ -5,6 +5,12 @@
  *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
  */
 
+/**
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
+ */
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +55,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::put("users/{id}", "Auth\UserManagementController@update");
     Route::delete("users/{id}", "Auth\UserManagementController@delete");
     Route::post("users", "Auth\UserQueryController@getUsers");
+    Route::post("users/passives", "Auth\UserQueryController@getPassiveUsers");
     Route::get("users/current/roles", "Auth\RoleController@getCurrentUserRoles");
     Route::get("users/{userId}/roles", "Auth\RoleController@getUserRoles");
     Route::get("roles", "Auth\RoleController@getAllRoles");

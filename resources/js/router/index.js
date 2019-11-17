@@ -1,4 +1,10 @@
 /*
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
+ *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
+ *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
+ */
+
+/*
  *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
  *  geliştirilen bütün kaynak kodlar
  *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
@@ -34,6 +40,7 @@ import QuestionEvaluation from '../views/question/QuestionEvaluation'
 import Stats from '../views/info/Stats'
 import LearningOutcomeList from '../views/learningOutcome/LearningOutcomeList'
 import NewInstitution from "../views/institution/NewInstitution";
+import PassiveUserList from "../views/user/PassiveUserList";
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -116,6 +123,11 @@ const router = new Router({
           path: '/users/list',
           name: 'users',
           component: UserList
+        },
+        {
+          path: '/users/passives/list',
+          name: 'passiveUsers',
+          component: PassiveUserList
         },
         {
           path: '/users/:id',
