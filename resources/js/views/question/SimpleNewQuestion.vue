@@ -32,7 +32,7 @@
             <div class="row">
               <div class="col-md-3">
                 <div
-                  v-if="$isInRole('admin')"
+                  v-if="checkBranches"
                   class="form-group has-feedback"
                   :class="{'has-error': errors.has('branch')}"
                 >
@@ -228,6 +228,8 @@ import BranchService from '../../services/BranchService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import LearningOutcomesService from '../../services/LearningOutcomesService'
+import UserService from '../../services/UserService'
+import AuthService from '../../services/AuthService'
 
 export default {
   name: 'SimpleNewQuestion',
@@ -257,13 +259,35 @@ export default {
       classLevels: range(4, 13),
       selectedLearningOutCome: null,
       learningOutComes: [],
-      isSending: false
+      isSending: false,
+      user: ''
     }
   },
-  created () {
-    if (this.$isInRole('admin')) {
-      this.getBranches()
+  computed: {
+    checkBranches () {
+      if (this.user) {
+        return this.$isInRole('admin') || this.user.branch.code === 'SB'
+      }
+      return false
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    Promise.all([BranchService.getBranches(), UserService.findById(AuthService.getUserId())])
+            .then(([branches, user]) => {
+              next(vm => {
+                vm.user = user
+                // Burada kullanıcı sosyal bilgiler öğretmeni ise
+                // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
+                if (user.branch.code === 'SB') {
+                  vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
+                } else {
+                  vm.branches = branches
+                }
+              })
+            })
+            .catch(() => {
+              Messenger.showError(MessengerConstants.errorMessage)
+            })
   },
   methods: {
     clearClasses () {
@@ -278,15 +302,6 @@ export default {
         this.selectedLearningOutCome = null
         this.$refs.loDD.clearSelection()
       }
-    },
-    getBranches () {
-      BranchService.getBranches()
-                       .then(data => {
-                         this.branches = data
-                       })
-                       .catch(() => {
-                         Messenger.showError(MessengerConstants.errorMessage)
-                       })
     },
     searchLearningOutcomes: debounce(function (search, loading) {
       if (search.length < 3) return

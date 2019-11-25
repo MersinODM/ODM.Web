@@ -19,6 +19,7 @@ use App\Http\Controllers\ResponseHelper;
 use App\Models\Branch;
 use App\Models\LearningOutcome;
 use App\Models\Question;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,7 +102,8 @@ class QuestionController extends ApiController
                 DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
                 "lo.class_level",
                 "u.full_name as creator",
-                "b.name as branch"
+                "b.name as branch",
+                DB::raw("(SELECT IF(COUNT(id) >= 1, true, false) FROM question_delete_requests as qdr WHERE qdr.question_id = q.id) as has_delete_request")
             )
             ->first();
         if (isset($question)) {
@@ -124,6 +126,7 @@ class QuestionController extends ApiController
             $branch_id = $user->branch_id;
         $class_level = $request->query('class_level');
         $searched_content = $request->query('searched_content');
+        //TODO sosyalciler için düzenleme yapılacak
         if ($user->isAn('admin') || $user->isAn('elector')) {
             $res = DB::select("SELECT q.id, q.creator_id, q.keywords, lo.code, lo.content FROM questions as q
                                 INNER JOIN learning_outcomes lo on q.learning_outcome_id = lo.id
@@ -141,6 +144,7 @@ class QuestionController extends ApiController
                 ]);
             return response()->json($res, 200);
         }
+        //TODO Sosyalciler için bir düzenleme yapılacak
         if ($user->isAn('teacher')) {
             $id = $user->id;
             // PArametre sayısı aynı olmazsa ve eşsiz parametre adı olmazsa hata basıypor
@@ -169,7 +173,7 @@ class QuestionController extends ApiController
     public function getLastQuestions($size)
     {
         $user = Auth::user();
-        if ($user->isAn('admin') || $user->isAn('elector')) {
+        if ($user->isAn('admin')) {
             $res = DB::table("questions as q")
                 ->join("learning_outcomes as l", "l.id", "=", "q.learning_outcome_id")
                 ->orderBy("q.created_at", "desc")
@@ -178,13 +182,28 @@ class QuestionController extends ApiController
                 ->get();
             return response()->json($res, 200);
         }
+        if ($user->isAn('elector')) {
+            //TODO sadece benim sorularım diyerek sorgulama yapabilmeli değerlendirici
+            $branch_id = $user->branch_id;
+            $res = DB::table("questions as q")
+                ->join("learning_outcomes as l", "l.id", "=", "q.learning_outcome_id")
+                ->orderBy("q.created_at", "desc")
+                ->take($size)
+                ->select("q.id", "q.creator_id", "q.keywords", "l.code", "l.content");
+            if ($user->branch->code == 'SB') {
+                $brancIds = Branch::where('code', 'SB')
+                    ->orWhere('code', 'İTA')
+                    ->get('id');
+                $res->whereIn("q.lesson_id", $brancIds);
+            }
+
+            return response()->json($res->get(), 200);
+        }
         if ($user->isAn('teacher')) {
             $id = $user->id;
-            $branch_id = $user->branch_id;
             // PArametre sayısı aynı olmazsa ve eşsiz parametre adı olmazsa hata basıypor
             $res = DB::table("questions as q")
                 ->join("learning_outcomes as l", "l.id", "=", "q.learning_outcome_id")
-                ->where("q.lesson_id", $branch_id)
                 ->where("q.creator_id", $id)
                 ->orderBy("q.created_at", "desc")
                 ->take($size)

@@ -6,14 +6,19 @@
 
 import http from '../helpers/axios'
 
-const RoleService = {
-  getRoles () {
+export const QuestionDeleteService = {
+  approve (questionId) {
     return new Promise((resolve, reject) => {
-      http.get('/roles')
-        .then(response => resolve(response.data))
+      http.put(`/questions/${questionId}/delete_request`)
+        .then(value => resolve(value.data))
         .catch(err => reject(err))
+    })
+  },
+  delete (id, questionId) {
+    return new Promise((resolve, reject) => {
+      http.delete(`/questions/${questionId}/delete_requests/${id}`)
+        .then(response => resolve(response.data))
+        .catch(error => reject(error))
     })
   }
 }
-
-export default RoleService

@@ -10,7 +10,7 @@ export default {
     // Base path bulma fplugin i
     Vue.prototype.$getBasePath = () => {
       if (!window.location.host.includes('localhost')) {
-        return window.location.pathname.split('/').slice(0, -2).join('/')
+        return window.location.pathname.split('/').slice(0, 2).join('/')
       }
       return ''
     }

@@ -5,11 +5,6 @@
  *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
  */
 
-/**
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
- *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
- */
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +49,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get("users/{id}", "Auth\UserQueryController@getUser");
     Route::put("users/{id}", "Auth\UserManagementController@update");
     Route::delete("users/{id}", "Auth\UserManagementController@delete");
+    Route::put("users/{id}/reactivate", "Auth\UserManagementController@reactivate");
     Route::post("users", "Auth\UserQueryController@getUsers");
     Route::post("users/passives", "Auth\UserQueryController@getPassiveUsers");
     Route::get("users/current/roles", "Auth\RoleController@getCurrentUserRoles");
@@ -81,7 +77,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post("questions", "Question\QuestionController@create");
     Route::get("questions", "Question\QuestionController@findByContentAndClassLevelAndBranch");
     Route::get("questions/last_saved/{size}", "Question\QuestionController@getLastQuestions");
-    Route::get("questions/delete_requests", "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
+    Route::post("questions/delete_requests", "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
     Route::get("questions/{id}", "Question\QuestionController@findById");
     Route::get("questions/{id}/file", "Question\QuestionController@getFile");
     Route::post("questions/{id}/evaluations", "Question\QuestionEvalController@create");
@@ -89,6 +85,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post("questions/{id}/revisions", "Question\QuestionRevisionController@create");
     Route::get("questions/{id}/revisions", "Question\QuestionRevisionController@findByQuestionId");
     Route::post("questions/{id}/delete_request", "Question\QuestionDeleteRequestController@create"); //Silme isteği api route
+    Route::put("questions/{id}/delete_request", "Question\QuestionDeleteRequestController@approveDeleteRequest"); //Silme isteği onaylama
+    Route::delete("questions/{question_id}/delete_requests/{id}", "Question\QuestionDeleteRequestController@delete"); //Silme isteği silme
 
     Route::get("stats/question_counts/total", "Stats\StatController@getQuestionCounts");
 //  Route::get("stats/question_counts/by_lo/{lo_id}", "Stats\StatController@getQuestionCountByLO");

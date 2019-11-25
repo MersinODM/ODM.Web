@@ -22,3 +22,7 @@ yarn-error.log
 .idea/php-test-framework.xml
 .idea/php.xml
 package-lock.json
+/public/css/
+/public/fonts/
+/public/images/
+/public/js/

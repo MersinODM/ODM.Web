@@ -16,15 +16,19 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Branch extends Model
 {
-  protected $fillable = [
-    "name", "code"
-  ];
+    protected $table = 'branches';
 
-  public function users() {
-    return $this->hasMany(User::class, "branch_id");
-  }
+    protected $fillable = [
+        "name", "code"
+    ];
 
-  public function questions() {
-    return $this->hasMany(Question::class, 'lesson_id');
-  }
+    public function users()
+    {
+        return $this->hasMany(User::class, "branch_id");
+    }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class, 'lesson_id');
+    }
 }

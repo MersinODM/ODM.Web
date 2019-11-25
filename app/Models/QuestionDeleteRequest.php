@@ -9,6 +9,7 @@ class QuestionDeleteRequest extends Model
     protected $fillable = [
         "question_id", "creator_id",
         "comment", "is_accepted",
-        "acceptor_id"
+        "acceptor_id",
+        "learning_outcome_id"
     ];
 }

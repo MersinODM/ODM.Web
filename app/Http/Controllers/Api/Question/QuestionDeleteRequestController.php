@@ -1,9 +1,8 @@
 <?php
 /**
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
- *  geliştirilen bütün kaynak kodlar
+ *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
  *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
  */
 
 namespace App\Http\Controllers\Api\Question;
@@ -23,6 +22,7 @@ use Yajra\DataTables\DataTables;
 class QuestionDeleteRequestController extends ApiController
 {
     public function create($id, Request $request) {
+        //TODO GAte tanımlaması yapılacak
         $validationResult = $this->apiValidator($request, [
             'reason' => 'required'
         ]);
@@ -50,16 +50,30 @@ class QuestionDeleteRequestController extends ApiController
     }
 
     public function approveDeleteRequest($id) {
-        $qdr = QuestionDeleteRequest::findOrFail($id);
-        $question = Question::findOrFail($qdr->question_id);
         try {
+            $qdr = QuestionDeleteRequest::findOrFail($id);
+            $question = Question::findOrFail($qdr->question_id);
             DB::beginTransaction();
+            $qdr->update(["acceptor_id" => Auth::id()]);
             $question->delete();
             Storage::delete($question->content_url);
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Soru silme işlemi başarılı!"]);
+            return response()->json([ResponseHelper::MESSAGE => "Soru tümüyle silinmiştir."]);
         }
         catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json($this->apiException($exception), 500);
+        }
+    }
+
+    public function delete($question_id,$id) {
+        try {
+            $qdr = QuestionDeleteRequest::findOrFail($id);
+            DB::beginTransaction();
+            $qdr->delete();
+            DB::commit();
+            return response()->json([ResponseHelper::MESSAGE => "Soru silme isteği silinmiştir."]);
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
         }
@@ -75,16 +89,18 @@ class QuestionDeleteRequestController extends ApiController
                 ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
                 ->where("users.deleted_at", "=", null)
                 ->select(
-                    'users.id',
+                    'qdr.id',
+                    'qdr.question_id',
                     'qdr.comment',
-                    'qdr.is_accepted',
                     'users.full_name',
                     DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
                     DB::raw('um.full_name as acceptor_name'),
                     'qdr.created_at');
-//            return $res;
 
             return Datatables::of($res)
+                ->orderColumn(
+                    "full_name",
+                    "created_at")
                 ->editColumn('created_at', function ($a) {
                     Carbon::setLocale("tr-TR");
                     $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
@@ -95,14 +111,34 @@ class QuestionDeleteRequestController extends ApiController
                 })
                 ->make(true);
         }
-        else if ($user->isAn('elector')) {
+        else  {
+            $res = DB::table('users')
+                ->join(DB::raw('question_delete_requests as qdr'), 'qdr.creator_id', '=', 'users.id')
+                ->join(DB::raw('learning_outcomes as lo'), 'lo.id', '=', 'qdr.learning_outcome_id')
+                ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
+                ->where("users.deleted_at", "=", null)
+                ->where('users.id', '=', Auth::id())
+                ->select(
+                    'qdr.id',
+                    'qdr.comment',
+                    'users.full_name',
+                    DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
+                    DB::raw('um.full_name as acceptor_name'),
+                    'qdr.created_at');
 
-        }
-        else if ($user->isA('teacher')) {
-
-        }
-        else {
-
+            return Datatables::of($res)
+                ->orderColumn(
+                    "full_name",
+                    "created_at")
+                ->editColumn('created_at', function ($a) {
+                    Carbon::setLocale("tr-TR");
+                    $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
+                    return $d;
+                })
+                ->filterColumn('created_at', function ($query, $keyword) {
+                    $query->whereRaw("DATE_FORMAT(created_at,'%d.%m.%Y') like ?", ["%{$keyword}%"]);
+                })
+                ->make(true);
         }
     }
 }
