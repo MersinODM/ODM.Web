@@ -101,7 +101,8 @@ class QuestionController extends ApiController
                 DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
                 "lo.class_level",
                 "u.full_name as creator",
-                "b.name as branch"
+                "b.name as branch",
+                DB::raw("(SELECT IF(COUNT(id) >= 1, true, false) FROM question_delete_requests as qdr WHERE qdr.question_id = q.id) as has_delete_request")
             )
             ->first();
         if (isset($question)) {

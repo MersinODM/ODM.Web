@@ -24,6 +24,13 @@ const UserService = {
       })
       .catch(() => Messenger.showError(MessengerConstants.errorMessage))
   },
+  reactivate (id) {
+    return new Promise((resolve, reject) => {
+      http.put(`/users/${id}/reactivate`)
+        .then(response => resolve(response.data))
+        .catch(err => reject(err.data))
+    })
+  },
   update (id, user) {
     return new Promise((resolve, reject) => {
       http.put(`/users/${id}`, user)

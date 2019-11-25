@@ -136,6 +136,21 @@ class UserManagementController extends ApiController
         }
     }
 
+    public function reactivate($id)
+    {
+        try {
+            DB::beginTransaction();
+            User::withTrashed()
+                ->where('id', $id)
+                ->restore();
+            DB::commit();
+            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı başarıyla aktifleştirildi"]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json($this->apiException($exception), 500);
+        }
+    }
+
     /**
      * Kullanıcı silme işlemi bu işlem hard delete değil soft delete işlemidir.
      * Yani silinen kullanıcı users tablosu içinde var olmaya devam edecektir.

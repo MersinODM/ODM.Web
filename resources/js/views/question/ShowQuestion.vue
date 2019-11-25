@@ -12,7 +12,10 @@
           <div class="box-header with-border">
             <h4>
               Soru İnceleme
-              <div class="pull-right">
+              <div
+                v-if="isOwner"
+                class="pull-right"
+              >
                 <button
                   class="btn btn-danger pull-right"
                   style="margin-right: 10px"
@@ -227,14 +230,15 @@
 </template>
 
 <script>
-  import QuestionService from '../../services/QuestionService'
-  import Messenger from '../../helpers/messenger'
-  import {MessengerConstants} from '../../helpers/constants'
-  import RevisionService from '../../services/CommentService'
-  import usersImg from '../../../images/users.png'
-  import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+import QuestionService from '../../services/QuestionService'
+import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
+import RevisionService from '../../services/CommentService'
+import usersImg from '../../../images/users.png'
+import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+import AuthService from '../../services/AuthService'
 
-  export default {
+export default {
   name: 'ShowQuestion',
   data () {
     return {
@@ -262,6 +266,13 @@
     },
     checkEvals () {
       return this.evaluationList !== null && this.evaluationList.length > 0
+    },
+    isOwner () {
+      if (this.question) {
+        return ((this.question.creator_id === AuthService.getUserId() && !this.question.has_delete_request) ||
+                (this.$isInRole('admin') && !this.question.has_delete_request))
+      }
+      return false
     }
   },
   beforeRouteEnter (to, from, next) {
