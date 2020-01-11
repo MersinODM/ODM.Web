@@ -19,8 +19,8 @@ const BranchService = {
   getAllForRegisterReq (name) {
     return new Promise((resolve, reject) => {
       http.get('/auth/branches')
-          .then(response => { resolve(response.data) })
-          .catch(error => { reject(error) })
+        .then(response => { resolve(response.data) })
+        .catch(error => { reject(error) })
     })
   },
   getBranchesWithStats () {
@@ -28,9 +28,10 @@ const BranchService = {
       http.get('/branches/with_stats').then(response => {
         if (response === undefined) reject(new Error('Tanımsız cevap'))
         resolve(response.data)
-      }).catch(error => {
-        reject(error)
       })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
   getBranches () {
@@ -38,9 +39,10 @@ const BranchService = {
       http.get('/branches').then(response => {
         if (response === undefined) reject(new Error('Tanımsız cevap'))
         resolve(response.data)
-      }).catch(error => {
-        reject(error)
       })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
   save: function (branch, callback) {

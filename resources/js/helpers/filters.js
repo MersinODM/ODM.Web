@@ -11,3 +11,9 @@ Vue.filter('year', (value) => {
   // console.log('Moment Filter: ' + value)
   return moment(value).format('YYYY')
 })
+
+Vue.filter('trDate', (value) => {
+  if (!value) return ''
+  // console.log('Moment Filter: ' + value)
+  return moment(value).format('L')
+})

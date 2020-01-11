@@ -115,11 +115,28 @@
           <span class="mdi mdi-account-plus" />
         </router-link>
       </div>
-      <spinner
-        v-if="isSigningIn"
-        spin-style="wave"
-      />
       <!-- /.login-box-body -->
+      <div class="alert alert-success">
+        <a
+          rel="license"
+          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+        >
+          <img
+            alt="Creative Commons Lisansı"
+            style="border-width:0"
+            src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+          >
+        </a> Bu eser <a
+          rel="license"
+          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+        > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
+        <a
+          class="btn btn-block btn-social btn-github"
+          href="https://github.com/electropsycho/ODM.Web"
+        >
+          <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
+        </a>
+      </div>
     </div>
     <!-- /.login-box -->
   </div>
@@ -129,7 +146,6 @@
 // import axios from 'axios';
 // import { mapGetters, mapActions } from 'vuex';
 // import { createNamespacedHelpers } from 'vuex';
-import Spinner from '../../components/Spinner'
 import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
@@ -138,54 +154,47 @@ import vueRecaptcha from 'vue-recaptcha'
 // const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
   name: 'Login',
-  components: { Spinner, vueRecaptcha },
+  components: { vueRecaptcha },
   data () {
     return {
       recaptchaVerified: false,
       captchaToken: '',
       email: '',
-      password: '',
-      isSigningIn: false
+      password: ''
     }
   },
   beforeCreate () {
     document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
     document.body.classList.add('hold-transition', 'login-page')
   },
-  // created () {
-  //   if (process.env.NODE_ENV === 'production') {
-  //     this.siteKey = process.env.MIX_GOOGLE_RECAPTCHA_KEY
-  //   } else {
-  //     this.siteKey = process.env.MIX_GOOGLE_RECAPTCHA_KEY_LOCAL
-  //   }
-  // },
   methods: {
     loginUser () {
       this.$validator.validateAll()
         .then(valRes => {
           if (valRes) {
-            let credentials = {
+            const credentials = {
               email: this.email,
               password: this.password,
               recaptcha: this.captchaToken
             }
             this.isSigningIn = true
+            const loader = this.$loading.show()
             AuthService.login(credentials)
-                       .then(value => {
-                         if (value.code === 401) {
-                           Messenger.showWarning(value.message)
-                           this.isSigningIn = false
-                         } else {
-                           this.$router.push({ name: 'stats' })
-                           this.isSigningIn = false
-                         }
-                       })
-                       .catch((err) => {
-                         console.log(err)
-                         this.isSigningIn = false
-                         Messenger.showWarning('Oturumunuz açılamadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
+              .then(value => {
+                if (value.code === 401) {
+                  Messenger.showWarning(value.message)
+                  loader.hide()
+                } else {
+                  this.$router.push({ name: 'stats' })
+                  loader.hide()
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+                this.isSigningIn = false
+                Messenger.showWarning('Oturumunuz açılamadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
                                  'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
-                       })
+              })
           }
         })
     },
@@ -201,7 +210,6 @@ export default {
         .then(value => next())
         .catch(reason => {
           console.log(reason)
-          this.isSigningIn = false
           Messenger.showError(MessengerConstants.errorMessage)
           next('/login')
         })

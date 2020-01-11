@@ -27,7 +27,7 @@
           </a>
           <ul class="treeview-menu">
             <li>
-              <router-link :to="{name: 'questionList' }">
+              <router-link :to="{name: 'questionTableList' }">
                 <span class="mdi mdi-book-multiple" />
                 Soruları Listele
               </router-link>
@@ -36,6 +36,12 @@
               <router-link :to="{name: 'newQuestion' }">
                 <span class="mdi mdi-book-plus" />
                 Soru Oluştur
+              </router-link>
+            </li>
+            <li v-if="$isInRole('admin') || $isInRole('elector')">
+              <router-link :to="{name: 'questionEvaluationRequests' }">
+                <span class="mdi mdi-test-tube" />
+                Soru Değerlendirme İstekleri
               </router-link>
             </li>
             <li>
@@ -58,12 +64,13 @@
           </a>
           <ul class="treeview-menu">
             <li>
-              <a><span class="mdi mdi-book-multiple" />
+              <router-link :to="{name: 'underConstruction' }">
+                <span class="mdi mdi-book-multiple" />
                 Sınavları Listele
-              </a>
+              </router-link>
             </li>
             <li>
-              <router-link :to="{name: 'home' }">
+              <router-link :to="{name: 'underConstruction' }">
                 <span class="mdi mdi-book-plus" />
                 Sınav Oluştur
               </router-link>

@@ -273,21 +273,21 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([BranchService.getBranches(), UserService.findById(AuthService.getUserId())])
-            .then(([branches, user]) => {
-              next(vm => {
-                vm.user = user
-                // Burada kullanıcı sosyal bilgiler öğretmeni ise
-                // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
-                if (user.branch.code === 'SB') {
-                  vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
-                } else {
-                  vm.branches = branches
-                }
-              })
-            })
-            .catch(() => {
-              Messenger.showError(MessengerConstants.errorMessage)
-            })
+      .then(([branches, user]) => {
+        next(vm => {
+          vm.user = user
+          // Burada kullanıcı sosyal bilgiler öğretmeni ise
+          // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
+          if (!vm.$isInRole('admin') && user.branch.code === 'SB') {
+            vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
+          } else {
+            vm.branches = branches
+          }
+        })
+      })
+      .catch(() => {
+        Messenger.showError(MessengerConstants.errorMessage)
+      })
   },
   methods: {
     clearClasses () {
@@ -306,20 +306,21 @@ export default {
     searchLearningOutcomes: debounce(function (search, loading) {
       if (search.length < 3) return
       loading(true)
-      let data = {
+      const data = {
         class_level: this.selectedClassLevel,
         content: search,
         lesson_id: this.selectedBranch
       }
       LearningOutcomesService.findByCodeOrContent(data)
-              .then(value => {
-                this.learningOutComes = value
-                loading(false)
-              })
-              .catch(reason => {
-                Messenger.showError(MessengerConstants.errorMessage)
-                loading(false)
-              }).finally(() => loading(false))
+        .then(value => {
+          this.learningOutComes = value
+          loading(false)
+        })
+        .catch(reason => {
+          Messenger.showError(MessengerConstants.errorMessage)
+          loading(false)
+        })
+        .finally(() => loading(false))
     }, 800),
     selectQuestionGraphic (event) {
       URL.revokeObjectURL(this.questionFileURL)
@@ -334,27 +335,28 @@ export default {
     },
     save () {
       this.$validator.validateAll()
-          .then(valRes => {
-            if (valRes) {
-              this.isSending = true
-              let fd = new FormData()
-              fd.append('lesson_id', this.selectedBranch)
-              fd.append('learning_outcome_id', this.selectedLearningOutCome)
-              fd.append('difficulty', this.selectedDifficulty)
-              fd.append('keywords', this.keywords)
-              fd.append('correct_answer', this.selectedCorrectAnswer)
-              fd.append('question_file', this.questionFile, this.questionFile.name)
-              QuestionService.save(fd, progress => {})
-                             .then(value => {
-                               this.isSending = false
-                               Messenger.showInfo('Soru kaydı başarılı')
-                             })
-                             .catch(reason => {
-                               this.isSending = false
-                               Messenger.showError()
-                             })
-            }
-          })
+        .then(valRes => {
+          if (valRes) {
+            this.isSending = true
+            const fd = new FormData()
+            fd.append('lesson_id', this.selectedBranch)
+            fd.append('learning_outcome_id', this.selectedLearningOutCome)
+            fd.append('difficulty', this.selectedDifficulty)
+            fd.append('keywords', this.keywords)
+            fd.append('correct_answer', this.selectedCorrectAnswer)
+            fd.append('question_file', this.questionFile, this.questionFile.name)
+            QuestionService.save(fd, progress => {})
+              .then(value => {
+                this.isSending = false
+                Messenger.showInfoV2('Soru kaydı başarılı')
+                  .then(() => this.$router.push({ name: 'questionTableList' }))
+              })
+              .catch(reason => {
+                this.isSending = false
+                Messenger.showError()
+              })
+          }
+        })
     }
   }
 }

@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
       $table->unsignedInteger("unit_id");
       $table->string("name");
       $table->string("phone")->nullable();
+      $table->string("province")->nullable();
 
       $table->foreign('unit_id')
         ->references('id')->on('units');

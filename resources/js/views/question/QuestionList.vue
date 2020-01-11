@@ -7,6 +7,18 @@
 
 <template>
   <section class="content">
+    <!--    <loading-->
+    <!--      :active.sync="isLoading"-->
+    <!--      :is-full-page="true"-->
+    <!--      :height="128"-->
+    <!--      :width="128"-->
+    <!--      :color="color"-->
+    <!--      :loader="loader"-->
+    <!--    >-->
+    <!--      <h3 v-if="useSlot">-->
+    <!--        Loading ...-->
+    <!--      </h3>-->
+    <!--    </loading>-->
     <div class="row">
       <div class="col-md-12">
         <div class="box">
@@ -140,9 +152,9 @@
                               Değerlendir
                             </router-link>
                           </li>
-                        <!--                        <li><a href="#">Öğretmen Sayısı <span class="pull-right badge bg-aqua">{{ b.userCount }}</span></a></li>-->
-                        <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
-                        <!--                      <li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
+                          <!--                        <li><a href="#">Öğretmen Sayısı <span class="pull-right badge bg-aqua">{{ b.userCount }}</span></a></li>-->
+                          <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
+                          <!--                      <li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
                         </ul>
                       </div>
                     </div>
@@ -176,6 +188,9 @@ export default {
   },
   data () {
     return {
+      isLoading: false,
+      loader: 'spinner',
+      color: '#007bff',
       userId: '',
       branches: [],
       selectedBranch: '',
@@ -188,27 +203,38 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([BranchService.getBranches(), QuestionService.getLastSavedQuestions(30)])
-           .then(([branches, questions]) => {
-             next(vm => {
-               vm.questionsGroup = chunk(questions, 3)
-               vm.branches = branches
-               vm.userId = AuthService.getUserId()
-             })
-           })
-           .catch(err => Messenger.showError(err.message))
+    .then(([branches, questions]) => {
+      next(vm => {
+        vm.questionsGroup = chunk(questions, 3)
+        vm.branches = branches
+        vm.userId = AuthService.getUserId()
+      })
+    })
+    .catch(err => Messenger.showError(err.message))
   },
   methods: {
     searchQuestions () {
-      this.$validator.validateAll().then(value => {
+      this.$validator.validateAll()
+      .then(value => {
         if (value) {
+          // this.isLoading = true
+          let loader = this.$loading.show()
           let params = {
             branchId: this.selectedBranch,
             classLevel: this.selectedClassLevel,
             searchedContent: this.searchedContent
           }
           QuestionService.searchQuestion(params)
-                         .then(res => { this.questionsGroup = chunk(res, 3) })
-                         .catch(e => Messenger.showError(MessengerConstants.errorMessage))
+          .then(res => {
+            this.questionsGroup = chunk(res, 3)
+            // this.isLoading = false
+            loader.hide()
+          })
+          .catch(e => {
+            Messenger.showError(MessengerConstants.errorMessage)
+            // this.isLoading = false
+            loader.hide()
+          })
         }
       })
     }

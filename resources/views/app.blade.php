@@ -2,10 +2,10 @@
 <html style="height: auto; min-height: 100%;">
 <head profile="http://www.w3.org/2005/10/profile">
   <title>Nevşehir ÖDM</title>
-  <base href="{{url('/')}}">
+  <base href="{{ url('/') }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="base-url" content="{{url('/')}}">
+  <meta name="base-url" content="{{ url('/') }}">
   <link rel="icon" type="image/png" href="{{asset('images/Logo.png')}}">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -26,10 +26,10 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.20/r-2.2.3/datatables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/tr.js" integrity="sha256-nVA6aRSQuRLGLSqtxE/RRKTymG1QwvyvvH5w8jORUwM=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-<script src="{{asset('js/manifest.js')}}" type="application/javascript"></script>
-<script src="{{asset('js/vendor.js')}}" type="application/javascript"></script>
-<script src="{{asset('js/main.js')}}" type="application/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/tr.js" integrity="sha256-nVA6aRSQuRLGLSqtxE/RRKTymG1QwvyvvH5w8jORUwM=" crossorigin="anonymous"></script>
+<script src="{{ asset('js/manifest.js') }}" type="application/javascript"></script>
+<script src="{{ asset('js/vendor.js') }}" type="application/javascript"></script>
+<script src="{{ asset('js/main.js') }}" type="application/javascript"></script>
 </body>
 </html>

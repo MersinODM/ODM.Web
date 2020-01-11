@@ -12,8 +12,15 @@ const UserService = {
   findById (id) {
     return new Promise((resolve, reject) => {
       http.get(`/users/${id}`)
-          .then(response => resolve(response.data))
-          .catch(error => reject(error))
+        .then(response => resolve(response.data))
+        .catch(error => reject(error))
+    })
+  },
+  findElectorsByBranchId(branchId) {
+    return new Promise((resolve, reject) => {
+      http.get(`/branches/${branchId}/electors`)
+        .then(value => resolve(value.data))
+        .catch(reason => reject(reason.data))
     })
   },
   approveUser (id, callback) {
@@ -41,8 +48,8 @@ const UserService = {
   delete (id) {
     return new Promise((resolve, reject) => {
       http.delete(`/users/${id}`)
-          .then(resp => resolve(resp.data))
-          .catch(error => reject(error))
+        .then(resp => resolve(resp.data))
+        .catch(error => reject(error))
     })
   }
 }

@@ -8,44 +8,35 @@
           </div>
           <div class="box-body">
             <div class="col-md-12">
-              <div class="row">
-                <div class="col-md-12">
-                  <object
-                    type="application/pdf"
-                    :data="questionFile"
-                    height="600pt"
-                    style="width: 100%"
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <h5 style="font-weight: bold">
-                    Madde Kökü/Anahtar Kelimeler
-                  </h5>
-                  <p
-                    v-if="question != null"
-                    v-html="question.keywords"
-                  />
-                  <h5 style="font-weight: bold">
-                    Kazanım
-                  </h5>
-                  <p v-if="question != null">
-                    {{ question.learning_outcome }}
-                  </p>
-                  <h5 style="font-weight: bold">
-                    Sınıf seviyesi
-                  </h5>
-                  <p v-if="question != null">
-                    {{ question.class_level }}
-                  </p>
-                </div>
-              </div>
-              <div class="row">
+              <question
+                :question="question"
+                :question-file="questionFile"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="hasOpenEval"
+      class="row"
+    >
+      <div class="col-md-12">
+        <div class="box box-primary">
+          <div class="box-header with-border">
+            <h3 class="box-title">
+              Değerlendirme Kaydet
+            </h3>
+          </div>
+          <div class="box-body">
+            <div class="col-md-12">
+              <div
+                class="row"
+              >
                 <div class="col-md-offset-4 col-md-4">
                   <div
                     class="form-group has-feedback"
-                    :class="{'has-error': errors.has('point')}"
+                    :class="{'has-error': errors.has('evalPoint')}"
                   >
                     <label>Değerlendirme Puanı</label>
                     <v-select
@@ -54,7 +45,7 @@
                       :options="points"
                       :reduce="p => p.key"
                       label="title"
-                      name="difficulty"
+                      name="evalPoint"
                       placeholder="Puanınızı seçiniz"
                     >
                       <template
@@ -71,32 +62,42 @@
                       </template>
                     </v-select>
                     <span
-                      v-if="errors.has('point')"
+                      v-if="errors.has('evalPoint')"
                       class="help-block"
-                    >{{ errors.first('point') }}</span>
+                    >{{ errors.first('evalPoint') }}</span>
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                   </div>
-                  <div class="form-group has-feedback">
+                  <div
+                    v-if="point <= 3"
+                    class="form-group has-feedback"
+                    :class="{'has-error': errors.has('evalComment')}"
+                  >
                     <textarea
                       v-model="comment"
+                      v-validate="'required'"
+                      name="evalComment"
                       class="form-control"
                       style="max-width: 100%; min-width: 100%; min-height: 60px"
                       placeholder="Değerlendirmenizi kısaca açıklayınız."
                     />
                     <span class="glyphicon glyphicon-magnet form-control-feedback" />
+                    <span
+                      v-if="errors.has('evalComment')"
+                      class="help-block"
+                    >{{ errors.first('evalComment') }}</span>
                   </div>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-offset-5 col-md-2">
-                  <div class="text-center">
-                    <button
-                      class="btn btn-success"
-                      @click="saveEval"
-                    >
-                      KAYDET
-                    </button>
+                <div class="row">
+                  <div class="col-md-offset-5 col-md-2">
+                    <div class="text-center">
+                      <button
+                        class="btn btn-success"
+                        @click="saveEval"
+                      >
+                        KAYDET
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -106,7 +107,7 @@
       </div>
     </div>
     <div
-      v-show="evaluationList !== null && evaluationList.length > 0"
+      v-show="filteredEvalList !== null && filteredEvalList.length > 0"
       class="row"
     >
       <div class="col-md-12">
@@ -120,17 +121,17 @@
           <div class="box-body">
             <div class="direct-chat-messages">
               <div
-                v-for="(evaluation, index) in evaluationList"
+                v-for="(evaluation, index) in filteredEvalList"
                 :key="evaluation.id"
                 class="direct-chat-msg"
               >
                 <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
+                  <span class="direct-chat-name pull-left">Değerlendirici {{ evaluation.code }}</span>
                   <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
                 </div>
                 <img
                   class="direct-chat-img"
-                  src="/otomasyon/images/users.png"
+                  :src="userImage"
                   alt="Message User Image"
                 >
                 <div class="direct-chat-text">
@@ -152,10 +153,13 @@ import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import usersImg from '../../../images/users.png'
+import AuthService from '../../services/AuthService'
+import Question from '../../components/Question'
+import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 
 export default {
-  name: 'QuestionEvaluation',
-  components: { vSelect },
+  name: 'EvaluateQuestion',
+  components: { vSelect, Question },
   data () {
     return {
       question: null,
@@ -170,44 +174,75 @@ export default {
       point: '',
       comment: '',
       evaluationList: [],
+      filteredEvalList: [],
       userImage: usersImg
     }
   },
   beforeRouteEnter (to, from, next) {
-    let questionId = to.params.questionId
+    const questionId = to.params.questionId
     QuestionService.findById(questionId)
-                     .then((res) => {
-                       next(vm => {
-                         vm.question = res
-                         vm.getFile()
-                         vm.getEvals()
-                       })
-                     })
+      .then((res) => {
+        next(vm => {
+          vm.question = res
+          vm.getFile()
+          vm.getEvals()
+        })
+      })
+  },
+  computed: {
+    hasOpenEval () {
+      if (this.question) {
+        const res = this.question.status === QuestionStatuses.IN_ELECTION &&
+                (this.evaluationList.filter(value => value.elector_id === AuthService.getUserId() &&
+                        value.is_open && value.code === this.$route.query.code).length > 0)
+        return res
+      }
+      return false
+    }
   },
   methods: {
     getFile () {
+      const loader = this.$loading.show()
       QuestionService.getFile(this.question.id)
-                     .then((res) => { this.questionFile = res })
-                     .catch(error => {
-                       Messenger.showError(MessengerConstants.errorMessage)
-                       console.log(error)
-                     })
+        .then((res) => {
+          this.questionFile = res
+          loader.hide()
+        })
+        .catch(() => {
+          Messenger.showError(MessengerConstants.errorMessage)
+          loader.hide()
+        })
+    },
+    getQuestion () {
+      const questionId = this.$route.params.questionId
+      QuestionService.findById(questionId)
+        .then(value => { this.question = value })
+        .catch(reason => Messenger.showError(reason))
     },
     getEvals () {
       QuestionEvaluationService.findByQuestionId(this.question.id)
-                               .then(qeList => { this.evaluationList = qeList })
-                               .catch(() => Messenger.showError(MessengerConstants.errorMessage))
+        .then(qeList => {
+          this.evaluationList = qeList
+          this.filteredEvalList = qeList.filter(q => q.point !== null && q.point > 0)
+        })
+        .catch(() => Messenger.showError(MessengerConstants.errorMessage))
     },
     saveEval () {
-      let data = { point: this.point, comment: this.comment }
-      QuestionEvaluationService.save(this.question.id, data)
-                               .then(res => {
-                                 Messenger.showInfo(res.message)
-                                 if (res.eval_count > 0) {
-                                   this.getEvals()
-                                 }
-                               })
-                               .catch(() => { Messenger.showError(Messenger.showError(MessengerConstants.errorMessage)) })
+      this.$validator.validateAll()
+        .then(value => {
+          if (!value) return
+          const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
+          if (this.point >= 4) data.comment = this.points.filter(p => p.key === this.point)[0].title
+          QuestionEvaluationService.save(this.question.id, data)
+            .then(res => {
+              Messenger.showInfo(res.message)
+              this.getEvals()
+              this.getQuestion()
+            })
+            .catch(() => {
+              Messenger.showError(Messenger.showError(MessengerConstants.errorMessage))
+            })
+        })
     }
   }
 }

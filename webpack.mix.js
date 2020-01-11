@@ -23,36 +23,24 @@ mix.webpackConfig({
     jquery: 'jQuery',
     'jquery.dataTables': 'jquery.dataTables',
     moment: 'moment'
-  },
-  module: {
-    rules: [
-      {
-        test: /\.lang$/,
-        loader: 'file-loader'
-      },
-      {
-        test: /\.png$/,
-        loader: 'url-loader?name=images/[name].[ext]'
-        // loader: "file-loader?name=images/[name].[ext]"
-      }
-    ]
   }
 })
 
-// mix.autoload({
-//   jquery: ['$', 'window.jQuery', 'jQuery'], // more than one
-//   moment: 'moment' // only one
-// })
-
 mix.copyDirectory('resources/images', 'public/images')
-mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 // mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
-mix.setResourceRoot('/css')
+// mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
+
 mix.js('resources/js/main.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')
-   .options({
-     processCssUrls: false
-   })
-  .extract(['vue'])
+  .options({
+    processCssUrls: false
+  })
+  .extract(['vue', 'vue-router', 'vee-validate'])
 
-if (!mix.inProduction()) { mix.sourceMaps() }
+if (!mix.inProduction()) {
+  mix.sourceMaps()
+}
+
+if (mix.inProduction()) {
+  mix.setResourceRoot('/otomasyon')
+}

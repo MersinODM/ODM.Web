@@ -13,6 +13,7 @@ use App\Http\Controllers\ResponseHelper;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -83,62 +84,57 @@ class QuestionDeleteRequestController extends ApiController
         //Gate tanımlamaları ile daha sistematik çözülebilirdi
         $user = Auth::user();
         if($user->isAn("admin")) {
-            $res = DB::table('users')
-                ->join(DB::raw('question_delete_requests as qdr'), 'qdr.creator_id', '=', 'users.id')
-                ->join(DB::raw('learning_outcomes as lo'), 'lo.id', '=', 'qdr.learning_outcome_id')
-                ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
-                ->where("users.deleted_at", "=", null)
-                ->select(
-                    'qdr.id',
-                    'qdr.question_id',
-                    'qdr.comment',
-                    'users.full_name',
-                    DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
-                    DB::raw('um.full_name as acceptor_name'),
-                    'qdr.created_at');
+            $res = $this->getTable();
 
-            return Datatables::of($res)
-                ->orderColumn(
-                    "full_name",
-                    "created_at")
-                ->editColumn('created_at', function ($a) {
-                    Carbon::setLocale("tr-TR");
-                    $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
-                    return $d;
-                })
-                ->filterColumn('created_at', function ($query, $keyword) {
-                    $query->whereRaw("DATE_FORMAT(created_at,'%d.%m.%Y') like ?", ["%{$keyword}%"]);
-                })
-                ->make(true);
+            return $this->buildDataTable($res);
         }
         else  {
-            $res = DB::table('users')
-                ->join(DB::raw('question_delete_requests as qdr'), 'qdr.creator_id', '=', 'users.id')
-                ->join(DB::raw('learning_outcomes as lo'), 'lo.id', '=', 'qdr.learning_outcome_id')
-                ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
-                ->where("users.deleted_at", "=", null)
-                ->where('users.id', '=', Auth::id())
-                ->select(
-                    'qdr.id',
-                    'qdr.comment',
-                    'users.full_name',
-                    DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
-                    DB::raw('um.full_name as acceptor_name'),
-                    'qdr.created_at');
-
-            return Datatables::of($res)
-                ->orderColumn(
-                    "full_name",
-                    "created_at")
-                ->editColumn('created_at', function ($a) {
-                    Carbon::setLocale("tr-TR");
-                    $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
-                    return $d;
-                })
-                ->filterColumn('created_at', function ($query, $keyword) {
-                    $query->whereRaw("DATE_FORMAT(created_at,'%d.%m.%Y') like ?", ["%{$keyword}%"]);
-                })
-                ->make(true);
+            $res = $this->getTable()
+                ->where('users.id', '=', Auth::id());
+            return $this->buildDataTable($res);
         }
+    }
+
+    /**
+     * @param \Illuminate\Database\Query\Builder $table
+     * @return mixed
+     * @throws \Exception
+     */
+    private function buildDataTable(Builder $table)
+    {
+        return Datatables::of($table)
+            ->orderColumn(
+                "full_name",
+                "created_at")
+            ->editColumn('created_at', function ($a) {
+                Carbon::setLocale("tr-TR");
+                $d = strtotime($a->created_at) > 0 ? with(new Carbon($a->created_at))->formatLocalized("%d.%m.%Y") : '';
+                return $d;
+            })
+            ->filterColumn('created_at', function ($query, $keyword) {
+                $query->whereRaw("DATE_FORMAT(created_at,'%d.%m.%Y') like ?", ["%{$keyword}%"]);
+            })
+            ->make(true);
+    }
+
+    /**
+     * @return \Illuminate\Database\Query\Builder
+     */
+    private function getTable(): Builder
+    {
+        $res = DB::table('users')
+            ->join(DB::raw('question_delete_requests as qdr'), 'qdr.creator_id', '=', 'users.id')
+            ->join(DB::raw('learning_outcomes as lo'), 'lo.id', '=', 'qdr.learning_outcome_id')
+            ->leftJoin(DB::raw('users as um'), 'qdr.acceptor_id', '=', 'um.id')
+            ->where("users.deleted_at", "=", null)
+            ->select(
+                'qdr.id',
+                'qdr.question_id',
+                'qdr.comment',
+                'users.full_name',
+                DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
+                DB::raw('um.full_name as acceptor_name'),
+                'qdr.created_at');
+        return $res;
     }
 }

@@ -15,16 +15,16 @@ class StatController extends ApiController
 {
     public function getQuestionCounts() {
         if (Auth::user()->isAn("teacher", "elector")) {
-            $counts = DB::select("select (IF(is_passed, count(id), 0)) as valid_count,
-                                                (IF(!is_passed, count(id), 0)) as non_valid_count,
+            $counts = DB::select("select (IF(status, count(id), 0)) as valid_count,
+                                                (IF(!status, count(id), 0)) as non_valid_count,
                                                 count(id) as total_count 
                                   from questions
                                   where lesson_id = :branchId", ["branchId" => Auth::user()->branch_id])[0];
             return response()->json($counts);
         }
         if (Auth::user()->isAn("admin")) {
-            $counts = DB::select("select (IF(is_passed, count(id), 0)) as valid_count,
-                                               (IF(is_passed = 0, count(id), 0)) as non_valid_count,
+            $counts = DB::select("select (IF(status, count(id), 0)) as valid_count,
+                                               (IF(status = 0, count(id), 0)) as non_valid_count,
                                                count(id) as total_count 
                                         from questions")[0];
             return response()->json($counts);
@@ -44,8 +44,8 @@ class StatController extends ApiController
     public function getClasses() {
         if (Auth::user()->isAn("teacher", "elector")) {
             $classes = DB::select("select lo.class_level,
-                                            (IF(is_passed, count(q.id), 0)) as valid_count,
-                                            (IF(!q.is_passed, count(q.id), 0)) as non_valid_count,
+                                            (IF(status, count(q.id), 0)) as valid_count,
+                                            (IF(!q.status, count(q.id), 0)) as non_valid_count,
                                             count(q.id) as total_count from questions as q
                                         inner join learning_outcomes lo on q.learning_outcome_id = lo.id
                                         where q.lesson_id = :branchId
@@ -55,8 +55,8 @@ class StatController extends ApiController
         }
         elseif (Auth::user()->isAn("admin")) {
             $classes = DB::select("select lo.class_level,
-                                            (IF(is_passed, count(q.id), 0)) as valid_count,
-                                            (IF(!q.is_passed, count(q.id), 0)) as non_valid_count,
+                                            (IF(status, count(q.id), 0)) as valid_count,
+                                            (IF(!q.status, count(q.id), 0)) as non_valid_count,
                                             count(q.id) as total_count from questions as q
                                         inner join learning_outcomes lo on q.learning_outcome_id = lo.id
                                         group by lo.class_level
@@ -73,8 +73,8 @@ class StatController extends ApiController
                 $loQuestionCount = DB::select('select 
                                                    CONCAT(lo.code, " ", lo.content) as learning_outcome,
                                                     lo.id as learning_outcome_id,
-                                                    (IF(is_passed, count(q.id), 0)) as valid_count,
-                                                    (IF(is_passed = 0, count(q.id), 0)) as non_valid_count,
+                                                    (IF(status, count(q.id), 0)) as valid_count,
+                                                    (IF(status = 0, count(q.id), 0)) as non_valid_count,
                                                     count(q.id) as total_count
                                             from questions as q
                                             inner join learning_outcomes lo on q.learning_outcome_id = lo.id
@@ -88,8 +88,8 @@ class StatController extends ApiController
                 $loQuestionCount = DB::select('select 
                                                     CONCAT(lo.code, " ", lo.content) as learning_outcome,
                                                     lo.id as learning_outcome_id,
-                                                    (IF(is_passed, count(q.id), 0)) as valid_count,
-                                                    (IF(is_passed = 0, count(q.id), 0)) as non_valid_count,
+                                                    (IF(status, count(q.id), 0)) as valid_count,
+                                                    (IF(status = 0, count(q.id), 0)) as non_valid_count,
                                                     count(q.id) as total_count
                                             from questions as q
                                             inner join learning_outcomes lo on q.learning_outcome_id = lo.id
@@ -104,8 +104,8 @@ class StatController extends ApiController
                 $loQuestionCount = DB::select('select 
                                                    CONCAT(lo.code, " ", lo.content) as learning_outcome,
                                                     lo.id as learning_outcome_id,
-                                                    (IF(is_passed, count(q.id), 0)) as valid_count,
-                                                    (IF(is_passed = 0, count(q.id), 0)) as non_valid_count,
+                                                    (IF(status, count(q.id), 0)) as valid_count,
+                                                    (IF(status = 0, count(q.id), 0)) as non_valid_count,
                                                     count(q.id) as total_count
                                             from questions as q
                                             right outer join learning_outcomes lo on q.learning_outcome_id = lo.id
@@ -119,8 +119,8 @@ class StatController extends ApiController
                 $loQuestionCount = DB::select('select 
                                                     CONCAT(lo.code, " ", lo.content) as learning_outcome,
                                                     lo.id as learning_outcome_id,
-                                                    (IF(is_passed, count(q.id), 0)) as valid_count,
-                                                    (IF(is_passed = 0, count(q.id), 0)) as non_valid_count,
+                                                    (IF(status, count(q.id), 0)) as valid_count,
+                                                    (IF(status = 0, count(q.id), 0)) as non_valid_count,
                                                     count(q.id) as total_count
                                             from questions as q
                                             right outer join learning_outcomes lo on q.learning_outcome_id = lo.id

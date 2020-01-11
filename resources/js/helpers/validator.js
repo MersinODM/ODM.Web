@@ -35,7 +35,9 @@ const dictionary = {
       comment: 'Gözden geçirme yorumu',
       instName: 'Okul/Kurum adı',
       instId: 'Okul/Kurum kodu',
-      unit: 'Birim/Şube'
+      unit: 'Birim/Şube',
+      evalPoint: 'Değerlendirme puanı',
+      evalComment: 'Değerlendirme yorumu'
     }
   }
 }

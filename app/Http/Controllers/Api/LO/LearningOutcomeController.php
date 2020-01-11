@@ -97,6 +97,15 @@ class LearningOutcomeController extends ApiController
     }
 
 
+    public function findById($id)
+    {
+        $lo = LearningOutcome::where('id', $id)
+            ->select(DB::raw("CONCAT(code, ' ', content) as learning_outcome"))
+            ->first();
+        return response()->json($lo);
+    }
+
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

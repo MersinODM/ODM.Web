@@ -14,11 +14,12 @@ const RevisionService = {
           'Content-Type': `multipart/form-data; boundary=${revision._boundary}`
         }
       })
-          .then(response => {
-            resolve(response.data)
-          }).catch(e => {
-            reject(e)
-          })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(e => {
+          reject(e)
+        })
     })
   },
   getRevisions (questionId) {
@@ -26,7 +27,8 @@ const RevisionService = {
       http.get(`questions/${questionId}/revisions`)
         .then(response => {
           resolve(response.data)
-        }).catch(e => {
+        })
+        .catch(e => {
           reject(e)
         })
     })

@@ -14,6 +14,7 @@ import VueMask from 'v-mask'
 import ACL from './plugins/ACL'
 import VueAxios from 'vue-axios'
 import PathManPlugin from './plugins/PathManPlugin'
+import Loading from 'vue-loading-overlay'
 
 Window.Vue = Vue
 
@@ -23,6 +24,14 @@ Vue.use(PathManPlugin)
 Vue.use(PrettyCheckbox)
 Vue.use(VeeValidate)
 Vue.use(VueMask)
+// Vue.use(require('vue-moment'))
+Vue.use(Loading, {
+  // container: this.$refs.overlayContainer,
+  color: '#007bff',
+  height: 128,
+  width: 128,
+  opacity: 0.8
+})
 
 Validator.localize('tr', tr)
 Validator.localize(dictionary)

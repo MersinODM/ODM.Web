@@ -2,10 +2,16 @@
 
 namespace App\Providers;
 
+use App\Events\QuestionEvalCalculateRequired;
 use App\Listeners\NewUserReqListener;
+use App\Listeners\QuestionEvaulationListener;
 use App\Listeners\ResetPasswordListener;
+use App\Models\QuestionEvalRequest;
+use App\Models\QuestionsEvaluation;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use App\Events\ResetPasswordEvent;
+use App\Events\NewUserReqReceived;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -15,11 +21,14 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\NewUserReqReceived' => [
-            'App\Listeners\NewUserReqListener',
+        NewUserReqReceived::class => [
+            NewUserReqListener::class,
         ],
-        'App\Events\ResetPasswordEvent' => [
-            'App\Listeners\ResetPasswordListener',
+        ResetPasswordEvent::class => [
+            ResetPasswordListener::class,
+        ],
+        QuestionEvalCalculateRequired::class => [
+            QuestionEvaulationListener::class
         ]
     ];
 

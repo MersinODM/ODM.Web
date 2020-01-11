@@ -39,13 +39,14 @@ const Messenger = {
     })
   },
   showSuccess (message, callback = null) {
-    swal({
-      title: 'Başarı mesajı!',
-      text: message,
-      icon: 'success',
-      button: 'Tamam'
-    }).then(value => {
-      if (callback !== null) callback(value)
+    return new Promise((resolve, reject) => {
+      swal({
+        title: 'Başarı mesajı!',
+        text: message,
+        icon: 'success',
+        button: 'Tamam'
+      }).then(value => resolve(value))
+        .catch(reason => reject(reason))
     })
   },
   showWarning (message, callback = null) {

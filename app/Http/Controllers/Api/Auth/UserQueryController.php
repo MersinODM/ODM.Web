@@ -18,6 +18,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\ApiController;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Silber\Bouncer\Database\Role;
 use Yajra\DataTables\DataTables;
@@ -104,7 +105,7 @@ class UserQueryController extends ApiController
     /**
      * Kullanıcının rolünü getiren api fonk
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getUser($id)
     {
@@ -113,5 +114,19 @@ class UserQueryController extends ApiController
             $user->role = $user->getRoles()->first();
 //            $user->role = DB::table("roles")->where('name', $user->getRoles()[0])->select("id", "name", "title")->first();
         return response()->json($user);
+    }
+
+    /**
+     * Bu fonksiyon branşa göre değerlendiricileri listeler
+     * @param $branchId
+     * @return JsonResponse
+     */
+    public function findElectorByBranchId($branchId): JsonResponse
+    {
+        $electors = User::whereIs('elector')
+            ->where('branch_id', $branchId)
+            ->select('id', 'full_name')
+            ->get();
+        return response()->json($electors);
     }
 }

@@ -44,9 +44,9 @@ Route::group([
 Route::group(['middleware' => ['jwt.auth']], function () {
 
     //Kullanıcı ve Rol yönetim route tanımnlamaları
-    Route::put("users/{id}/confirm_req", "Auth\UserManagementController@confirmNewUserReq");
-    Route::get("users/current/permissions", "Auth\PermissionController@getCurrentUserPermissions");
-    Route::get("users/{id}", "Auth\UserQueryController@getUser");
+    Route::put('users/{id}/confirm_req', "Auth\UserManagementController@confirmNewUserReq");
+    Route::get('users/current/permissions', "Auth\PermissionController@getCurrentUserPermissions");
+    Route::get('users/{id}', "Auth\UserQueryController@getUser");
     Route::put("users/{id}", "Auth\UserManagementController@update");
     Route::delete("users/{id}", "Auth\UserManagementController@delete");
     Route::put("users/{id}/reactivate", "Auth\UserManagementController@reactivate");
@@ -62,6 +62,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete("branches/{id}", "Branch\BranchController@delete");
     Route::get("branches/with_stats", "Branch\BranchController@getBranchesWithStats");
     Route::get("branches", "Branch\BranchController@getBranches");
+    Route::get("branches/{branchId}/electors", "Auth\UserQueryController@findElectorByBranchId");
 
     //Kazanım Api route tanımlamaları
     Route::post("learning_outcomes", "LO\LearningOutcomeController@create");
@@ -69,19 +70,24 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete("learning_outcomes/{id}", "LO\LearningOutcomeController@delete");
     Route::get("learning_outcomes/findByClassLevelAndLessonId", "LO\LearningOutcomeController@findByClassLevelAndLessonId");
     Route::post("learning_outcomes/find_by/content_lesson_id_class_level", "LO\LearningOutcomeController@findByContentAndLessonIdAndClassLevel");
-    Route::get("learning_outcomes/find_by", "LO\LearningOutcomeController@findBy");
     Route::get("learning_outcomes/find_by/content", "LO\LearningOutcomeController@findByContentWithPaging");
+    Route::get("learning_outcomes/find_by", "LO\LearningOutcomeController@findBy");
     Route::get("learning_outcomes/last_saved/{size}", "LO\LearningOutcomeController@getLastSavedRecords");
+    Route::get("learning_outcomes/{id}", "LO\LearningOutcomeController@findById");
 
     // Question Api route tanımlamaları aslında users/{id}/questions şeklinde url tanımlamaları yapılabilirdi
     Route::post("questions", "Question\QuestionController@create");
     Route::get("questions", "Question\QuestionController@findByContentAndClassLevelAndBranch");
     Route::get("questions/last_saved/{size}", "Question\QuestionController@getLastQuestions");
+    Route::post("questions/list", "Question\QuestionQueryController@getQuestionList");
     Route::post("questions/delete_requests", "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
     Route::get("questions/{id}", "Question\QuestionController@findById");
     Route::get("questions/{id}/file", "Question\QuestionController@getFile");
-    Route::post("questions/{id}/evaluations", "Question\QuestionEvalController@create");
-    Route::get("questions/{id}/evaluations", "Question\QuestionEvalController@findByQuestionId");
+    Route::post("questions/{questionId}/evaluations", "Question\QuestionEvalRequestController@create");
+    Route::put("questions/{questionId}/evaluations", "Question\QuestionEvalRequestController@updateQuestionEval");
+    Route::get("questions/{questionId}/evaluations", "Question\QuestionEvalRequestController@findByQuestionId");
+    Route::delete("questions/{questionId}/evaluations/{code}", "Question\QuestionEvalRequestController@deleteByCode");
+    Route::post("questions/evaluation_requests", "Question\QuestionEvalRequestController@getQuestionRequestsList");
     Route::post("questions/{id}/revisions", "Question\QuestionRevisionController@create");
     Route::get("questions/{id}/revisions", "Question\QuestionRevisionController@findByQuestionId");
     Route::post("questions/{id}/delete_request", "Question\QuestionDeleteRequestController@create"); //Silme isteği api route

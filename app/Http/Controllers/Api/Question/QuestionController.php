@@ -28,6 +28,11 @@ use Illuminate\Support\Facades\Storage;
 
 class QuestionController extends ApiController
 {
+    /**
+     * Soru oluşturma api fonk.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request)
     {
 
@@ -68,6 +73,9 @@ class QuestionController extends ApiController
                     $expl = explode(".", $question_file->getClientOriginalName());
                     $ext = end($expl);
 
+                    //Tüm dosyalar ana klasör altındaki storage->app->public altına ekleniyot
+                    //Path formatı: public/Kazanım kodu-kullanıcı id-soru id-dosya uzantısı
+                    //örn: public/T-7-4-2-31-73.pdf
                     $path = 'public/' . $loCode . $question->creator_id . '-' . $question->id . '.' . $ext;
                     Storage::put($path, file_get_contents($question_file->getPathName()));
                     $question->content_url = $path;
@@ -94,10 +102,19 @@ class QuestionController extends ApiController
             ->select(
                 "q.id",
                 "q.creator_id",
+                "u.branch_id",
                 "q.keywords",
                 "q.difficulty",
                 "q.correct_answer",
-                "q.is_passed",
+                "q.status",
+                DB::raw("CASE
+                                WHEN status = 0 THEN 'İşleme alınmamış'
+                                WHEN status = 1 THEN 'Değerlendirme aşamasında'
+                                WHEN status = 2 THEN 'Sorulamayacak soru'
+                                WHEN status = 3 THEN 'Revizyon gerekli'
+                                WHEN status = 4 THEN 'Revizyon tamamlanmış'
+                                WHEN status = 5 THEN 'Havuza girmiş'
+                               END AS status_title"),
                 DB::raw("DATE_FORMAT(q.created_at, '%d.%m.%Y') as created_at"),
                 DB::raw("CONCAT(lo.code, ' ', lo.content) as learning_outcome"),
                 "lo.class_level",
@@ -190,13 +207,12 @@ class QuestionController extends ApiController
                 ->orderBy("q.created_at", "desc")
                 ->take($size)
                 ->select("q.id", "q.creator_id", "q.keywords", "l.code", "l.content");
-            if ($user->branch->code == 'SB') {
+            if ($user->branch->code === 'SB') {
                 $brancIds = Branch::where('code', 'SB')
                     ->orWhere('code', 'İTA')
                     ->get('id');
                 $res->whereIn("q.lesson_id", $brancIds);
             }
-
             return response()->json($res->get(), 200);
         }
         if ($user->isAn('teacher')) {
@@ -229,6 +245,4 @@ class QuestionController extends ApiController
         }
         return response()->json([ResponseHelper::MESSAGE => "Veritabanına dosya yolu kaydı girilmemiş!"], 404);
     }
-
-
 }

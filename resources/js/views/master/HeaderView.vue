@@ -171,7 +171,7 @@
             >
               <!-- The user image in the navbar-->
               <img
-                src="/otomasyon/images/Logo.png"
+                :src="image"
                 class="user-image"
                 alt="User Image"
               >
@@ -220,7 +220,6 @@
 <script>
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
-
 export default {
   name: 'NHeader',
   data () {
@@ -229,27 +228,9 @@ export default {
       user: null
     }
   },
-  watch: {
-    '$route': 'getUser'
-  },
   created () {
     this.getUser()
   },
-  // beforeRouteEnter (to, from, next) {
-  //   console.log('Before')
-  //   Auth.getUser((err, user) => {
-  //     console.log('Before' + user)
-  //     next(vm => vm.setUser(err, user))
-  //   })
-  // },
-  // beforeRouteUpdate (to, from, next) {
-  //   console.log('BeforeUpt')
-  //   this.post = null
-  //   Auth.getUser((err, user) => {
-  //     this.setData(err, user)
-  //     next()
-  //   })
-  // },
   methods: {
     logout () {
       Auth.logout()
@@ -271,6 +252,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang="sass">
 
 </style>

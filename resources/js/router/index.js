@@ -22,12 +22,17 @@ import NewLearningOutcome from '../views/learningOutcome/NewLearningOutcome'
 import QuestionList from '../views/question/QuestionList'
 import ShowQuestion from '../views/question/ShowQuestion'
 import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
-import QuestionEvaluation from '../views/question/QuestionEvaluation'
 import Stats from '../views/info/Stats'
 import LearningOutcomeList from '../views/learningOutcome/LearningOutcomeList'
 import NewInstitution from '../views/institution/NewInstitution'
 import PassiveUserList from '../views/user/PassiveUserList'
 import QuestionDeleteRequests from '../views/question/QuestionDeleteRequests'
+import QuestionTableList from '../views/question/QuestionTableList'
+import QuestionEvaluationRequestList from '../views/question/QuestionEvaluationRequestList'
+import EvaluateQuestion from '../views/question/EvaluateQuestion'
+import ReviseQuestion from '../views/question/ReviseQuestion'
+import SetEvaluatorsForQuestion from '../views/question/SetEvaluatorsForQuestion'
+import UnderConstruction from '../views/utils/UnderConstruction'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -52,22 +57,6 @@ const router = new Router({
       component: ForgotMyPassword
     },
     {
-      path: '/password/:token',
-      name: 'passwordReset',
-      component: ResetPassword,
-      props: (route) => ({ email: route.query.email }),
-      beforeEnter: (to, from, next) => {
-        if (to.query.email != null && to.params.token != null) {
-          next()
-          // console.log('To Query: ' + to.query.email)
-          // console.log('To Token: ' + to.params.token)
-          // console.log('From: ' + from.query.email)
-        } else {
-          next('/login')
-        }
-      }
-    },
-    {
       path: '/',
       component: MasterView,
       children: [
@@ -83,8 +72,8 @@ const router = new Router({
         },
         {
           path: '/questions/list',
-          name: 'questionList',
-          component: QuestionList
+          name: 'questionTableList',
+          component: QuestionTableList
         },
         {
           path: '/questions/delete_requests',
@@ -92,14 +81,29 @@ const router = new Router({
           component: QuestionDeleteRequests
         },
         {
+          path: '/questions/eval_requests',
+          name: 'questionEvaluationRequests',
+          component: QuestionEvaluationRequestList
+        },
+        {
           path: '/questions/:questionId',
           name: 'showQuestion',
           component: ShowQuestion
         },
         {
-          path: '/questions/:questionId/evaluate',
+          path: '/questions/:questionId/revise',
+          name: 'reviseQuestion',
+          component: ReviseQuestion
+        },
+        {
+          path: '/questions/:questionId/set_evaluators',
+          name: 'setEvaluators',
+          component: SetEvaluatorsForQuestion
+        },
+        {
+          path: '/questions/:questionId/evaluate/:qerId',
           name: 'questionEvaluation',
-          component: QuestionEvaluation
+          component: EvaluateQuestion
         },
         {
           path: '/learning_outcomes/new',
@@ -140,6 +144,11 @@ const router = new Router({
           path: 'institutions/new',
           name: 'newInst',
           component: NewInstitution
+        },
+        {
+          path: 'under_construction',
+          name: 'underConstruction',
+          component: UnderConstruction
         }
       ]
     },
@@ -147,6 +156,7 @@ const router = new Router({
   ]
 })
 
+// TODO Burada role denetimi yapılacak
 router.beforeEach((to, from, next) => {
   if (to.name === 'login' ||
         to.name === 'register' ||
@@ -155,7 +165,7 @@ router.beforeEach((to, from, next) => {
   ) {
     next()
   } else {
-    let token = localStorage.getItem(Constants.accessToken)
+    const token = localStorage.getItem(Constants.accessToken)
     if (token == null) {
       next('/login')
     } else {

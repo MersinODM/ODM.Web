@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Question;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
 use App\Models\Question;
 use App\Models\QuestionRevisions;
 use Illuminate\Http\Request;
@@ -41,6 +40,10 @@ class QuestionRevisionController extends ApiController {
                 "comment" => $comment
             ]);
             $rev->save();
+            Question::where('id', $id)
+                ->where('status', Question::NEED_REVISION)
+                ->update(['status' => Question::REVISION_COMPLETED]);
+            // TODO adminlere veya komisyona mail atmak gerekebilir
             Storage::delete($path);
             Storage::put($path, file_get_contents($question_file->getPathName()));
             DB::commit();

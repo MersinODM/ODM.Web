@@ -24,10 +24,11 @@ use Illuminate\Database\Eloquent\Model;
 class Institution extends Model
 {
     protected $fillable = [
-        "id",
-        "unit_id",
-        "name",
-        "phone"
+        'id',
+        'unit_id',
+        'name',
+        'phone',
+        'province'
     ];
 
     public function users()

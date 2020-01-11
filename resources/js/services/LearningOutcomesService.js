@@ -23,6 +23,13 @@ import Messenger from '../helpers/messenger'
 import { MessengerConstants } from '../helpers/constants'
 
 const LearningOutcomesService = {
+  findById (loId) {
+    return new Promise((resolve, reject) => {
+      http.get(`/learning_outcomes/${loId}`)
+        .then(value => resolve(value.data))
+        .catch(reason => reject(reason.message))
+    })
+  },
   findByContent (content, callback) {
     if (content.length >= 3) {
       http.get('/learning_outcomes', {

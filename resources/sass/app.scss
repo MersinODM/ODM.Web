@@ -5,12 +5,6 @@
  *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-/*!
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
- *  geliştirilen bütün kaynak kodlar
- *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
- */
 
 // Fonts
 // @import url('https://fonts.googleapis.com/css?family=Nunito');
@@ -28,7 +22,7 @@
 @import '~pace-js/themes/orange/pace-theme-minimal.css';
 @import "~animate.css/animate.min.css";
 @import '~vue-select/dist/vue-select.css';
-
+@import '~vue-loading-overlay/dist/vue-loading.css';
 
 
 .disabled {
