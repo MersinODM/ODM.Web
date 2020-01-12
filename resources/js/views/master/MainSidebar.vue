@@ -20,6 +20,28 @@
         <!-- Optionally, you can add icons to the links -->
         <li class="treeview">
           <a href="#"><i class="mdi mdi-account-question" />
+            <span>Ana Sayfa & İstatistikler</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right" />
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <router-link :to="{name: 'stats' }">
+                <span class="mdi mdi-book-multiple" />
+                Ana Sayfa
+              </router-link>
+            </li>
+            <li>
+              <router-link :to="{name: 'underConstruction' }">
+                <span class="mdi mdi-book-plus" />
+                Kazanım/Soru Sayılarını İncele
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#"><i class="mdi mdi-account-question" />
             <span>Soru Yönetimi</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right" />

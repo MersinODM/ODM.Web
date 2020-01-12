@@ -6,7 +6,8 @@ namespace App\Http\Controllers\Api\Stats;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
-use http\Env\Response;
+use App\Models\Branch;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,22 +15,70 @@ use Illuminate\Support\Facades\DB;
 class StatController extends ApiController
 {
     public function getQuestionCounts() {
-        if (Auth::user()->isAn("teacher", "elector")) {
-            $counts = DB::select("select (IF(status, count(id), 0)) as valid_count,
-                                                (IF(!status, count(id), 0)) as non_valid_count,
-                                                count(id) as total_count 
-                                  from questions
-                                  where lesson_id = :branchId", ["branchId" => Auth::user()->branch_id])[0];
-            return response()->json($counts);
+        // TODO Hardcoded teacher ve elector tanımları const a çekilecek
+        $user = Auth::user();
+        if ($user->isAn('teacher', 'elector')) {
+            $user = Auth::user();
+            $totalCountsQuery = DB::table('questions')
+                ->select(DB::raw('count(IF(status='.Question::APPROVED.', 1, null)) as approved'),
+                    DB::raw('count(IF(status='.Question::REVISION_COMPLETED.', 1, null)) as revision_completed'),
+                    DB::raw('count(IF(status='.Question::NEED_REVISION.', 1, null)) as need_revision'),
+                    DB::raw('count(IF(status='.Question::IN_ELECTION.', 1, null)) as in_election'),
+                    DB::raw('count(IF(status='.Question::WAITING_FOR_ACTION.', 1, null)) as waiting_for_action'),
+                    DB::raw('count(IF(status='.Question::NOT_MUST_ASKED.', 1, null)) as not_must_asked'),
+                    DB::raw('count(id) as total'));
+
+            // TODO sadece creator_id ye bakmak yeterli olsa gerek
+            $ownQuestionCountQuery = DB::table('questions')
+                ->where('creator_id', Auth::id())
+                ->select(DB::raw('count(IF(status='.Question::APPROVED.', 1, null)) as own_approved'),
+                    DB::raw('count(IF(status='.Question::REVISION_COMPLETED.', 1, null)) as own_revision_completed'),
+                    DB::raw('count(IF(status='.Question::NEED_REVISION.', 1, null)) as own_need_revision'),
+                    DB::raw('count(IF(status='.Question::IN_ELECTION.', 1, null)) as own_in_election'),
+                    DB::raw('count(IF(status='.Question::WAITING_FOR_ACTION.', 1, null)) as own_waiting_for_action'),
+                    DB::raw('count(IF(status='.Question::NOT_MUST_ASKED.', 1, null)) as own_not_must_asked'),
+                    DB::raw('count(id) as own_total'));
+
+            if ($user->branch->code === 'SB') {
+                $brancIds = Branch::where('code', 'SB')
+                    ->orWhere('code', 'İTA')
+                    ->get('id');
+                $totalCountsQuery->whereIn('lesson_id', $brancIds);
+                $ownQuestionCountQuery->whereIn('lesson_id', $brancIds);
+            } else {
+                $ownQuestionCountQuery->where('lesson_id', $user->branch_id);
+                $totalCountsQuery->where('lesson_id', $user->branch_id);
+            }
+            $ownQuestionCount = $ownQuestionCountQuery->first();
+            $totalCounts = $totalCountsQuery->first();
+            $res = (object)array_merge((array)$totalCounts, (array)$ownQuestionCount);
+            return response()->json($res);
         }
-        if (Auth::user()->isAn("admin")) {
-            $counts = DB::select("select (IF(status, count(id), 0)) as valid_count,
-                                               (IF(status = 0, count(id), 0)) as non_valid_count,
-                                               count(id) as total_count 
-                                        from questions")[0];
-            return response()->json($counts);
+        if ($user->isAn('admin')) {
+            $totalCounts = DB::table('questions')
+                ->select(DB::raw('count(IF(status='.Question::APPROVED.', 1, null)) as approved'),
+                    DB::raw('count(IF(status='.Question::REVISION_COMPLETED.', 1, null)) as revision_completed'),
+                    DB::raw('count(IF(status='.Question::NEED_REVISION.', 1, null)) as need_revision'),
+                    DB::raw('count(IF(status='.Question::IN_ELECTION.', 1, null)) as in_election'),
+                    DB::raw('count(IF(status='.Question::WAITING_FOR_ACTION.', 1, null)) as waiting_for_action'),
+                    DB::raw('count(IF(status='.Question::NOT_MUST_ASKED.', 1, null)) as not_must_asked'),
+                    DB::raw('count(id) as total'))
+                ->first();
+            $ownQuestionCount = DB::table('questions')
+                ->where('creator_id', Auth::id())
+                ->select(DB::raw('count(IF(status='.Question::APPROVED.', 1, null)) as own_approved'),
+                    DB::raw('count(IF(status='.Question::REVISION_COMPLETED.', 1, null)) as own_revision_completed'),
+                    DB::raw('count(IF(status='.Question::NEED_REVISION.', 1, null)) as own_need_revision'),
+                    DB::raw('count(IF(status='.Question::IN_ELECTION.', 1, null)) as own_in_election'),
+                    DB::raw('count(IF(status='.Question::WAITING_FOR_ACTION.', 1, null)) as own_waiting_for_action'),
+                    DB::raw('count(IF(status='.Question::NOT_MUST_ASKED.', 1, null)) as own_not_must_asked'),
+                    DB::raw('count(id) as own_total'))
+                ->first();
+            $res = (object)array_merge((array)$totalCounts, (array)$ownQuestionCount);
+            return response()->json($res);
+
         }
-        return response()->json(["valid_count" => 0, "non_valid_count" => 0, "total_count" => 0]);
+        return response()->json();
     }
 
 //    public function getQuestionCountByLO($lo_id) {

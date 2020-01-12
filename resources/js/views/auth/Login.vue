@@ -20,7 +20,7 @@
         <!--            <img src="images/Logo.PNG" class="img-circle" alt="...">-->
         <!--          </div>-->
         <!--        </div>-->
-        <a href="http://nevsehirodm.meb.gov.tr/"><b>Nevşehir</b>ÖDM</a>
+        <a :href="sanitizeUrl(settings.web_address)"><b>{{ settings.city }}</b>ÖDM</a>
       </div>
       <!-- /.login-logo -->
       <div class="login-box-body">
@@ -76,7 +76,7 @@
             <div style="text-align: center;">
               <vueRecaptcha
                 style="display: inline-block;"
-                sitekey="6LdWF8AUAAAAACRraqjw-IJFoL5iiR6ybzBBFtya"
+                :sitekey="settings.captcha_public_key"
                 @verify="markRecaptchaAsVerified"
               />
               <span
@@ -116,7 +116,7 @@
         </router-link>
       </div>
       <!-- /.login-box-body -->
-      <div class="alert alert-success">
+      <div class="alert alert-success text-justify">
         <a
           rel="license"
           href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
@@ -150,6 +150,8 @@ import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import vueRecaptcha from 'vue-recaptcha'
+import { SettingService } from '../../services/SettingService'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 
 // const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
@@ -160,14 +162,29 @@ export default {
       recaptchaVerified: false,
       captchaToken: '',
       email: '',
-      password: ''
+      password: '',
+      isSigningIn: false,
+      settings: null
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    SettingService.getSettings()
+      .then(value => {
+        next(vm => { vm.settings = value })
+      })
+      .catch(reason => {
+        console.log(reason)
+        location.reload()
+      })
   },
   beforeCreate () {
     document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
     document.body.classList.add('hold-transition', 'login-page')
   },
   methods: {
+    sanitizeUrl (url) {
+      return sanitizeUrl(url)
+    },
     loginUser () {
       this.$validator.validateAll()
         .then(valRes => {
@@ -183,9 +200,11 @@ export default {
               .then(value => {
                 if (value.code === 401) {
                   Messenger.showWarning(value.message)
+                  this.isSigningIn = false
                   loader.hide()
                 } else {
                   this.$router.push({ name: 'stats' })
+                  this.isSigningIn = true
                   loader.hide()
                 }
               })

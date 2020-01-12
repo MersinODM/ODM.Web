@@ -9,9 +9,9 @@
       <span
         class="logo-mini"
         style="font-size:small"
-      ><b>N</b>ÖDM</span>
+      ><b>{{ name[0] }}</b>ÖDM</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Nevşehir</b>ÖDM</span>
+      <span class="logo-lg"><b>{{ name }}</b>ÖDM</span>
     </router-link>
 
     <!-- Header Navbar -->
@@ -196,10 +196,13 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a
+                  <router-link
+                    :to="{name: 'underConstruction' }"
                     href="#"
                     class="btn btn-default btn-flat"
-                  >Ayarlarım</a>
+                  >
+                    Ayarlarım
+                  </router-link>
                 </div>
                 <div class="pull-right">
                   <a
@@ -220,16 +223,19 @@
 <script>
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
+import { SettingService } from '../../services/SettingService'
 export default {
   name: 'NHeader',
   data () {
     return {
       image: img,
-      user: null
+      user: null,
+      name: ''
     }
   },
   created () {
     this.getUser()
+    this.getSettings()
   },
   methods: {
     logout () {
@@ -240,6 +246,9 @@ export default {
         // console.log('Before' + user)
         this.setUser(err, user)
       })
+    },
+    getSettings () {
+      this.name = JSON.parse(localStorage.getItem('settings')).city
     },
     setUser (err, user) {
       if (err) {

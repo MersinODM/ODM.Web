@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="height: auto; min-height: 100%;">
+<html lang="tr" style="height: auto; min-height: 100%;" >
 <head profile="http://www.w3.org/2005/10/profile">
   <title>Nevşehir ÖDM</title>
   <base href="{{ url('/') }}">

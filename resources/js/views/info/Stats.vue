@@ -1,38 +1,168 @@
 <template>
   <section class="content">
     <div class="row">
-      <div class="col-md-4">
-        <div class="small-box bg-green">
-          <div class="inner">
-            <h3>{{ validCount }}</h3>
-
-            <p>Havuzdaki Soru Sayısı</p>
+      <div class="col-md-6">
+        <div class="box box-primary">
+          <div class="box-header">
+            <h4 v-if="$isInRole('admin')">
+              Genel Soru Sayıları
+            </h4>
+            <h4 v-else>
+              Branş/Alan Geneli Soru Sayıları
+            </h4>
           </div>
-          <div class="icon">
-            <i class="ion ion-stats-bars" />
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-gray">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">İşleme Alınmamış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.waiting_for_action }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-aqua">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Değerlendirmedeki Soru sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.in_election }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-yellow">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Revizyon Alması Gereken Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.need_revision }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-blue">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Revizyonu Tamamlanmış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.revision_completed }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-red">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Sorulamayacak Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.not_must_asked }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-green">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Onaylanmış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.approved }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <div class="info-box bg-navy">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Toplam Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.total }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="small-box bg-yellow">
-          <div class="inner">
-            <h3>{{ nonValidCount }}</h3>
-
-            <p>Değerlendirmedeki Soru sayısı</p>
+      <div class="col-md-6">
+        <div class="box box-primary">
+          <div class="box-header">
+            <h4>
+              Bana Ait Soru Sayıları
+            </h4>
           </div>
-          <div class="icon">
-            <i class="ion ion-person-add" />
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="small-box bg-aqua">
-          <div class="inner">
-            <h3>{{ total }}</h3>
-            <p>Toplam</p>
-          </div>
-          <div class="icon">
-            <i class="ion ion-bag" />
+          <div class="box-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-gray">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">İşleme Alınmamış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_waiting_for_action }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-aqua">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Değerlendirmedeki Soru sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_in_election }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-yellow">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Revizyon Alması Gereken Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_need_revision }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-blue">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Revizyonu Tamamlanmış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_revision_completed }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-red">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Sorulamayacak Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_not_must_asked }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="info-box bg-green">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Onaylanmış Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_approved }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <div class="info-box bg-navy">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center">Toplam Soru Sayısı</span>
+                    <span class="info-box-number text-center">{{ questionCounts.own_total }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -145,6 +275,7 @@ export default {
   name: 'Stats',
   data () {
     return {
+      questionCounts: null,
       total: 0,
       nonValidCount: 0,
       validCount: 0,
@@ -155,14 +286,19 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([StatService.getClasses(), StatService.getQuestionCounts()])
-           .then(([classes, questionCounts]) => {
-             next(vm => {
-               vm.validCount = questionCounts.valid_count
-               vm.nonValidCount = questionCounts.non_valid_count
-               vm.total = questionCounts.total_count
-               vm.classes = classes
-             })
-           })
+      .then(([classes, questionCounts]) => {
+        next(vm => {
+          vm.questionCounts = questionCounts
+          // vm.validCount = questionCounts.valid_count
+          // vm.nonValidCount = questionCounts.non_valid_count
+          // vm.total = questionCounts.total_count
+          vm.classes = classes
+        })
+      })
+      .catch(reason => {
+        console.log(reason)
+        location.reload()
+      })
 
     // StatService.getQuestionCounts()
     //            .then((counts) => {
@@ -179,13 +315,18 @@ export default {
     },
     getLearningOutComesByClass (cls) {
       StatService.getLearningOutcomes(cls, this.isAnyQuestionLO ? 0 : 1)
-              .then(data => { this.learningOutComes = data })
-              .catch(() => { Messenger.showError(MessengerConstants.errorMessage) })
+        .then(data => { this.learningOutComes = data })
+        .catch(() => { Messenger.showError(MessengerConstants.errorMessage) })
     }
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+.info-box {
+  min-height: 50px;
+}
+.info-box .info-box-content {
+  margin-left: auto;
+}
 </style>

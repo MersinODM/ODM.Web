@@ -35,6 +35,7 @@ Route::group([
     Route::post('login', 'Auth\AuthController@login');
     Route::get('institutions', 'Inst\InstitutionController@findByNameInstitutions');
     Route::get('branches', 'Branch\BranchController@getBranches');
+    Route::get('settings', 'Setting\SettingController@getSettings');
 
 });
 
@@ -42,6 +43,7 @@ Route::group([
 //İstekler yapılırken http://tam_url/otomasyon/api/ nin arkasına ilgili istekler eklenecek
 //TODO Swagger dökümantasyonu yapılabilir. Geliştircilerin hayatını kurtatır.
 Route::group(['middleware' => ['jwt.auth']], function () {
+
 
     //Kullanıcı ve Rol yönetim route tanımnlamaları
     Route::put('users/{id}/confirm_req', "Auth\UserManagementController@confirmNewUserReq");
