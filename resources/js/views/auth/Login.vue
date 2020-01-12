@@ -20,7 +20,7 @@
         <!--            <img src="images/Logo.PNG" class="img-circle" alt="...">-->
         <!--          </div>-->
         <!--        </div>-->
-        <a :href="sanitizeUrl(settings.web_address)"><b>{{ settings.city }}</b>ÖDM</a>
+        <a :href="sanitizeUrl"><b>{{ settings.city }}</b>ÖDM</a>
       </div>
       <!-- /.login-logo -->
       <div class="login-box-body">
@@ -73,10 +73,10 @@
             :class="{'has-error': !recaptchaVerified}"
             class="form-group has-feedback"
           >
-            <div style="text-align: center;">
+            <div v-if="siteKey" style="text-align: center;">
               <vueRecaptcha
                 style="display: inline-block;"
-                :sitekey="settings.captcha_public_key"
+                :sitekey="siteKey"
                 @verify="markRecaptchaAsVerified"
               />
               <span
@@ -164,27 +164,31 @@ export default {
       email: '',
       password: '',
       isSigningIn: false,
-      settings: null
+      settings: {},
+      web_address: '',
+      siteKey: ''
     }
   },
   beforeRouteEnter (to, from, next) {
     SettingService.getSettings()
       .then(value => {
-        next(vm => { vm.settings = value })
+        next(vm => {
+          vm.settings = value
+          vm.web_address = value.web_address
+          vm.siteKey = value.captcha_public_key
+        })
       })
-      .catch(reason => {
-        console.log(reason)
-        location.reload()
-      })
+  },
+  computed: {
+    sanitizeUrl () {
+      return sanitizeUrl(this.web_address)
+    }
   },
   beforeCreate () {
     document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
     document.body.classList.add('hold-transition', 'login-page')
   },
   methods: {
-    sanitizeUrl (url) {
-      return sanitizeUrl(url)
-    },
     loginUser () {
       this.$validator.validateAll()
         .then(valRes => {

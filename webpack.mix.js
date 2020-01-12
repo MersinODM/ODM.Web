@@ -35,7 +35,7 @@ mix.js('resources/js/main.js', 'public/js')
   .options({
     processCssUrls: false
   })
-  .extract(['vue', 'vue-router', 'vee-validate'])
+  .extract(['vue', 'vue-router', 'vee-validate', 'sweetalert', 'bootstrap'])
 
 if (!mix.inProduction()) {
   mix.sourceMaps()

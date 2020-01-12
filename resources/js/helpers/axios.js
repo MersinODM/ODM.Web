@@ -4,7 +4,7 @@
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-import pace from 'pace-js'
+import pace from 'pace-js/pace.min'
 import swal from 'sweetalert'
 import router from '../router'
 

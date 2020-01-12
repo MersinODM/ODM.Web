@@ -275,7 +275,7 @@ export default {
   name: 'Stats',
   data () {
     return {
-      questionCounts: null,
+      questionCounts: {},
       total: 0,
       nonValidCount: 0,
       validCount: 0,
@@ -295,10 +295,7 @@ export default {
           vm.classes = classes
         })
       })
-      .catch(reason => {
-        console.log(reason)
-        location.reload()
-      })
+      .catch(reason => {})
 
     // StatService.getQuestionCounts()
     //            .then((counts) => {

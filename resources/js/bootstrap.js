@@ -30,7 +30,7 @@ require('jquery-ui')
 require('jquery-slimscroll/jquery.slimscroll.min')
 require('fastclick/lib/fastclick')
 require('admin-lte/dist/js/adminlte.min')
-require('pace-js/pace.min')
+// require('pace-js/pace.min')
 
 // Datatables için err mode kapatılıyot tüm hataları biz yakalayacağız
 $.fn.dataTable.ext.errMode = 'none'
