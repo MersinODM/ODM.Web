@@ -19,14 +19,14 @@ class CreateUsersTable extends Migration
     });
 
     Schema::create("institutions", function (Blueprint $table) {
-      $table->unsignedInteger("id")->primary();
-      $table->unsignedInteger("unit_id");
-      $table->string("name");
-      $table->string("phone")->nullable();
-      $table->string("province")->nullable();
+        $table->unsignedInteger("id")->primary();
+        $table->unsignedInteger("unit_id");
+        $table->string("province")->nullable();
+        $table->string("name");
+        $table->string("phone")->nullable();
 
-      $table->foreign('unit_id')
-        ->references('id')->on('units');
+        $table->foreign('unit_id')
+            ->references('id')->on('units');
     });
 
     //Dersler/Alanlar tablosu

@@ -8,14 +8,17 @@
 <template>
   <div class="register-box">
     <div class="register-logo">
-      <a href="https://nevsehir.meb.gov.tr"><b>Nevşehir</b>ÖDM</a>
+      <a :href="sanitizeUrl"><b>{{ city }}</b>ÖDM</a>
     </div>
 
     <div class="register-box-body">
       <p class="login-box-msg">
         Yeni kullanıcı açma talep formu
       </p>
-      <form @submit.prevent>
+      <form
+        method="post"
+        @submit.prevent
+      >
         <div
           class="form-group has-feedback"
           :class="{'has-error': errors.has('full_name')}"
@@ -122,10 +125,13 @@
           :class="{'has-error': !recaptchaVerified}"
           class="form-group has-feedback"
         >
-          <div style="text-align: center;">
+          <div
+            v-if="siteKey"
+            style="text-align: center;"
+          >
             <vueRecaptcha
               style="display: inline-block;"
-              sitekey="6LdWF8AUAAAAACRraqjw-IJFoL5iiR6ybzBBFtya"
+              :sitekey="siteKey"
               @verify="markRecaptchaAsVerified"
             />
             <span
@@ -157,6 +163,27 @@
         <span class="mdi mdi-passport" />
       </router-link>
     </div>
+    <div class="alert alert-success text-justify">
+      <a
+              rel="license"
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+      >
+        <img
+                alt="Creative Commons Lisansı"
+                style="border-width:0"
+                src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+        >
+      </a> Bu eser <a
+            rel="license"
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+    > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
+      <a
+              class="btn btn-block btn-social btn-github"
+              href="https://github.com/electropsycho/ODM.Web"
+      >
+        <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
+      </a>
+    </div>
   </div>
 </template>
 
@@ -169,6 +196,7 @@ import vueRecaptcha from 'vue-recaptcha'
 import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
 import AuthService from '../../services/AuthService'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 
 export default {
   name: 'RegisterRequest',
@@ -185,7 +213,14 @@ export default {
       branches: [],
       isSending: false,
       recaptchaVerified: false,
-      captchaToken: ''
+      siteKey: '',
+      city: '',
+      web_address: ''
+    }
+  },
+  computed: {
+    sanitizeUrl () {
+      return sanitizeUrl(this.web_address)
     }
   },
   beforeCreate () {
@@ -194,25 +229,29 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     BranchService.getAllForRegisterReq()
-                 .then((branches) => {
-                   next(vm => {
-                     vm.branches = branches
-                   })
-                 })
+      .then((branches) => {
+        next(vm => {
+          vm.branches = branches
+          const settings = JSON.parse(localStorage.getItem('settings'))
+          vm.siteKey = settings.captcha_public_key
+          vm.city = settings.city
+          vm.web_address = settings.web_address
+        })
+      })
   },
   methods: {
     searchInstitutions: debounce(function (search, loading) {
       if (search) {
         loading(true)
         InstitutionService.findByName(search)
-                          .then(value => {
-                            this.institutions = value
-                            loading(false)
-                          })
-                          .catch(err => {
-                            loading(false)
-                            Messenger.showError(err.message)
-                          })
+          .then(value => {
+            this.institutions = value
+            loading(false)
+          })
+          .catch(err => {
+            loading(false)
+            Messenger.showError(err.message)
+          })
       }
     }, 1000),
     sendRegisterRequest () {
@@ -220,7 +259,7 @@ export default {
         .then(res => {
           if (res) {
             this.isSending = true
-            let data = {
+            const data = {
               email: this.email,
               full_name: this.full_name,
               inst_id: this.inst,
@@ -229,18 +268,18 @@ export default {
               recaptcha: this.captchaToken
             }
             AuthService.createRegisterRequest(data)
-                       .then(value => {
-                         this.isSending = false
-                         Messenger.showSuccess(value.message)
-                       })
-                       .catch(error => {
-                         this.isSending = false
-                         if (error.response.status === 409) {
-                           Messenger.showWarning(error.response.data.message)
-                           return
-                         }
-                         Messenger.showError(MessengerConstants.errorMessage)
-                       })
+              .then(value => {
+                this.isSending = false
+                Messenger.showSuccess(value.message)
+              })
+              .catch(error => {
+                this.isSending = false
+                if (error.response.status === 409) {
+                  Messenger.showWarning(error.response.data.message)
+                  return
+                }
+                Messenger.showError(MessengerConstants.errorMessage)
+              })
           }
         })
     },

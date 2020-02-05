@@ -289,10 +289,10 @@ export default {
     Promise.all([
       QuestionService.findById(questionId),
       QuestionEvaluationService.findByQuestionId(questionId)])
-      .then(([question, savedEvalutaions]) => {
+      .then(([question, savedEvaluations]) => {
         next(vm => {
           vm.question = question
-          vm.savedEvaluators = savedEvalutaions
+          vm.savedEvaluators = savedEvaluations
         })
       })
   },

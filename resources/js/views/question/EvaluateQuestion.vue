@@ -147,17 +147,17 @@
 </template>
 
 <script>
-import vSelect from 'vue-select'
-import QuestionService from '../../services/QuestionService'
-import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
-import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-import usersImg from '../../../images/users.png'
-import AuthService from '../../services/AuthService'
-import Question from '../../components/Question'
-import { QuestionStatuses } from '../../helpers/QuestionStatuses'
+  import vSelect from 'vue-select'
+  import QuestionService from '../../services/QuestionService'
+  import Messenger from '../../helpers/messenger'
+  import {MessengerConstants} from '../../helpers/constants'
+  import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+  import usersImg from '../../../images/users.png'
+  import AuthService from '../../services/AuthService'
+  import Question from '../../components/Question'
+  import {QuestionStatuses} from '../../helpers/QuestionStatuses'
 
-export default {
+  export default {
   name: 'EvaluateQuestion',
   components: { vSelect, Question },
   data () {
@@ -192,10 +192,9 @@ export default {
   computed: {
     hasOpenEval () {
       if (this.question) {
-        const res = this.question.status === QuestionStatuses.IN_ELECTION &&
+        return this.question.status === QuestionStatuses.IN_ELECTION &&
                 (this.evaluationList.filter(value => value.elector_id === AuthService.getUserId() &&
                         value.is_open && value.code === this.$route.query.code).length > 0)
-        return res
       }
       return false
     }

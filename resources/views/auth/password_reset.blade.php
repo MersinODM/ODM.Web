@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html style="height: auto; min-height: 100%;">
 <head profile="http://www.w3.org/2005/10/profile">
-    <title>Nevşehir ÖDM</title>
+    <title>{{$city}} ÖDM</title>
     <base href="{{url('/')}}">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +20,7 @@
     <div class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <a href="http://nevsehirodm.meb.gov.tr/"><b>Nevşehir</b>ÖDM</a>
+                <a href="{{$web_address}}"><b>{{$city}}</b>ÖDM</a>
             </div>
             <!-- /.login-logo -->
             <div class="login-box-body">

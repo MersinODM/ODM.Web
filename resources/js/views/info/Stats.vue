@@ -307,9 +307,6 @@ export default {
     //            })
   },
   methods: {
-    test () {
-
-    },
     getLearningOutComesByClass (cls) {
       StatService.getLearningOutcomes(cls, this.isAnyQuestionLO ? 0 : 1)
         .then(data => { this.learningOutComes = data })

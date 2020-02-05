@@ -39,7 +39,7 @@ class UserManagementController extends ApiController
             "inst_id" => "required",
             "branch_id" => "required",
             "phone" => "required",
-            'recaptcha' => ['required', $recaptcha]
+//            'recaptcha' => ['required', $recaptcha]
         ]);
 
         if ($validator->fails()) {

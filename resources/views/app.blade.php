@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr" style="height: auto; min-height: 100%;" >
-<head profile="http://www.w3.org/2005/10/profile">
+<head>
   <title>Nevşehir ÖDM</title>
   <base href="{{ url('/') }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

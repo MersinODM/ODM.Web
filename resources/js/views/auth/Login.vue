@@ -4,13 +4,6 @@
   -  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
   -->
 
-<!--
-  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
-  -  geliştirilen bütün kaynak kodlar
-  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
-  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
-  -->
-
 <template>
   <div class="hold-transition login-page">
     <div class="login-box">
@@ -73,7 +66,10 @@
             :class="{'has-error': !recaptchaVerified}"
             class="form-group has-feedback"
           >
-            <div v-if="siteKey" style="text-align: center;">
+            <div
+              v-if="siteKey"
+              style="text-align: center;"
+            >
               <vueRecaptcha
                 style="display: inline-block;"
                 :sitekey="siteKey"
@@ -175,6 +171,7 @@ export default {
         next(vm => {
           vm.settings = value
           vm.web_address = value.web_address
+          localStorage.setItem('settings', JSON.stringify(value))
           vm.siteKey = value.captcha_public_key
         })
       })

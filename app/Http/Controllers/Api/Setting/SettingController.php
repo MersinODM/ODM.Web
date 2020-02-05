@@ -14,6 +14,15 @@ use App\Models\Setting;
 class SettingController extends ApiController
 {
     function getSettings() {
-        return response()->json(Setting::first());
+        return response()->json(Setting::first([
+            'city',
+            'twitter_address',
+            'web_address',
+            'inst_name',
+            'phone',
+            'captcha_public_key',
+            'email',
+            'address'
+            ]));
     }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
+use App\Models\QuestionEvalRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -55,7 +56,12 @@ class QuestionDeleteRequestController extends ApiController
             $qdr = QuestionDeleteRequest::findOrFail($id);
             $question = Question::findOrFail($qdr->question_id);
             DB::beginTransaction();
-            $qdr->update(["acceptor_id" => Auth::id()]);
+            QuestionEvalRequest::where("question_id", $qdr->question_id)
+                ->delete();
+            $qdr->update([
+                "acceptor_id" => Auth::id(),
+                "question_id" => null
+            ]);
             $question->delete();
             Storage::delete($question->content_url);
             DB::commit();

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ResponseHelper;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Http\Request;
@@ -19,8 +20,14 @@ class CustomPasswordResetController extends Controller
 
     public function showResetForm(Request $request, $token = null)
     {
+        $settings = Setting::first();
         return view('auth.password_reset')->with(
-            ['token' => $token, 'email' => $request->email]
+            [
+                'token' => $token,
+                'email' => $request->email,
+                'city' => $settings->city,
+                'web_address' => $settings->web_address
+            ]
         );
     }
 
