@@ -14,6 +14,7 @@ use App\Http\Controllers\ResponseHelper;
 use App\Rules\Recaptcha;
 use App\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +27,7 @@ class UserManagementController extends ApiController
      * Kullanıcı açma isteğini işleyecek fonksiyon
      * @param Request $request
      * @param Recaptcha $recaptcha
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function registerRequest(Request $request, Recaptcha $recaptcha)
     {
@@ -73,7 +74,7 @@ class UserManagementController extends ApiController
     /**
      * Yeni kayıt isteği yapan sistem kullanıcısına onay verecek fonksiyon
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function confirmNewUserReq(Request $request, $id)
     {
@@ -83,7 +84,7 @@ class UserManagementController extends ApiController
                 "activator_id" => Auth::id()
             ]);
             $newUserReq = User::find($id);
-            //TODO: Bu sırada kullanıcıya şifre email olarak atılacak önemli!!!
+            //Bu sırada kullanıcıya şifre email olarak atıldı.
             //Bu işlem normalde java gibi dillerde asenkron yapılabilirdi
             event(new ResetPasswordEvent($newUserReq));
             DB::commit();
@@ -99,7 +100,7 @@ class UserManagementController extends ApiController
      * Kullanıcı güncelleme api fonk.
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id) {
         $validationResult = $this->apiValidator($request, [
@@ -136,6 +137,9 @@ class UserManagementController extends ApiController
         }
     }
 
+    /*
+     * Bu fonksiyon kullanıcıyı tekrar aktifleştirmrk için kullanılacak
+     */
     public function reactivate($id)
     {
         try {
@@ -156,7 +160,7 @@ class UserManagementController extends ApiController
      * Yani silinen kullanıcı users tablosu içinde var olmaya devam edecektir.
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function delete($id) {
         try{

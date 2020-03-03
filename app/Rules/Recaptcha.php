@@ -8,8 +8,14 @@
 
 namespace App\Rules;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\HandlerStack;
 use Illuminate\Contracts\Validation\Rule;
-use Zttp\Zttp;
+use Illuminate\Support\Facades\Cache;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\Storage\LaravelCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
 
 class Recaptcha implements Rule
 {
@@ -18,17 +24,28 @@ class Recaptcha implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
+     * @throws GuzzleException
      */
     public function passes($attribute, $value)
     {
-        return Zttp::asFormParams()->post(static::URL, [
-            'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
-            'response' => $value,
-            'remoteip' => request()->ip()
-        ])->json()['success'];
+        $client = $this->getGuzzleFileCachedClient();
+        $r = $client->request('POST', static::URL, [
+            'json' => [
+                'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
+                'response' => $value,
+                'remoteip' => request()->ip()
+            ]
+        ]);
+        $json_response = json_decode($r->getBody()->getContents(), true);
+        return $json_response['success'];
+//        return Zttp::asFormParams()->post(static::URL, [
+//            'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
+//            'response' => $value,
+//            'remoteip' => request()->ip()
+//        ])->json()['success'];
     }
 
     /**
@@ -39,5 +56,29 @@ class Recaptcha implements Rule
     public function message()
     {
         return 'Robot olmadığınızı ispat edemediniz!';
+    }
+
+    /**
+     * Returns a GuzzleClient that uses a file based cache manager
+     * @return Client
+     */
+    private function getGuzzleFileCachedClient()
+    {
+        // Create a HandlerStack
+        $stack = HandlerStack::create();
+
+        $stack->push(
+            new CacheMiddleware(
+                new PrivateCacheStrategy(
+                    new LaravelCacheStorage(
+                        Cache::store('file')
+                    )
+                )
+            ),
+            'cache'
+        );
+
+        // Initialize the client with the handler option and return it
+        return new Client(['handler' => $stack]);
     }
 }

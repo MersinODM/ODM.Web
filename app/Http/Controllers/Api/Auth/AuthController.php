@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations\OpenApi;
 
 /**
  * Kullanıcı işlemleri için oluşturulan kontrolcü sınıfı

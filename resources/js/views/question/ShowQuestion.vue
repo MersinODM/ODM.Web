@@ -155,8 +155,7 @@ export default {
     },
     isOwner () {
       if (this.question) {
-        return ((this.question.creator_id === AuthService.getUserId() && !this.question.has_delete_request) ||
-                (this.$isInRole('admin') && !this.question.has_delete_request))
+        return ((this.question.creator_id === AuthService.getUserId() || this.$isInRole('admin')) && !this.question.has_delete_request)
       }
       return false
     }

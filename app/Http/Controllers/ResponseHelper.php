@@ -22,3 +22,12 @@ class ResponseHelper
 
   const EXCEPTION_MESSAGE = "Sunucu bazlı bir hata meydana geldi!";
 }
+
+class ResponseCodes {
+    const CODE_SUCCESS = 1000;
+    const CODE_UN_AUTHORIZED = 1001;
+    const CODE_NOT_FOUND = 1002;
+    const CODE_INFO = 1003;
+    const CODE_WARNING = 1004;
+    const CODE_ERROR = 1005;
+}

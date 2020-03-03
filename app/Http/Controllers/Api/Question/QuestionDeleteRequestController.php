@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Api\Question;
 
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ResponseCodes;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
@@ -32,13 +33,20 @@ class QuestionDeleteRequestController extends ApiController
             return response()->json($validationResult,422);
         }
         $reason = $request->input("reason");
-        $loId = Question::find($id)->learning_outcome_id;
+        $question = Question::find($id);
+        if ($question === null) {
+            return response()->json(
+                [
+                    ResponseHelper::MESSAGE => "Böyle bir soru yok maalesef!",
+                    ResponseHelper::CODE => ResponseCodes::CODE_NOT_FOUND
+                ]);
+        }
         try {
             DB::beginTransaction();
             $qdr = new QuestionDeleteRequest([
                 'question_id' => $id,
                 'creator_id' => Auth::id(),
-                'learning_outcome_id' => $loId,
+                'learning_outcome_id' =>  $question->learning_outcome_id,
                 'comment' => $reason
                 ]);
             $qdr->save();
