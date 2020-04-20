@@ -11,9 +11,7 @@ namespace App\Traits;
 trait ValidationTrait
 {
     public $MESSAGES = [
-            'password.regex' => 'Şifre en az bir adet rakam,'.
-                ' bir adet küçük harf, bir adet özel karakter(.,+@#%)'.
-                ' içermelidir ve en az 8 en fazla 16 karakter olmalıdır',
+            'password.regex' => 'Şifre en az: 1 büyük harf, 1 küçük harf, 1 rakam, ve bir özel karakter içermelidir(. , + @ # % vs.)',
         ];
 
     public $ATTRIBUTES = [

@@ -89,7 +89,7 @@ class CustomPasswordResetController extends Controller
             ]
         ];
     }
-    
+
     public function broker()
     {
         return Password::broker();
