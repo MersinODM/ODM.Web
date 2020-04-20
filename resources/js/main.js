@@ -36,6 +36,14 @@ Vue.use(Loading, {
 Validator.localize('tr', tr)
 Validator.localize(dictionary)
 
+VeeValidate.Validator.extend('verify_password', {
+  getMessage: field => 'Şifre en az: 1 büyük harf, 1 küçük harf, 1 rakam, ve bir özel karakter içermelidir(. , @ _ & ? + vs.)',
+  validate: value => {
+    const strongRegex = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[#$^+=!*()@%&.]).{8,16}')
+    return strongRegex.test(value)
+  }
+})
+
 // eslint-disable-next-line no-unused-vars
 const main = new Vue({
   router,

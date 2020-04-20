@@ -49,7 +49,7 @@
           >
             <input
               v-model="password"
-              v-validate="'required|min:6|max:10'"
+              v-validate="'required|min:8|max:16|verify_password'"
               name="password"
               type="password"
               class="form-control"
