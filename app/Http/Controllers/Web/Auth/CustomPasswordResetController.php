@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Web\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Setting;
+use App\Traits\ValidationTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
 
 class CustomPasswordResetController extends Controller
 {
+    use ValidationTrait;
 
     public function showResetForm(Request $request, $token = null)
     {
@@ -33,7 +35,7 @@ class CustomPasswordResetController extends Controller
 
     public function reset(Request $request)
     {
-        $request->validate($this->rules(), [], $this->niceNames());
+        $request->validate($this->rules(), $this->MESSAGES, $this->ATTRIBUTES);
 
         $credentials = $request->only(
             'email', 'password', 'password_confirmation', 'token'
@@ -42,7 +44,7 @@ class CustomPasswordResetController extends Controller
 //        $broker = app('auth.password.broker');
 
         $user = $this->broker()->getUser($credentials);
-        if ($user == null) {
+        if ($user === null) {
             return response([ResponseHelper::MESSAGE =>  "Kullanıcı e-posta adresi bulunamadı!"], 404);
         }
 
@@ -52,7 +54,7 @@ class CustomPasswordResetController extends Controller
             $result =  $this->broker()->reset($credentials, function ($user, $pass){
                 $this->resetPassword($user, $pass);
             });
-            if ($result == PasswordBroker::PASSWORD_RESET) {
+            if ($result === PasswordBroker::PASSWORD_RESET) {
                 return view("app");
             }
             return redirect()
@@ -78,19 +80,16 @@ class CustomPasswordResetController extends Controller
         return [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'max:16',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
+            ]
         ];
     }
-
-    protected function niceNames() {
-        return [
-            "token" => "Jeton",
-            "email" => "E-Posta",
-            "password" => "Şifre",
-        ];
-    }
-
-
+    
     public function broker()
     {
         return Password::broker();

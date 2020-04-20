@@ -54,6 +54,8 @@ class AuthController extends ApiController
                 'email' => 'required|string|email|max:255',
                 'password' => [
                     'required',
+                    'min:8',
+                    'max:16',
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
                 ],
                 //'recaptcha' => ['required', $recaptcha]

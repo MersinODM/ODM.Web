@@ -8,11 +8,13 @@
 namespace App\Http\Controllers;
 
 
+use App\Traits\ValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
+    use ValidationTrait;
     /**
      * @param Request $request
      * @param $props
@@ -21,20 +23,7 @@ class ApiController extends Controller
     public function apiValidator(Request $request, $props): ?\Illuminate\Support\MessageBag
     {
 
-        $messages = [
-            'password.regex' => 'Şifre en az bir adet rakam,'.
-                ' bir adet küçük harf, bir adet özel karakter(.,+@#%)'.
-                ' içermelidir ve en az 8 en fazla 16 karakter olmalıdır',
-        ];
-
-        $attributes = [
-            'learning_outcome_id' => 'Kazanım',
-            'difficulty' => 'Zorluk',
-            'question_file' => 'Soru dosyası',
-            'password' => 'Şifre',
-        ];
-
-        $validator = Validator::make($request->all(), $props, $messages, $attributes);
+        $validator = Validator::make($request->all(), $props, $this->MESSAGES, $this->ATTRIBUTES);
         if ($validator->fails()) {
             return $validator->errors();
         }
