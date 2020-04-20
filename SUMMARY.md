@@ -2,7 +2,7 @@
 
 * [Başlangıç](README.md)
 
-## Geliştiriciler İçin
+## Geliştiriciler ve IT Profesyonelleri İçin <a id="gelistiriciler-icin"></a>
 
 * [Başlarken](gelistiriciler-icin/baslarken.md)
 * [Gereksinimler](gelistiriciler-icin/gereksinimler.md)
