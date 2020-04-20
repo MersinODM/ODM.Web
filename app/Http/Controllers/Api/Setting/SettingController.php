@@ -9,11 +9,59 @@ namespace App\Http\Controllers\Api\Setting;
 
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ResponseCodes;
+use App\Http\Controllers\ResponseHelper;
 use App\Models\Setting;
+use Exception;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Request;
 
 class SettingController extends ApiController
 {
-    function getSettings() {
+
+    public function migrateUp() {
+        try {
+            Artisan::call('migrate');
+            $result = Artisan::output();
+            // Log::info($result);
+            if (strpos($result, "Migrated") !== false) {
+                return response()->json([
+                    ResponseHelper::CODE => ResponseCodes::CODE_SUCCESS,
+                    ResponseHelper::MESSAGE => "Veritabanı son sürüme güncellendi"
+                ]);
+            }
+            return response()->json([
+                ResponseHelper::CODE => ResponseCodes::CODE_WARNING,
+                ResponseHelper::MESSAGE => "Veritabanı güncel"
+            ]);
+        }
+        catch(Exception $exception) {
+            return response()->json([
+                ResponseHelper::CODE => ResponseCodes::CODE_ERROR,
+                ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
+                ResponseHelper::EXCEPTION => $exception->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Genel bilgileri döner
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getGeneralInfo() {
+        return response()->json(Setting::first([
+            'captcha_public_key',
+            'captcha_enabled',
+            'city',
+            'web_address'
+        ]));
+    }
+
+    /**
+     * Tüm ayarları geri döner
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSettings() {
         return response()->json(Setting::first([
             'city',
             'twitter_address',
@@ -21,8 +69,43 @@ class SettingController extends ApiController
             'inst_name',
             'phone',
             'captcha_public_key',
+            'captcha_private_key',
             'email',
-            'address'
+            'address',
+            'captcha_enabled'
             ]));
+    }
+
+    public function update (Request $request) {
+        $validationResult = $this->apiValidator($request ,[
+            'city',
+            'twitter_address',
+            'web_address',
+            'inst_name',
+            'phone',
+            'captcha_public_key',
+            'captcha_private_key',
+            'email',
+            'address',
+            'captcha_enabled',
+        ]);
+
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
+        }
+
+        Setting::first()
+            ->update([
+                'city' => $request->get('city'),
+                'twitter_address' => $request->get('twitter_address'),
+                'web_address' => $request->get('web_address'),
+                'inst_name' => $request->get('inst_name'),
+                'phone' => $request->get('phone'),
+                'captcha_public_key' => $request->get('captcha_public_key'),
+                'captcha_private_key' => $request->get('captcha_private_key'),
+                'email' => $request->get('email'),
+                'address' => $request->get('address'),
+                'captcha_enabled' => $request->get('captcha_enabled')
+            ]);
     }
 }

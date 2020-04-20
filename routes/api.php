@@ -35,8 +35,8 @@ Route::group([
     Route::post('login', 'Auth\AuthController@login');
     Route::get('institutions', 'Inst\InstitutionController@findByNameInstitutions');
     Route::get('branches', 'Branch\BranchController@getBranches');
-    Route::get('settings', 'Setting\SettingController@getSettings');
-
+    Route::get('general_info', 'Setting\SettingController@getGeneralInfo');
+    
 });
 
 //Bütün doğrulanması gereken api istekleri bu grup altına yazılacak
@@ -44,6 +44,8 @@ Route::group([
 //TODO Swagger dökümantasyonu yapılabilir. Geliştircilerin hayatını kurtatır.
 Route::group(['middleware' => ['jwt.auth']], function () {
 
+    //TODO Artisan Queue Work komutu için api yazılacak
+    Route::get('mails/sync', "Setting\MailSyncController@executeMailQueue");
 
     //Kullanıcı ve Rol yönetim route tanımnlamaları
     Route::put('users/{id}/confirm_req', "Auth\UserManagementController@confirmNewUserReq");
@@ -111,4 +113,6 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::put("institutions/{id}", "Inst\InstitutionController@update");
     Route::delete("institutions/{id}", "Inst\InstitutionController@delete");
 
+    //Ayarlar ile ilgili route tanımlamaları
+    Route::post("settings/migrate_up", "Setting\SettingController@migrateUp");
 });

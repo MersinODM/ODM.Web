@@ -8,8 +8,11 @@
 namespace App\Http\Controllers\Api\Auth;
 
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ResponseCodes;
 use App\Http\Controllers\ResponseHelper;
+use App\Models\Setting;
 use App\Rules\Recaptcha;
 use Exception;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -22,7 +25,7 @@ use OpenApi\Annotations\OpenApi;
  * Class AuthController
  * @package App\Http\Controllers\Api
  */
-class AuthController extends Controller
+class AuthController extends ApiController
 {
 
     use ThrottlesLogins;
@@ -34,13 +37,30 @@ class AuthController extends Controller
      */
     public function login(Request $request, Recaptcha $recaptcha)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email|max:255',
-            'password' => 'required',
-            //'recaptcha' => ['required', $recaptcha]
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        $captcha_enabled = Setting::first()->captcha_enabled;
+        $validationResult = null;
+        if($captcha_enabled) {
+            $validationResult = $this->apiValidator($request, [
+                'email' => 'required|string|email|max:255',
+                'password' => [
+                    'required',
+                    'between:8,16',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
+                ],
+                'recaptcha' => ['required', $recaptcha]
+            ]);
+        }else {
+            $validationResult = $this->apiValidator($request, [
+                'email' => 'required|string|email|max:255',
+                'password' => [
+                    'required',
+                    'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
+                ],
+                //'recaptcha' => ['required', $recaptcha]
+            ]);
+        }
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
         }
         // Kullanıcı ve şifre bilgilerini istekten çekelim
         $credentials = $request->only('email', 'password');
@@ -51,7 +71,7 @@ class AuthController extends Controller
             if (!$token = auth()->attempt($credentials)) {
                 //TODO json düzenlemesi yapılcak
                 return response()->json([
-                    ResponseHelper::CODE => ResponseHelper::UN_AUTHORIZED,
+                    ResponseHelper::CODE => ResponseCodes::CODE_UN_AUTHORIZED,
                     ResponseHelper::MESSAGE => 'Hatalı kullanıcı adı/şifre kullanmış olabilirsiniz veya hesabınız sistem yöneticileri tarafından etkisizleştirilmiş olabilir!']);
             }
         } catch (Exception $e) {

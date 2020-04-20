@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Api\Question;
 
+use App\Events\NewEvalReqEvent;
 use App\Events\QuestionEvalCalculateRequired;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ResponseHelper;
@@ -51,6 +52,7 @@ class QuestionEvalRequestController extends ApiController
         $code = strtoupper(Str::random(6));
         try {
             DB::beginTransaction();
+            $lessonId = Question::find($questionId)->lesson_id;
             foreach ($electors as $elector) {
                 $qevalReq = new QuestionEvalRequest([
                     'elector_id' => $elector['id'],
@@ -59,13 +61,16 @@ class QuestionEvalRequestController extends ApiController
                     'code' => $code
                 ]);
                 $qevalReq->save();
-                //TODO Değerlendiriciye mail atmak gerekebilir
             }
             Question::where('id', $questionId)
                 ->where('status', Question::WAITING_FOR_ACTION)
                 ->orWhere('status', Question::REVISION_COMPLETED)
                 ->update(['status' => Question::IN_ELECTION]);
             DB::commit();
+            //Değerlendiriciye mail atılıyor
+            foreach ($electors as $elector) {
+                event(new NewEvalReqEvent($lessonId, $elector['id']));
+            }
             return response()->json([ResponseHelper::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();

@@ -9,7 +9,7 @@ import http from '../helpers/axios'
 export const SettingService = {
   getSettings () {
     return new Promise((resolve, reject) => {
-      http.get('auth/settings')
+      http.get('auth/general_info')
         .then(value => {
           localStorage.setItem('settings', JSON.stringify(value.data))
           resolve(value.data)

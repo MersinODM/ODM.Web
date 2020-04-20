@@ -39,7 +39,7 @@ class BranchController extends ApiController
     catch (Exception $exception) {
       return response()->json($this->apiException($exception), 500);
     }
-    return response()->json([ResponseHelper::MESSAGE => "Branş/Ders kayıt işlemi başarılı."], 201);
+    return response()->json([ResponseHelper::MESSAGE => 'Branş/Ders kayıt işlemi başarılı.'], 201);
   }
 
   public function update(Request $request, $id) {

@@ -33,6 +33,7 @@ import EvaluateQuestion from '../views/question/EvaluateQuestion'
 import ReviseQuestion from '../views/question/ReviseQuestion'
 import SetEvaluatorsForQuestion from '../views/question/SetEvaluatorsForQuestion'
 import UnderConstruction from '../views/utils/UnderConstruction'
+import AppSettings from "../views/management/AppSettings";
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -149,6 +150,11 @@ const router = new Router({
           path: 'under_construction',
           name: 'underConstruction',
           component: UnderConstruction
+        },
+        {
+          path: 'app_settings',
+          name: 'appSettings',
+          component: AppSettings
         }
       ]
     },

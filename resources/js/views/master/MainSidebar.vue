@@ -152,7 +152,8 @@
         </li>
         <li
           v-if="$isInRole('admin')"
-          class="treeview">
+          class="treeview"
+        >
           <a href="#"><i class="mdi mdi-school" />
             <span>Kurum Yönetimi</span>
             <span class="pull-right-container">
@@ -190,6 +191,26 @@
               <router-link :to="{name: 'passiveUsers' }">
                 <span class="mdi mdi-table-row-remove" />
                 Pasif Kull. Listele
+              </router-link>
+            </li>
+          </ul>
+        </li>
+        <li
+          v-if="$isInRole('admin')"
+          class="treeview"
+        >
+          <a href="#"><i class="mdi mdi-account-settings" />
+            <span>Uygulama Yönetimi</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right" />
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <router-link :to="{name: 'appSettings' }">
+                <!-- Add a Font Awesome icon -->
+                <span class="mdi mdi-account-group" />
+                Uygulama Ayarları
               </router-link>
             </li>
           </ul>

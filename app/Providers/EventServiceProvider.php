@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\NewEvalReqEvent;
 use App\Events\QuestionEvalCalculateRequired;
+use App\Listeners\NewEvalReqListener;
 use App\Listeners\NewUserReqListener;
 use App\Listeners\QuestionEvaulationListener;
 use App\Listeners\ResetPasswordListener;
@@ -29,6 +31,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         QuestionEvalCalculateRequired::class => [
             QuestionEvaulationListener::class
+        ],
+        NewEvalReqEvent::class => [
+            NewEvalReqListener::class
         ]
     ];
 

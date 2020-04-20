@@ -15,19 +15,20 @@ namespace App\Http\Controllers;
 class ResponseHelper
 {
   //Mesaj adları
-  const UN_AUTHORIZED = 401;
-  const CODE = "code";
-  const MESSAGE = "message";
-  const EXCEPTION = "exception";
+  public const UN_AUTHORIZED = 401;
+  public const CODE = 'code';
+  public const MESSAGE = 'message';
+  public const EXCEPTION = 'exception';
 
-  const EXCEPTION_MESSAGE = "Sunucu bazlı bir hata meydana geldi!";
+  public const EXCEPTION_MESSAGE = 'Sunucu bazlı bir hata meydana geldi!';
 }
 
-class ResponseCodes {
-    const CODE_SUCCESS = 1000;
-    const CODE_UN_AUTHORIZED = 1001;
-    const CODE_NOT_FOUND = 1002;
-    const CODE_INFO = 1003;
-    const CODE_WARNING = 1004;
-    const CODE_ERROR = 1005;
+class ResponseCodes
+{
+    public const CODE_SUCCESS = 1000;
+    public const CODE_UN_AUTHORIZED = 1001;
+    public const CODE_NOT_FOUND = 1002;
+    public const CODE_INFO = 1003;
+    public const CODE_WARNING = 1004;
+    public const CODE_ERROR = 1005;
 }
