@@ -223,7 +223,7 @@
 <script>
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
-import { SettingService } from '../../services/SettingService'
+import Constants from '../../helpers/constants'
 export default {
   name: 'NHeader',
   data () {
@@ -248,7 +248,7 @@ export default {
       })
     },
     getSettings () {
-      this.name = JSON.parse(localStorage.getItem('settings')).city
+      this.name = JSON.parse(localStorage.getItem(Constants.generalInfo)).city
     },
     setUser (err, user) {
       if (err) {

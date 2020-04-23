@@ -207,9 +207,16 @@
           </a>
           <ul class="treeview-menu">
             <li>
+              <router-link :to="{name: 'mailSync' }">
+                <!-- Add a Font Awesome icon -->
+                <span class="mdi mdi-mailbox-open" />
+                Mail Senkronizasyonu
+              </router-link>
+            </li>
+            <li>
               <router-link :to="{name: 'appSettings' }">
                 <!-- Add a Font Awesome icon -->
-                <span class="mdi mdi-account-group" />
+                <span class="mdi mdi-settings-box" />
                 Uygulama Ayarları
               </router-link>
             </li>

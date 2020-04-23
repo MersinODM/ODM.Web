@@ -8,6 +8,7 @@
 
 namespace App\Rules;
 
+use App\Models\Setting;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
@@ -31,10 +32,12 @@ class Recaptcha implements Rule
      */
     public function passes($attribute, $value)
     {
+        $secret = Setting::first()->captcha_private_key;
+
         $client = $this->getGuzzleFileCachedClient();
         $r = $client->request('POST', static::URL, [
-            'json' => [
-                'secret' => env('GOOGLE_RECAPTCHA_SECRET'),
+            'form_params' => [
+                'secret' =>  $secret,
                 'response' => $value,
                 'remoteip' => request()->ip()
             ]

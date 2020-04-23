@@ -114,5 +114,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete("institutions/{id}", "Inst\InstitutionController@delete");
 
     //Ayarlar ile ilgili route tanımlamaları
+    Route::get("settings", "Setting\SettingController@getSettings");
+    Route::put("settings", "Setting\SettingController@update");
     Route::post("settings/migrate_up", "Setting\SettingController@migrateUp");
 });

@@ -34,6 +34,7 @@ import ReviseQuestion from '../views/question/ReviseQuestion'
 import SetEvaluatorsForQuestion from '../views/question/SetEvaluatorsForQuestion'
 import UnderConstruction from '../views/utils/UnderConstruction'
 import AppSettings from "../views/management/AppSettings";
+import MailSync from "../views/management/MailSync";
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -155,6 +156,11 @@ const router = new Router({
           path: 'app_settings',
           name: 'appSettings',
           component: AppSettings
+        },
+        {
+          path: 'mails/sync',
+          name: 'mailSync',
+          component: MailSync
         }
       ]
     },

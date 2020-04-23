@@ -78,8 +78,8 @@ class UserManagementController extends ApiController
      */
     public function confirmNewUserReq(Request $request, $id)
     {
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
             User::find($id)->update([
                 "activator_id" => Auth::id()
             ]);

@@ -8,7 +8,8 @@ const Constants = {
   accessToken: 'access_token',
   permissions: 'permissions',
   roles: 'roles',
-  expires_in: 'expires_in'
+  expires_in: 'expires_in',
+  generalInfo: 'general_info'
 }
 
 const MessengerConstants = {

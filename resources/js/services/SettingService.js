@@ -5,16 +5,40 @@
  */
 
 import http from '../helpers/axios'
+import Constants from '../helpers/constants'
 
 export const SettingService = {
-  getSettings () {
+  getGeneralInfo () {
     return new Promise((resolve, reject) => {
       http.get('auth/general_info')
         .then(value => {
-          localStorage.setItem('settings', JSON.stringify(value.data))
+          localStorage.setItem(Constants.generalInfo, JSON.stringify(value.data))
           resolve(value.data)
         })
         .catch(reason => reject(reason.data))
+    })
+  },
+  getSettings () {
+    return new Promise((resolve, reject) => {
+      http.get('settings')
+        .then(response => resolve(response.data))
+        .catch(reason => reject(reason))
+    })
+  },
+  update (settings) {
+    return new Promise((resolve, reject) => {
+      http.put('settings', settings)
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((reason) => reject(reason))
+    })
+  },
+  mailSync () {
+    return new Promise((resolve, reject) => {
+      http.get('mails/sync')
+        .then((response) => resolve(response.data))
+        .catch((reason) => reject(reason))
     })
   }
 }

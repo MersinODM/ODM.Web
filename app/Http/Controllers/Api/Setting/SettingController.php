@@ -13,8 +13,9 @@ use App\Http\Controllers\ResponseCodes;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Setting;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 
 class SettingController extends ApiController
 {
@@ -64,6 +65,8 @@ class SettingController extends ApiController
     public function getSettings() {
         return response()->json(Setting::first([
             'city',
+            'governor',
+            'directorate',
             'twitter_address',
             'web_address',
             'inst_name',
@@ -77,8 +80,11 @@ class SettingController extends ApiController
     }
 
     public function update (Request $request) {
+
         $validationResult = $this->apiValidator($request ,[
             'city',
+            'governor',
+            'directorate',
             'twitter_address',
             'web_address',
             'inst_name',
@@ -94,11 +100,17 @@ class SettingController extends ApiController
             return response()->json($validationResult, 422);
         }
 
-        Setting::first()
-            ->update([
+        try {
+            DB::beginTransaction();
+            $settings = Setting::first();
+            $settings->update([
                 'city' => $request->get('city'),
+                'governor' => $request->get('governor'),
+                'directorate' => $request->get('directorate'),
                 'twitter_address' => $request->get('twitter_address'),
                 'web_address' => $request->get('web_address'),
+                'facebook_address' => $request->get('facebook_address'),
+                'instagram_address' => $request->get('instagram_address'),
                 'inst_name' => $request->get('inst_name'),
                 'phone' => $request->get('phone'),
                 'captcha_public_key' => $request->get('captcha_public_key'),
@@ -107,5 +119,18 @@ class SettingController extends ApiController
                 'address' => $request->get('address'),
                 'captcha_enabled' => $request->get('captcha_enabled')
             ]);
+            DB::commit();
+            return response()->json([
+                ResponseHelper::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseHelper::MESSAGE => "Ayarlarnız başarıyla güncellendi"
+            ]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                ResponseHelper::CODE => ResponseCodes::CODE_ERROR,
+                ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
+                ResponseHelper::EXCEPTION => $exception->getMessage()
+            ]);
+        }
     }
 }

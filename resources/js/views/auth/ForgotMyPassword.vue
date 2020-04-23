@@ -79,21 +79,21 @@
       </div>
       <div class="alert alert-success text-justify">
         <a
-                rel="license"
-                href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+          rel="license"
+          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
         >
           <img
-                  alt="Creative Commons Lisansı"
-                  style="border-width:0"
-                  src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+            alt="Creative Commons Lisansı"
+            style="border-width:0"
+            src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
           >
         </a> Bu eser <a
-              rel="license"
-              href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-      > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
+          rel="license"
+          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+        > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
         <a
-                class="btn btn-block btn-social btn-github"
-                href="https://github.com/electropsycho/ODM.Web"
+          class="btn btn-block btn-social btn-github"
+          href="https://github.com/electropsycho/ODM.Web"
         >
           <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
         </a>
@@ -113,7 +113,7 @@ import Spinner from '../../components/Spinner'
 import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
 import AuthService from '../../services/AuthService'
-import { MessengerConstants } from '../../helpers/constants'
+import Constants, { MessengerConstants } from '../../helpers/constants'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 
 export default {
@@ -135,7 +135,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      const settings = JSON.parse(localStorage.getItem('settings'))
+      const settings = JSON.parse(localStorage.getItem(Constants.generalInfo))
       vm.captchaToken = settings.captcha_public_key
       vm.city = settings.city
     })

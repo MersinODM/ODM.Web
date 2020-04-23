@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Api\Auth;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ResponseCodes;
 use App\Http\Controllers\ResponseHelper;
 use App\Models\Setting;
@@ -17,8 +16,6 @@ use App\Rules\Recaptcha;
 use Exception;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use OpenApi\Annotations\OpenApi;
 
 /**
  * Kullanıcı işlemleri için oluşturulan kontrolcü sınıfı
@@ -27,7 +24,6 @@ use OpenApi\Annotations\OpenApi;
  */
 class AuthController extends ApiController
 {
-
     use ThrottlesLogins;
 
     /**
@@ -44,7 +40,8 @@ class AuthController extends ApiController
                 'email' => 'required|string|email|max:255',
                 'password' => [
                     'required',
-                    'between:8,16',
+                    'min:8',
+                    'max:16',
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
                 ],
                 'recaptcha' => ['required', $recaptcha]

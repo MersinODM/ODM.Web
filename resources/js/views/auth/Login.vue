@@ -67,7 +67,7 @@
             class="form-group has-feedback"
           >
             <div
-              v-if="siteKey"
+              v-if="siteKey && captchaEnabled"
               style="text-align: center;"
             >
               <vueRecaptcha
@@ -84,7 +84,7 @@
           <div class="row">
             <div class="col-xs-offset-8 col-xs-4">
               <button
-                :class="{ disabled : errors.any() || !recaptchaVerified || isSigningIn }"
+                :class="{ disabled : validateLogin }"
                 type="submit"
                 class="btn btn-primary btn-block btn-flat"
                 @click="loginUser"
@@ -144,7 +144,6 @@
 // import { createNamespacedHelpers } from 'vuex';
 import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
 import vueRecaptcha from 'vue-recaptcha'
 import { SettingService } from '../../services/SettingService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
@@ -162,23 +161,30 @@ export default {
       isSigningIn: false,
       settings: {},
       web_address: '',
-      siteKey: ''
+      siteKey: '',
+      captchaEnabled: true
     }
   },
   beforeRouteEnter (to, from, next) {
-    SettingService.getSettings()
+    SettingService.getGeneralInfo()
       .then(value => {
         next(vm => {
           vm.settings = value
           vm.web_address = value.web_address
-          localStorage.setItem('settings', JSON.stringify(value))
           vm.siteKey = value.captcha_public_key
+          vm.captchaEnabled = value.captcha_enabled
         })
       })
   },
   computed: {
     sanitizeUrl () {
       return sanitizeUrl(this.web_address)
+    },
+    validateLogin () {
+      if (this.captchaEnabled) {
+        return this.$validator.errors.any() || !this.recaptchaVerified || this.isSigningIn
+      }
+      return this.$validator.errors.any() || this.isSigningIn
     }
   },
   beforeCreate () {
@@ -202,11 +208,9 @@ export default {
                 if (value.code === 401) {
                   Messenger.showWarning(value.message)
                   this.isSigningIn = false
-                  loader.hide()
                 } else {
                   this.$router.push({ name: 'stats' })
                   this.isSigningIn = true
-                  loader.hide()
                 }
               })
               .catch((err) => {
@@ -215,6 +219,7 @@ export default {
                 Messenger.showWarning('Oturumunuz açılamadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
                                  'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
               })
+              .finally(() => loader.hide())
           }
         })
     },
@@ -230,7 +235,7 @@ export default {
         .then(value => next())
         .catch(reason => {
           console.log(reason)
-          Messenger.showError(MessengerConstants.errorMessage)
+          Messenger.showError('Roller ve yetkiler ayarlanamadı!')
           next('/login')
         })
     }

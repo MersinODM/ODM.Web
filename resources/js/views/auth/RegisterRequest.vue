@@ -108,12 +108,12 @@
         >
           <input
             v-model="phone"
-            v-mask="'(###)-###-####'"
-            v-validate="{ required: true, regex:/[(][0-9]{1,3}[)][-][0-9]{1,3}[-][0-9]{4}$/ }"
+            v-mask="'### ### ####'"
+            v-validate="{ required: true, regex:/[0-9]{1,3}[ ][0-9]{1,3}[ ][0-9]{4}$/ }"
             type="text"
             name="phone"
             class="form-control"
-            placeholder="(999)-999-9999"
+            placeholder="Tel. num. başında 0(sıfır) olmadan giriniz"
           >
           <span class="glyphicon glyphicon-phone form-control-feedback" />
           <span
@@ -165,21 +165,21 @@
     </div>
     <div class="alert alert-success text-justify">
       <a
-              rel="license"
-              href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+        rel="license"
+        href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
       >
         <img
-                alt="Creative Commons Lisansı"
-                style="border-width:0"
-                src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+          alt="Creative Commons Lisansı"
+          style="border-width:0"
+          src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
         >
       </a> Bu eser <a
-            rel="license"
-            href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-    > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
+        rel="license"
+        href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+      > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
       <a
-              class="btn btn-block btn-social btn-github"
-              href="https://github.com/electropsycho/ODM.Web"
+        class="btn btn-block btn-social btn-github"
+        href="https://github.com/electropsycho/ODM.Web"
       >
         <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
       </a>
@@ -191,7 +191,7 @@
 import debounce from 'lodash/debounce'
 import vSelect from 'vue-select'
 import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
+import Constants, { MessengerConstants } from '../../helpers/constants'
 import vueRecaptcha from 'vue-recaptcha'
 import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
@@ -232,7 +232,7 @@ export default {
       .then((branches) => {
         next(vm => {
           vm.branches = branches
-          const settings = JSON.parse(localStorage.getItem('settings'))
+          const settings = JSON.parse(localStorage.getItem(Constants.generalInfo))
           vm.siteKey = settings.captcha_public_key
           vm.city = settings.city
           vm.web_address = settings.web_address
@@ -264,7 +264,7 @@ export default {
               full_name: this.full_name,
               inst_id: this.inst,
               branch_id: this.branch,
-              phone: this.phone.replace(/[^0-9]/gi, ''),
+              phone: this.phone,
               recaptcha: this.captchaToken
             }
             AuthService.createRegisterRequest(data)

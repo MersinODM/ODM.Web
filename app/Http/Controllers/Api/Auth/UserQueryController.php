@@ -124,7 +124,7 @@ class UserQueryController extends ApiController
     public function findElectorByBranchId($branchId): JsonResponse
     {
         $electors = User::whereIs('elector')
-            ->where('branch_id', $branchId)
+            ->whereIn('branch_id', [$branchId, 1, 13])
             ->join('branches as b', 'b.id', '=', 'branch_id')
             ->select('users.id', DB::raw('CONCAT(full_name, " - ", b.name) as full_name'))
             ->get();

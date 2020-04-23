@@ -106,8 +106,9 @@
                     class="form-control"
                     rows="2"
                     style="max-width: 100%; min-width: 100%; min-height: 50px"
-                    placeholder="Kazanım içeriğini giriniz"></textarea>
-                  <span class="mdi mdi-flagform-control-feedback"></span>
+                    placeholder="Kazanım içeriğini giriniz"
+                  />
+                  <span class="mdi mdi-flagform-control-feedback" />
                   <span
                     v-if="errors.has('content')"
                     class="help-block"
@@ -169,11 +170,11 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     BranchService.getBranches()
-           .then((branches) => {
-             next(vm => {
-               vm.branches = branches
-             })
-           })
+      .then((branches) => {
+        next(vm => {
+          vm.branches = branches
+        })
+      })
   },
   methods: {
     save () {
