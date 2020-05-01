@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Stats;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils;
 use App\Models\Branch;
 use App\Models\Question;
 use Illuminate\Http\Request;
@@ -113,7 +113,7 @@ class StatController extends ApiController
             return response()->json($classes);
         }
         else
-            return response()->json([ResponseHelper::MESSAGE => "Herhangi bir yetkiniz yok"]);
+            return response()->json([ResponseKeys::MESSAGE => "Herhangi bir yetkiniz yok"]);
     }
 
     public function getQuestionCountByLO(Request $request) {

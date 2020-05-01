@@ -5,7 +5,7 @@
 //
 //
 //use App\Http\Controllers\ApiController;
-//use App\Http\Controllers\ResponseHelper;
+//use App\Http\Controllers\ResponseKeys;
 //use App\Models\Question;
 //use App\Models\QuestionsEvaluation;
 //use Illuminate\Http\Request;
@@ -34,7 +34,7 @@
 //                return response()->json([
 //                    "eval_count" => 1, // TODO Bu neden vardı ki?
 //                    "eval_avg" => $check_result->evalAvg,
-//                    ResponseHelper::MESSAGE => "Daha önce bir değerlendirme tarafınızdan yapılmıştır."
+//                    ResponseKeys::MESSAGE => "Daha önce bir değerlendirme tarafınızdan yapılmıştır."
 //                ]);
 //            try {
 //                DB::beginTransaction();
@@ -59,7 +59,7 @@
 //                return response()->json([
 //                    "eval_count" => $evalCount,
 //                    "eval_avg" => $check_result->evalAvg,
-//                    ResponseHelper::MESSAGE => "Değerlendirme puanınız: " . $qe->point . "\nDeğerlendirme kaydı başarılı"], 201);
+//                    ResponseKeys::MESSAGE => "Değerlendirme puanınız: " . $qe->point . "\nDeğerlendirme kaydı başarılı"], 201);
 //            } catch (\Exception $exception) {
 //                DB::rollBack();
 //                return response()->json($this->apiException($exception), 500);
@@ -68,7 +68,7 @@
 //        return response()->json([
 //            "eval_count" => $evalCount,
 //            "eval_avg" => $check_result->evalAvg,
-//            ResponseHelper::MESSAGE => "Bu soru için yeterli ve gerekli değerlendirmeler daha önce yapılmıştır."]);
+//            ResponseKeys::MESSAGE => "Bu soru için yeterli ve gerekli değerlendirmeler daha önce yapılmıştır."]);
 //
 //    }
 //

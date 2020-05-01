@@ -162,7 +162,13 @@
           </a>
           <ul class="treeview-menu">
             <li>
-              <router-link :to="{name: 'newInst' }">
+              <router-link :to="{ name: 'institutions' }">
+                <span class="mdi mdi-bank" />
+                Okul/Kurum Listesi
+              </router-link>
+            </li>
+            <li>
+              <router-link :to="{ name: 'newInst' }">
                 <span class="mdi mdi-bank-plus" />
                 Okul/Kurum Ekle
               </router-link>
@@ -199,7 +205,7 @@
           v-if="$isInRole('admin')"
           class="treeview"
         >
-          <a href="#"><i class="mdi mdi-account-settings" />
+          <a href="#"><i class="mdi mdi-cogs" />
             <span>Uygulama Yönetimi</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right" />

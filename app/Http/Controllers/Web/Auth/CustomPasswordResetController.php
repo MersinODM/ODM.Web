@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils;
 use App\Models\Setting;
 use App\Traits\ValidationTrait;
 use Carbon\Carbon;
@@ -45,7 +45,7 @@ class CustomPasswordResetController extends Controller
 
         $user = $this->broker()->getUser($credentials);
         if ($user === null) {
-            return response([ResponseHelper::MESSAGE =>  "Kullanıcı e-posta adresi bulunamadı!"], 404);
+            return response([ResponseKeys::MESSAGE =>  "Kullanıcı e-posta adresi bulunamadı!"], 404);
         }
 
         $isExist =  $this->broker()->tokenExists($user, $credentials["token"]);
@@ -60,12 +60,12 @@ class CustomPasswordResetController extends Controller
             return redirect()
                 ->back()
                 ->withInput($request->only('email'))
-                ->withErrors([ResponseHelper::MESSAGE => "Şifre değiştirme işlemi yapılamadı."]);
+                ->withErrors([ResponseKeys::MESSAGE => "Şifre değiştirme işlemi yapılamadı."]);
         }
         return redirect()
             ->back()
             ->withInput($request->only('email'))
-            ->withErrors([ResponseHelper::MESSAGE =>  "Şifre değiştirme bağlantısının süresi geçmiş olabilir.\nŞifremi unuttum diyerek tekrar bağlantı alabilirsiniz!"]);
+            ->withErrors([ResponseKeys::MESSAGE =>  "Şifre değiştirme bağlantısının süresi geçmiş olabilir.\nŞifremi unuttum diyerek tekrar bağlantı alabilirsiniz!"]);
     }
 
     protected function resetPassword($user, $password) {

@@ -203,40 +203,40 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([BranchService.getBranches(), QuestionService.getLastSavedQuestions(30)])
-    .then(([branches, questions]) => {
-      next(vm => {
-        vm.questionsGroup = chunk(questions, 3)
-        vm.branches = branches
-        vm.userId = AuthService.getUserId()
+      .then(([branches, questions]) => {
+        next(vm => {
+          vm.questionsGroup = chunk(questions, 3)
+          vm.branches = branches
+          vm.userId = AuthService.getUserId()
+        })
       })
-    })
-    .catch(err => Messenger.showError(err.message))
+      .catch(err => Messenger.showError(err.message))
   },
   methods: {
     searchQuestions () {
       this.$validator.validateAll()
-      .then(value => {
-        if (value) {
+        .then(value => {
+          if (value) {
           // this.isLoading = true
-          let loader = this.$loading.show()
-          let params = {
-            branchId: this.selectedBranch,
-            classLevel: this.selectedClassLevel,
-            searchedContent: this.searchedContent
+            const loader = this.$loading.show()
+            const params = {
+              branchId: this.selectedBranch,
+              classLevel: this.selectedClassLevel,
+              searchedContent: this.searchedContent
+            }
+            QuestionService.searchQuestion(params)
+              .then(res => {
+                this.questionsGroup = chunk(res, 3)
+                // this.isLoading = false
+                loader.hide()
+              })
+              .catch(e => {
+                Messenger.showError(MessengerConstants.errorMessage)
+                // this.isLoading = false
+                loader.hide()
+              })
           }
-          QuestionService.searchQuestion(params)
-          .then(res => {
-            this.questionsGroup = chunk(res, 3)
-            // this.isLoading = false
-            loader.hide()
-          })
-          .catch(e => {
-            Messenger.showError(MessengerConstants.errorMessage)
-            // this.isLoading = false
-            loader.hide()
-          })
-        }
-      })
+        })
     }
   }
 }

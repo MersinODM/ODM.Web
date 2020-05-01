@@ -20,7 +20,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Silber\Bouncer\Database\Role;
 use Yajra\DataTables\DataTables;
 
 class UserQueryController extends ApiController
@@ -129,5 +128,15 @@ class UserQueryController extends ApiController
             ->select('users.id', DB::raw('CONCAT(full_name, " - ", b.name) as full_name'))
             ->get();
         return response()->json($electors);
+    }
+
+    public function findByInstitutionIdWithStats($id) {
+        $users = User::where('inst_id', $id)
+            ->leftJoin('questions as q', 'q.creator_id', '=', 'users.id')
+            ->leftJoin('institutions as i', 'i.id', '=', 'users.inst_id')
+            ->groupBy(['users.id'])
+            ->select('i.name', 'users.full_name', DB::raw('count(q.id) as question_count'))
+        ->get();
+        return response()->json($users);
     }
 }

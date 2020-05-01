@@ -8,10 +8,9 @@
 namespace App\Http\Controllers\Api\Auth;
 
 
-use App\Events\NewUserReqReceived;
 use App\Events\ResetPasswordEvent;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Rules\Recaptcha;
 use App\User;
 use Carbon\Carbon;
@@ -41,7 +40,7 @@ class PasswordController extends ApiController
 
         $user = $broker->getUser($credentials);
         if ($user == null) {
-            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı e-posta adresi bulunamadı!"], 404);
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı e-posta adresi bulunamadı!"], 404);
         }
 
         $isExist = $broker->tokenExists($user, $credentials["token"]);
@@ -53,11 +52,11 @@ class PasswordController extends ApiController
                 $user->save();
             });
             if ($result == PasswordBroker::PASSWORD_RESET) {
-                return response()->json([ResponseHelper::MESSAGE => "Şifreniz başarıyla değiştirildi!"], 200);
+                return response()->json([ResponseKeys::MESSAGE => "Şifreniz başarıyla değiştirildi!"], 200);
             }
-            return response()->json([ResponseHelper::MESSAGE => "Şifreniz değiştirilemedi!"]);
+            return response()->json([ResponseKeys::MESSAGE => "Şifreniz değiştirilemedi!"]);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Şifre değiştirme bağlantısının süresi geçmiş olabilir.\nŞifremi unuttum diyerek tekrar bağlantı alabilirsiniz!"], 404);
+        return response()->json([ResponseKeys::MESSAGE => "Şifre değiştirme bağlantısının süresi geçmiş olabilir.\nŞifremi unuttum diyerek tekrar bağlantı alabilirsiniz!"], 404);
     }
 
     public function forgetPassword(Request $request, Recaptcha $recaptcha)
@@ -76,10 +75,10 @@ class PasswordController extends ApiController
         if (isset($user)) {
             if (isset($user->activator_id)) {
                 event(new ResetPasswordEvent($user));
-                return response()->json([ResponseHelper::MESSAGE => "Şifre oluşturabilecek bir e-posta, belirttiğiniz adrese gönderildi.\nİyi çalışmalar..."]);
+                return response()->json([ResponseKeys::MESSAGE => "Şifre oluşturabilecek bir e-posta, belirttiğiniz adrese gönderildi.\nİyi çalışmalar..."]);
             }
-            return response()->json([ResponseHelper::MESSAGE => "Kaydınız henüz onaylanmadığı için şifremi unuttum kısmını kullanamazsınız!"]);
+            return response()->json([ResponseKeys::MESSAGE => "Kaydınız henüz onaylanmadığı için şifremi unuttum kısmını kullanamazsınız!"]);
         }
-        return response()->json([ResponseHelper::MESSAGE => "E-Posta adresiniz sistemde bulunamadı! Lütfen doğru e posta adresini gönderdiğinizden emin olunuz doğru gönderdiğinizi düşünüyorsanız sistem yönetininize başvurunuz. İyi çalışmalar.."]);
+        return response()->json([ResponseKeys::MESSAGE => "E-Posta adresiniz sistemde bulunamadı! Lütfen doğru e posta adresini gönderdiğinizden emin olunuz doğru gönderdiğinizi düşünüyorsanız sistem yönetininize başvurunuz. İyi çalışmalar.."]);
     }
 }

@@ -10,7 +10,6 @@ import Login from '../views/auth/Login'
 import MasterView from '../views/master/MasterView'
 import RegisterRequest from '../views/auth/RegisterRequest'
 import NotFound from '../views/utils/NotFound'
-import ResetPassword from '../views/auth/ResetPassword'
 // import NewQuestion from '../views/question/NewQuestion'
 import UserList from '../views/user/UserList'
 import ForgotMyPassword from '../views/auth/ForgotMyPassword'
@@ -19,7 +18,6 @@ import User from '../views/user/User'
 import NewBranch from '../views/branch/NewBranch'
 import BranchList from '../views/branch/BranchList'
 import NewLearningOutcome from '../views/learningOutcome/NewLearningOutcome'
-import QuestionList from '../views/question/QuestionList'
 import ShowQuestion from '../views/question/ShowQuestion'
 import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
 import Stats from '../views/info/Stats'
@@ -33,8 +31,10 @@ import EvaluateQuestion from '../views/question/EvaluateQuestion'
 import ReviseQuestion from '../views/question/ReviseQuestion'
 import SetEvaluatorsForQuestion from '../views/question/SetEvaluatorsForQuestion'
 import UnderConstruction from '../views/utils/UnderConstruction'
-import AppSettings from "../views/management/AppSettings";
-import MailSync from "../views/management/MailSync";
+import AppSettings from '../views/management/AppSettings'
+import MailSync from '../views/management/MailSync'
+import InstitutionList from '../views/institution/InstitutionList'
+import EditInstitution from '../views/institution/EditInstitution'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -146,6 +146,16 @@ const router = new Router({
           path: 'institutions/new',
           name: 'newInst',
           component: NewInstitution
+        },
+        {
+          path: 'institutions/:instId/edit',
+          name: 'editInst',
+          component: EditInstitution
+        },
+        {
+          path: 'institutions',
+          name: 'institutions',
+          component: InstitutionList
         },
         {
           path: 'under_construction',

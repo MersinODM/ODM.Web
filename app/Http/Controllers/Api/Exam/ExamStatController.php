@@ -11,7 +11,7 @@
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Exam;
 
 
 class ExamStatController

@@ -9,7 +9,6 @@ namespace App\Http\Controllers\Api\Question;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ResponseHelper;
 use App\Models\Branch;
 use App\Models\Question;
 use Carbon\Carbon;
@@ -43,9 +42,6 @@ class QuestionQueryController extends Controller
      */
     public function getQuestionList(Request $request): JsonResponse
     {
-        // TODO Branch id sosyalciler ve Adminler için parametrik olacak ve istemciden gelecek
-        // TODO Durum bilgisi kullanıcıdan alınacak
-
         $branchId = $request->input('branch_id');
         $classLevel = $request->input('class_level');
         $status = $request->input('question_status');

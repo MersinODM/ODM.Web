@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Api\Question;
 use App\Events\NewEvalReqEvent;
 use App\Events\QuestionEvalCalculateRequired;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\Question;
 use App\Models\QuestionEvalRequest;
@@ -71,7 +71,7 @@ class QuestionEvalRequestController extends ApiController
             foreach ($electors as $elector) {
                 event(new NewEvalReqEvent($lessonId, $elector['id']));
             }
-            return response()->json([ResponseHelper::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
+            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -108,7 +108,7 @@ class QuestionEvalRequestController extends ApiController
             ]);
             $qevalReq->save();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => 'Gruba yeni değerlendirici kaydı başarıyla eklendi.'], 200);
+            return response()->json([ResponseKeys::MESSAGE => 'Gruba yeni değerlendirici kaydı başarıyla eklendi.'], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -124,7 +124,7 @@ class QuestionEvalRequestController extends ApiController
             DB::commit();
             // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
             event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseHelper::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
+            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -143,7 +143,7 @@ class QuestionEvalRequestController extends ApiController
             // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
             // QuestionEvalRequest::where('code', $code);
             // event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseHelper::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
+            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -180,7 +180,7 @@ class QuestionEvalRequestController extends ApiController
             DB::commit();
             // Event fırlatarak soru puanlama ve hesaplamaları yaptırılıyor
             event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseHelper::MESSAGE => 'Değerlendirmeniz kaydedilmiştir. Teşekkür ederiz.'], 201);
+            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirmeniz kaydedilmiştir. Teşekkür ederiz.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -208,9 +208,9 @@ class QuestionEvalRequestController extends ApiController
             if ($this->checkQuestionEval($questionId, $code)) {
                 // TODO Refactoring yapılacak
                 $this->setQuestionState($this->calculateQuestionEval($questionId, $code), $questionId);
-                return response()->json([ResponseHelper::MESSAGE => 'Soru değerlendirmesi maunel hesaplanmıştır.'], 200);
+                return response()->json([ResponseKeys::MESSAGE => 'Soru değerlendirmesi maunel hesaplanmıştır.'], 200);
             }
-            return response()->json([ResponseHelper::MESSAGE => 'Maalesef yeterli değerlendirme yapılmamıştır.'], 200);
+            return response()->json([ResponseKeys::MESSAGE => 'Maalesef yeterli değerlendirme yapılmamıştır.'], 200);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return response()->json($this->apiException($exception), 500);

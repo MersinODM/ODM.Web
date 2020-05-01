@@ -10,7 +10,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <h4>Soru Silme İstekleri</h4>
+            <h4><span class="mdi mdi-delete-restore" /> Soru Silme İstekleri</h4>
           </div>
           <div class="box-body">
             <div
@@ -53,129 +53,100 @@ import Constants from '../../helpers/constants'
 import Auth from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { QuestionDeleteService } from '../../services/QuestionDeleteRequestService'
+import tr from '../../helpers/dataTablesTurkish'
 
 export default {
   name: 'QuestionDeleteRequests',
   mounted () {
     const vm = this
-    let table = $('#qdrList')
-                .DataTable({
-                  processing: true,
-                  serverSide: true,
-                  responsive: true,
-                  ajax: {
-                    url: `${vm.$getBasePath()}/api/questions/delete_requests`,
-                    dataType: 'json',
-                    type: 'POST',
-                    beforeSend (xhr) {
-                      Auth.check()
-                      const token = localStorage.getItem(Constants.accessToken)
-                      xhr.setRequestHeader('Authorization',
+    const table = $('#qdrList')
+      .DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+          url: `${vm.$getBasePath()}/api/questions/delete_requests`,
+          dataType: 'json',
+          type: 'POST',
+          beforeSend (xhr) {
+            Auth.check()
+            const token = localStorage.getItem(Constants.accessToken)
+            xhr.setRequestHeader('Authorization',
                         `Bearer ${token}`)
-                    }
-                    // error: function (jqXHR, textStatus, errorThrown) {
-                    //   console.log(errorThrown)
-                    // }
-                  },
-                  language: {
-                    'sDecimal': ',',
-                    'sEmptyTable': 'Tabloda herhangi bir veri mevcut değil',
-                    'sInfo': '_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor',
-                    'sInfoEmpty': 'Kayıt yok',
-                    'sInfoFiltered': '(_MAX_ kayıt içerisinden bulunan)',
-                    'sInfoPostFix': '',
-                    'sInfoThousands': '.',
-                    'sLengthMenu': 'Sayfada _MENU_ kayıt göster',
-                    'sLoadingRecords': 'Yükleniyor...',
-                    'sProcessing': 'İşleniyor...',
-                    'sSearch': 'Ara:',
-                    'sZeroRecords': 'Eşleşen kayıt bulunamadı',
-                    'oPaginate': {
-                      'sFirst': 'İlk',
-                      'sLast': 'Son',
-                      'sNext': 'Sonraki',
-                      'sPrevious': 'Önceki'
-                    },
-                    'oAria': {
-                      'sSortAscending': ': artan sütun sıralamasını aktifleştir',
-                      'sSortDescending': ': azalan sütun sıralamasını aktifleştir'
-                    },
-                    'select': {
-                      'rows': {
-                        '_': '%d kayıt seçildi',
-                        '0': '',
-                        '1': '1 kayıt seçildi'
-                      }
-                    }
-                  },
-                  columns: [
-                    {
-                      data: 'id',
-                      name: 'users.id',
-                      visible: false
-                    },
-                    {
-                      data: 'question_id',
-                      name: 'qdr.question_id',
-                      visible: false
-                    },
-                    {
-                      data: 'full_name',
-                      name: 'users.full_name',
-                      searchable: true
-                    },
-                    {
-                      data: 'comment',
-                      searchable: true
-                    },
-                    {
-                      data: 'learning_outcome',
-                      searchable: false
-                    },
-                    {
-                      data: 'created_at',
-                      name: 'qdr.created_at',
-                      searchable: true
-                    },
-                    {
-                      data: 'acceptor_name',
-                      name: 'um.full_name',
-                      searchable: false
-                    },
-                    {
-                      data: '',
-                      className: 'text-center',
-                      width: '15%',
-                      render (data, type, row, meta) {
-                        if (vm.$isInRole('admin')) {
-                          if (row['acceptor_name'] === null) {
-                            return '<div class="btn-group">' +
-                                    '<button class="btn btn-xs btn-info">Soruyu Gör</button>' +
-                                    '<button class="btn btn-xs btn-warning">Sil</button>' +
+          }
+          // error: function (jqXHR, textStatus, errorThrown) {
+          //   console.log(errorThrown)
+          // }
+        },
+        language: tr,
+        columns: [
+          {
+            data: 'id',
+            name: 'users.id',
+            visible: false
+          },
+          {
+            data: 'question_id',
+            name: 'qdr.question_id',
+            visible: false
+          },
+          {
+            data: 'full_name',
+            name: 'users.full_name',
+            searchable: true
+          },
+          {
+            data: 'comment',
+            searchable: true
+          },
+          {
+            data: 'learning_outcome',
+            searchable: false
+          },
+          {
+            data: 'created_at',
+            name: 'qdr.created_at',
+            searchable: true
+          },
+          {
+            data: 'acceptor_name',
+            name: 'um.full_name',
+            searchable: false
+          },
+          {
+            data: '',
+            className: 'text-center',
+            width: '15%',
+            render (data, type, row, meta) {
+              if (vm.$isInRole('admin')) {
+                if (row.acceptor_name === null) {
+                  return '<div class="btn-group">' +
+                                    '<button class="btn btn-xs btn-info">Gör</button>' +
+                                    '<button class="btn btn-xs btn-warning">İsteği Sil</button>' +
                                     '<button class="btn btn-xs btn-danger">Onayla</button>' +
                                  '</div>'
-                          }
-                          return 'Silinmiş'
-                        }
-                        return 'Yetkiniz yok'
-                      },
-                      searchable: false,
-                      orderable: false
-                    }
-                  ],
-                  retrieve: true,
-                  searching: true,
-                  paging: true
-                })
+                }
+                return 'Silinmiş'
+              }
+              return 'Yetkiniz yok'
+            },
+            searchable: false,
+            orderable: false
+          }
+        ],
+        retrieve: true,
+        searching: true,
+        paging: true
+      })
 
     table.on('click', '.btn-info', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       console.log(data)
       vm.$router.push({ name: 'showQuestion', params: { questionId: data.question_id } })
     })
 
     table.on('click', '.btn-warning', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       console.log(data)
       Messenger.showPrompt('Bu silme talebini silmek istediğinize emin misiniz?', {
         cancel: 'İptal',
@@ -186,20 +157,20 @@ export default {
       }).then(value => {
         if (value) {
           QuestionDeleteService.delete(data.id, data.question_id)
-                  .then(resp => {
-                    Messenger.showSuccess(resp.message)
-                    table.ajax.reload()
-                  })
-                  .catch(err => {
-                    Messenger.showError(err)
-                    table.ajax.reload()
-                  })
+            .then(resp => {
+              Messenger.showSuccess(resp.message)
+              table.ajax.reload()
+            })
+            .catch(err => {
+              Messenger.showError(err)
+              table.ajax.reload()
+            })
         }
       })
     })
 
     table.on('click', '.btn-danger', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       Messenger.showPrompt('Bu soruya ait tüm veriler silinecek! Bu isteğe onay vermek istediğinize emin misiniz?',
         {
@@ -211,14 +182,14 @@ export default {
         }).then(value => {
         if (value) {
           QuestionDeleteService.approve(data.id)
-                  .then(res => {
-                    Messenger.showSuccess(res)
-                    table.ajax.reload()
-                  })
-                  .catch(err => {
-                    Messenger.showError(err)
-                    table.ajax.reload()
-                  })
+            .then(res => {
+              Messenger.showSuccess(res)
+              table.ajax.reload()
+            })
+            .catch(err => {
+              Messenger.showError(err)
+              table.ajax.reload()
+            })
         }
       })
     })

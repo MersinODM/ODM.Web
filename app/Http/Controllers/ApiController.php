@@ -8,6 +8,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Controllers\Utils\ResponseCodes;
 use App\Traits\ValidationTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -33,9 +34,9 @@ class ApiController extends Controller
     public function apiException($exception)
     {
         return [
-            ResponseHelper::CODE => ResponseCodes::CODE_ERROR,
-            ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
-            ResponseHelper::EXCEPTION => $exception->getMessage()
+            ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
+            ResponseKeys::MESSAGE => ResponseContents::EXCEPTION_MESSAGE,
+            ResponseKeys::EXCEPTION => $exception->getMessage()
         ];
     }
 }

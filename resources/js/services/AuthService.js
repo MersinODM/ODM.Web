@@ -25,17 +25,15 @@ import jwt from 'jwt-decode'
 const AuthService = {
   login: (credentials) => {
     return new Promise((resolve, reject) => {
-      http.post('/auth/login', credentials, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => {
-        localStorage.setItem(Constants.accessToken, response.data.access_token)
-        localStorage.setItem(Constants.expires_in, response.data.expires_in)
-        resolve(response.data)
-      }).catch((error) => {
-        reject(error)
-      })
+      http.post('/auth/login', credentials)
+        .then(response => {
+          localStorage.setItem(Constants.accessToken, response.data.access_token)
+          localStorage.setItem(Constants.expires_in, response.data.expires_in)
+          resolve(response.data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
     })
   },
   logout: () => {
@@ -43,7 +41,8 @@ const AuthService = {
     localStorage.removeItem(Constants.expires_in)
     localStorage.removeItem(Constants.permissions)
     localStorage.removeItem(Constants.roles)
-    router.push({ 'name': 'login' })
+    localStorage.removeItem(Constants.generalInfo)
+    router.push({ name: 'login' })
   },
   check: () => {
 
@@ -58,15 +57,16 @@ const AuthService = {
         localStorage.setItem(Constants.permissions, JSON.stringify(permission.data))
         localStorage.setItem(Constants.roles, JSON.stringify(roles.data))
         resolve({ roles: roles.data, permissions: permission.data })
-      }).catch(error => {
-        console.log(error)
-        reject(error)
       })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
     })
   },
   getUser: (callback) => {
     let user = null
-    let id = jwt(localStorage.getItem(Constants.accessToken)).sub
+    const id = jwt(localStorage.getItem(Constants.accessToken)).sub
     http.get(`/users/${id}`)
       .then(response => {
         user = response.data
@@ -79,7 +79,7 @@ const AuthService = {
       })
   },
   getUserId () {
-    let token = localStorage.getItem(Constants.accessToken)
+    const token = localStorage.getItem(Constants.accessToken)
     if (token) {
       return jwt(localStorage.getItem(Constants.accessToken)).sub
     }
@@ -88,23 +88,23 @@ const AuthService = {
   createRegisterRequest (data) {
     return new Promise((resolve, reject) => {
       http.post('/auth/register', data)
-          .then(response => {
-            resolve(response.data)
-          })
-          .catch(reason => {
-            reject(reason)
-          })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(reason => {
+          reject(reason)
+        })
     })
   },
   forgetPassword (data) {
     return new Promise((resolve, reject) => {
       http.post('/auth/password/forget', data)
-          .then(response => {
-            resolve(response.data)
-          })
-          .catch(reason => {
-            reject(reason)
-          })
+        .then(response => {
+          resolve(response.data)
+        })
+        .catch(reason => {
+          reject(reason)
+        })
     })
   }
 }

@@ -2,13 +2,6 @@
   -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
   -  geliştirilen bütün kaynak kodlar
   -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
-  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
-  -->
-
-<!--
-  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
-  -  geliştirilen bütün kaynak kodlar
-  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   -  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
   -->
 
@@ -18,7 +11,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <h4>Yeni Okul/Kurum</h4>
+            <h4> <span class="mdi mdi-bank-plus" /> Yeni Okul/Kurum Ekleme</h4>
           </div>
           <div class="box-body">
             <div class="row">
@@ -95,12 +88,12 @@
                     <label>Telefon</label>
                     <input
                       v-model="phone"
-                      v-mask="'(###)-###-####'"
-                      v-validate="{ required: true, regex:/[(][0-9]{1,3}[)][-][0-9]{1,3}[-][0-9]{4}$/ }"
+                      v-mask="'### ### ####'"
+                      v-validate="{ required: true, regex:/[0-9]{1,3}[ ][0-9]{1,3}[ ][0-9]{4}$/ }"
                       name="phone"
                       class="form-control"
                       type="text"
-                      placeholder="(999)-999-9999"
+                      placeholder="Tel. num. başında 0(sıfır) olmadan giriniz"
                     >
                     <span class="mdi mdi-phone form-control-feedback" />
                     <span
@@ -109,13 +102,6 @@
                     >{{ errors.first('phone') }}</span>
                   </div>
                   <div class="row">
-                    <!--<div class="col-xs-8">-->
-                    <!--<p-check v-model="isChecked" class="p-icon p-smooth" color="primary">-->
-                    <!--<i slot="extra" class="icon fa fa-check"></i>-->
-                    <!--fa-check-->
-                    <!--</p-check>-->
-                    <!--</div>-->
-                    <!-- /.col -->
                     <div class="col-xs-offset-4 col-xs-4">
                       <button
                         :class="{ disabled : errors.any() }"
@@ -158,34 +144,34 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     UnitService.getAllUnits()
-               .then((units) => {
-                 next(vm => {
-                   vm.units = units
-                 })
-               })
+      .then((units) => {
+        next(vm => {
+          vm.units = units
+        })
+      })
   },
   methods: {
     save () {
       this.$validator.validateAll()
-          .then(valRes => {
-            if (valRes) {
-              let inst = {
-                id: this.instId,
-                unit_id: this.selectedUnit,
-                name: this.name,
-                phone: this.phone.replace(/[^0-9]/gi, '')
-              }
-              InstitutionService.create(inst)
-                .then(value => {
-                  Messenger.showInfo(value.message, () => {
-                    this.$router.push({ name: 'stats' })
-                  })
-                })
-                .catch(() => {
-                  Messenger.showError(MessengerConstants.errorMessage)
-                })
+        .then(valRes => {
+          if (valRes) {
+            const inst = {
+              id: this.instId,
+              unit_id: this.selectedUnit,
+              name: this.name,
+              phone: this.phone.replace(/[^0-9]/gi, '')
             }
-          })
+            InstitutionService.create(inst)
+              .then(value => {
+                Messenger.showInfo(value.message, () => {
+                  this.$router.push({ name: 'stats' })
+                })
+              })
+              .catch(() => {
+                Messenger.showError(MessengerConstants.errorMessage)
+              })
+          }
+        })
     }
   }
 }

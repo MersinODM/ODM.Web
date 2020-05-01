@@ -264,7 +264,7 @@ export default {
               full_name: this.full_name,
               inst_id: this.inst,
               branch_id: this.branch,
-              phone: this.phone,
+              phone: this.phone.replace(/[^0-9]/gi, ''),
               recaptcha: this.captchaToken
             }
             AuthService.createRegisterRequest(data)

@@ -9,8 +9,8 @@ namespace App\Http\Controllers\Api\Auth;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseCodes;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseCodes;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Setting;
 use App\Rules\Recaptcha;
 use Exception;
@@ -27,9 +27,28 @@ class AuthController extends ApiController
     use ThrottlesLogins;
 
     /**
+     * The maximum number of attempts to allow.
+     *
+     * @return int
+     */
+    protected $maxAttempts = 3;
+
+
+    /**
+     * The number of minutes to throttle for.
+     *
+     * @return int
+     */
+    protected $decayMinutes = 2;
+
+
+    /**
      * Oturum açmak gereken fonksiyon
      * @param Request $request
+     * @param Recaptcha $recaptcha
+     * @param $decayMinutes
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function login(Request $request, Recaptcha $recaptcha)
     {
@@ -61,6 +80,16 @@ class AuthController extends ApiController
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
+
+        if (method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => 'Çok fazla hatalı giriş yaptınız '.$this->decayMinutes.' dakika bekleyiniz!']);
+        }
+
         // Kullanıcı ve şifre bilgilerini istekten çekelim
         $credentials = $request->only('email', 'password');
 
@@ -68,18 +97,23 @@ class AuthController extends ApiController
 
             // Kullanıcı biliglerinin veri tabanından doğrulaması yapılıyor
             if (!$token = auth()->attempt($credentials)) {
-                //TODO json düzenlemesi yapılcak
+                $this->incrementLoginAttempts($request);
                 return response()->json([
-                    ResponseHelper::CODE => ResponseCodes::CODE_UN_AUTHORIZED,
-                    ResponseHelper::MESSAGE => 'Hatalı kullanıcı adı/şifre kullanmış olabilirsiniz veya hesabınız sistem yöneticileri tarafından etkisizleştirilmiş olabilir!']);
+                    ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
+                    ResponseKeys::MESSAGE => 'Hatalı kullanıcı adı/şifre kullanmış olabilirsiniz veya hesabınız sistem yöneticileri tarafından etkisizleştirilmiş olabilir!']);
             }
         } catch (Exception $e) {
             // Bişeyler ters giderse ;-)
-            return response()->json([ResponseHelper::MESSAGE => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()], 500);
+            return response()->json([ResponseKeys::MESSAGE => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()], 500);
         }
 
         // Herşey normal ise jetonu geri döndürelim
         return $this->respondWithToken($token);
+    }
+
+    private function username()
+    {
+        return 'email';
     }
 
     protected function respondWithToken($token)

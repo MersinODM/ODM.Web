@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Question;
 
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Question;
 use App\Models\QuestionRevisions;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class QuestionRevisionController extends ApiController {
                 ->where('status', Question::NEED_REVISION)
                 ->update(['status' => Question::REVISION_COMPLETED]);
             // TODO adminlere veya komisyona mail atmak gerekebilir
+            Storage::copy($path, "temp/".$path);
             Storage::delete($path);
             Storage::put($path, file_get_contents($question_file->getPathName()));
             DB::commit();
@@ -51,9 +53,10 @@ class QuestionRevisionController extends ApiController {
         }
         catch (\Exception $exception) {
             DB::rollBack();
-            //Storage::delete($path);
-            throw $exception;
-//            return response()->json([ResponseHelper::EXCEPTION => "Revizyon kaydı başarısız!"],500);
+            Storage::move("temp/".$path, $path);
+            return response()->json([ResponseKeys::MESSAGE=> "Revizyon kaydı başarısız!",
+                ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
+//            return response()->json([ResponseKeys::EXCEPTION => "Revizyon kaydı başarısız!"],500);
         }
     }
 

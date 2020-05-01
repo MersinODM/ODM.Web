@@ -66,7 +66,7 @@ export default {
   },
   mounted () {
     const vm = this
-    let table = $('#userList')
+    const table = $('#userList')
       .DataTable({
         processing: true,
         serverSide: true,
@@ -126,7 +126,7 @@ export default {
             className: 'text-center',
             width: '15%',
             render (data, type, row, meta) {
-              if (row['activator_name'] !== null) {
+              if (row.activator_name !== null) {
                 return '<div class="btn-group">' +
                     '<button class="btn btn-xs btn-info">Göster</button>' +
                     '<button class="btn btn-xs btn-danger">Pasif.</button>' +
@@ -152,13 +152,13 @@ export default {
     // });
 
     table.on('click', '.btn-info', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       vm.$router.push({ name: 'user', params: { id: data.id } })
     })
 
     table.on('click', '.btn-danger', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
         {
@@ -170,20 +170,20 @@ export default {
         }).then(value => {
         if (value) {
           UserService.delete(data.id)
-                     .then(res => {
-                       Messenger.showSuccess(res)
-                       table.ajax.reload()
-                     })
-                     .catch(err => {
-                       Messenger.showError(err)
-                       table.ajax.reload()
-                     })
+            .then(res => {
+              Messenger.showSuccess(res)
+              table.ajax.reload()
+            })
+            .catch(err => {
+              Messenger.showError(err)
+              table.ajax.reload()
+            })
         }
       })
     })
 
     table.on('click', '.btn-warning', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       vm.isApproving = true
       UserService.approveUser(data.id, (resp) => {

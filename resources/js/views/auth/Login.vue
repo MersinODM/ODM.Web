@@ -147,6 +147,7 @@ import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
 import { SettingService } from '../../services/SettingService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
+import { ResponseCodes } from '../../helpers/constants'
 
 // const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
@@ -205,7 +206,7 @@ export default {
             const loader = this.$loading.show()
             AuthService.login(credentials)
               .then(value => {
-                if (value.code === 401) {
+                if (value.code === ResponseCodes.CODE_UNAUTHORIZED) {
                   Messenger.showWarning(value.message)
                   this.isSigningIn = false
                 } else {

@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Api\Branch;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use Exception;
 use Illuminate\Http\Request;
@@ -39,7 +39,7 @@ class BranchController extends ApiController
     catch (Exception $exception) {
       return response()->json($this->apiException($exception), 500);
     }
-    return response()->json([ResponseHelper::MESSAGE => 'Branş/Ders kayıt işlemi başarılı.'], 201);
+    return response()->json([ResponseKeys::MESSAGE => 'Branş/Ders kayıt işlemi başarılı.'], 201);
   }
 
   public function update(Request $request, $id) {
@@ -59,7 +59,7 @@ class BranchController extends ApiController
     catch (Exception $exception) {
       return response()->json($this->apiException($exception), 500);
     }
-    return response()->json([ResponseHelper::MESSAGE => "Branş/Ders güncelleme işlemi başarılı."], 201);
+    return response()->json([ResponseKeys::MESSAGE => "Branş/Ders güncelleme işlemi başarılı."], 201);
   }
 
   public function delete(Request $request, $id) {

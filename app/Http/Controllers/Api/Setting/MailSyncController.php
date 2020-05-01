@@ -9,8 +9,8 @@ namespace App\Http\Controllers\Api\Setting;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseCodes;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseCodes;
+use App\Http\Controllers\Utils\ResponseKeys;
 use Illuminate\Support\Facades\Artisan;
 
 class MailSyncController extends ApiController
@@ -21,8 +21,8 @@ class MailSyncController extends ApiController
             //Aşağıdaki kod parçasına ulaşamdan çalışma kesiliyor
             $output = Artisan::output();
             return response()->json([
-                ResponseHelper::CODE => ResponseCodes::CODE_SUCCESS,
-                ResponseHelper::MESSAGE => "Mail seknronizasyonu tamamlandı."
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Mail seknronizasyonu tamamlandı."
             ]);
         }
         catch (\Exception $exception) {

@@ -103,7 +103,7 @@
                     <li>Sınıf Seviyesi: {{ l.class_level }}</li>
                     <li>Kodu: {{ l.code }}</li>
                     <li>İçerik: {{ l.content }}</li>
-                    <li></li>
+                    <li />
                   </ul>
                 </div>
               </div>
@@ -137,24 +137,24 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([BranchService.getBranches(), LearningOutcomesService.getLastSavedLOs(18)])
-           .then(([branches, los]) => {
-             next(vm => {
-               branches.splice(0, 0, { id: 0, name: 'Hepsi', code: 'ALL' })
-               vm.branches = branches
-               vm.loGroup = chunk(los, 3)
-             })
-           })
+      .then(([branches, los]) => {
+        next(vm => {
+          branches.splice(0, 0, { id: 0, name: 'Hepsi', code: 'ALL' })
+          vm.branches = branches
+          vm.loGroup = chunk(los, 3)
+        })
+      })
   },
   methods: {
     searchLOs () {
       this.$validator.validateAll()
-          .then(valRes => {
-            if (valRes) {
-              LearningOutcomesService.findByCodeOrContentWithPaging({ searched_content: this.searchedContent })
-                                     .then(value => { this.loGroup = chunk(value, 3) })
-                                     .catch(reason => Messenger.showError(reason.message))
-            }
-          })
+        .then(valRes => {
+          if (valRes) {
+            LearningOutcomesService.findByCodeOrContentWithPaging({ searched_content: this.searchedContent })
+              .then(value => { this.loGroup = chunk(value, 3) })
+              .catch(reason => Messenger.showError(reason.message))
+          }
+        })
     }
   }
 }

@@ -12,9 +12,18 @@ const Constants = {
   generalInfo: 'general_info'
 }
 
+const ResponseCodes = {
+  CODE_SUCCESS: 1000,
+  CODE_UNAUTHORIZED: 1001,
+  CODE_NOT_FOUND: 1002,
+  CODE_INFO: 1003,
+  CODE_WARNING: 1004,
+  CODE_ERROR: 1005
+}
+
 const MessengerConstants = {
   errorMessage: 'Sunucu bazlı bir hata meydana geldi!'
 }
 
-export { MessengerConstants }
+export { MessengerConstants, ResponseCodes }
 export default Constants

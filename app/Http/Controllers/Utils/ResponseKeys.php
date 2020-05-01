@@ -5,30 +5,16 @@
  *  Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz. 2019
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Utils;
 
 /**
  * Responsları Biraz kolaylaştırma amaçlı eklendi
- * Class ResponseHelper
+ * Class ResponseKeys
  * @package App\Http\Controllers
  */
-class ResponseHelper
+class ResponseKeys
 {
-  //Mesaj adları
-  public const UN_AUTHORIZED = 401;
   public const CODE = 'code';
   public const MESSAGE = 'message';
   public const EXCEPTION = 'exception';
-
-  public const EXCEPTION_MESSAGE = 'Sunucu bazlı bir hata meydana geldi!';
-}
-
-class ResponseCodes
-{
-    public const CODE_SUCCESS = 1000;
-    public const CODE_UN_AUTHORIZED = 1001;
-    public const CODE_NOT_FOUND = 1002;
-    public const CODE_INFO = 1003;
-    public const CODE_WARNING = 1004;
-    public const CODE_ERROR = 1005;
 }

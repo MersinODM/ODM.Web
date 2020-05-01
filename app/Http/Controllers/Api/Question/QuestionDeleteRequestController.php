@@ -9,8 +9,8 @@ namespace App\Http\Controllers\Api\Question;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseCodes;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseCodes;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
 use App\Models\QuestionEvalRequest;
@@ -37,8 +37,8 @@ class QuestionDeleteRequestController extends ApiController
         if ($question === null) {
             return response()->json(
                 [
-                    ResponseHelper::MESSAGE => "Böyle bir soru yok maalesef!",
-                    ResponseHelper::CODE => ResponseCodes::CODE_NOT_FOUND
+                    ResponseKeys::MESSAGE => "Böyle bir soru yok maalesef!",
+                    ResponseKeys::CODE => ResponseCodes::CODE_NOT_FOUND
                 ]);
         }
         try {
@@ -51,7 +51,7 @@ class QuestionDeleteRequestController extends ApiController
                 ]);
             $qdr->save();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Soru silme isteği incelenmek üzere tarafımıza ulaşmıştır."]);
+            return response()->json([ResponseKeys::MESSAGE => "Soru silme isteği incelenmek üzere tarafımıza ulaşmıştır."]);
         }
         catch (\Exception $exception){
             DB::rollBack();
@@ -73,7 +73,7 @@ class QuestionDeleteRequestController extends ApiController
             $question->delete();
             Storage::delete($question->content_url);
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Soru tümüyle silinmiştir."]);
+            return response()->json([ResponseKeys::MESSAGE => "Soru tümüyle silinmiştir."]);
         }
         catch (\Exception $exception) {
             DB::rollBack();
@@ -87,7 +87,7 @@ class QuestionDeleteRequestController extends ApiController
             DB::beginTransaction();
             $qdr->delete();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Soru silme isteği silinmiştir."]);
+            return response()->json([ResponseKeys::MESSAGE => "Soru silme isteği silinmiştir."]);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);

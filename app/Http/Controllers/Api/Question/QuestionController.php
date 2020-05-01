@@ -15,7 +15,8 @@
 namespace App\Http\Controllers\Api\Question;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\LearningOutcome;
 use App\Models\Question;
@@ -88,7 +89,7 @@ class QuestionController extends ApiController
             Storage::delete($path);
             return response()->json($this->apiException($exception), 500);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Soru ekleme işlemi başarılı."], 201);
+        return response()->json([ResponseKeys::MESSAGE => "Soru ekleme işlemi başarılı."], 201);
     }
 
     public function findById($id)
@@ -126,7 +127,7 @@ class QuestionController extends ApiController
         if (isset($question)) {
             return response()->json($question, 200);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Böyle bir soru yok!"], 404);
+        return response()->json([ResponseKeys::MESSAGE => "Böyle bir soru yok!"], 404);
     }
 
     public function findByContentAndClassLevelAndBranch(Request $request)
@@ -183,7 +184,7 @@ class QuestionController extends ApiController
                 ]);
             return response()->json($res, 200);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulamadık!"], 404);
+        return response()->json([ResponseKeys::MESSAGE => "Hiçbir şey bulamadık!"], 404);
 
     }
 
@@ -227,7 +228,7 @@ class QuestionController extends ApiController
                 ->get();
             return response()->json($res, 200);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Hiçbir şey bulamadık!"], 200);
+        return response()->json([ResponseKeys::MESSAGE => "Hiçbir şey bulamadık!"], 200);
 
     }
 
@@ -237,12 +238,12 @@ class QuestionController extends ApiController
         $filePath = $question->content_url;
         if (isset($filePath)) {
             if (!Storage::exists($filePath)) {
-                return response()->json([ResponseHelper::MESSAGE => "Belirttiğiniz soruya ait bir dosya yok!"], 404);
+                return response()->json([ResponseKeys::MESSAGE => "Belirttiğiniz soruya ait bir dosya yok!"], 404);
             }
             $pdfContent = Storage::get($filePath);
             $encodedPDF = "data:application/pdf;base64," . base64_encode($pdfContent);
             return response($encodedPDF, 200);
         }
-        return response()->json([ResponseHelper::MESSAGE => "Veritabanına dosya yolu kaydı girilmemiş!"], 404);
+        return response()->json([ResponseKeys::MESSAGE => "Veritabanına dosya yolu kaydı girilmemiş!"], 404);
     }
 }

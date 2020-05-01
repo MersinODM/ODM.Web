@@ -17,12 +17,16 @@ const InstitutionService = {
   findByName (name) {
     return new Promise((resolve, reject) => {
       http.get('/auth/institutions', { params: { searchTerm: name } })
-          .then(response => { resolve(response.data) })
-          .catch(error => { reject(error) })
+        .then(response => { resolve(response.data) })
+        .catch(error => { reject(error) })
     })
   },
   findById (id) {
-
+    return new Promise((resolve, reject) => {
+      http.get(`institutions/${id}`)
+        .then((response) => { resolve(response.data) })
+        .catch((error) => reject(error))
+    })
   },
   create (institution) {
     return new Promise((resolve, reject) => {
@@ -31,8 +35,12 @@ const InstitutionService = {
         .catch(err => { reject(err) })
     })
   },
-  update (institution) {
-
+  update (id, institution) {
+    return new Promise((resolve, reject) => {
+      http.put(`institutions/${id}`, institution)
+        .then(response => { resolve(response.data) })
+        .catch(err => { reject(err) })
+    })
   },
   delete (id) {
   }

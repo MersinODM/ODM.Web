@@ -10,7 +10,8 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Events\NewUserReqReceived;
 use App\Events\ResetPasswordEvent;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ResponseHelper;
+use App\Http\Controllers\Utils\ResponseContents;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Rules\Recaptcha;
 use App\User;
 use Exception;
@@ -50,7 +51,7 @@ class UserManagementController extends ApiController
         $req = User::where("email", $request->input("email"))->first();
 
         if ($req) {
-            return response()->json([ResponseHelper::MESSAGE => "Bu mail adresiyle daha önce bir istek yapılmış."], 409);
+            return response()->json([ResponseKeys::MESSAGE => "Bu mail adresiyle daha önce bir istek yapılmış."], 409);
         }
 
         $requestedUser = $request->only("full_name", "inst_id", "branch_id", "email", "phone");
@@ -63,10 +64,10 @@ class UserManagementController extends ApiController
             //Burada kullanıca şifre oluşturma maili atılıyor
             event(new NewUserReqReceived($model));
             DB::commit();
-            return response()->json(["message" => "Kullanıcı açma isteğiniz alındı."], 201);
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı oluşturma isteğiniz alındı."], 201);
         } catch (Exception $exception) {
             DB::rollback();
-            return response()->json([ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı oluşturma işlmei alınamadı!",
                 "exception" => $exception->getMessage()], 500);
         }
     }
@@ -88,11 +89,11 @@ class UserManagementController extends ApiController
             //Bu işlem normalde java gibi dillerde asenkron yapılabilirdi
             event(new ResetPasswordEvent($newUserReq));
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı kayıt isteği onaylandı."], 200);
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı kayıt isteği onaylandı."], 200);
         } catch (Exception $exception) {
             DB::rollback();
-            return response()->json([ResponseHelper::MESSAGE => ResponseHelper::EXCEPTION_MESSAGE,
-                ResponseHelper::EXCEPTION => $exception->getMessage()], 500);
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı kayıt onayı yapılamadı!",
+                ResponseKeys::EXCEPTION => $exception->getMessage()], 500);
         }
     }
 
@@ -129,11 +130,14 @@ class UserManagementController extends ApiController
             $user->update($data);
             $user->assign($role);
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı güncelleme başarılı olmuştur."]);
+            return response()->json([
+                ResponseKeys::MESSAGE => "Kullanıcı güncelleme başarılı olmuştur."
+            ]);
         }
         catch (Exception $exception) {
             DB::rollBack();
-            return response()->json($this->apiException($exception), 500);
+            return response()->json([ResponseKeys::MESSAGE=> "Kullanıcı güncelleme başarısız oldu!",
+                ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
         }
     }
 
@@ -148,10 +152,12 @@ class UserManagementController extends ApiController
                 ->where('id', $id)
                 ->restore();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı başarıyla aktifleştirildi"]);
+            return response()->json([
+                ResponseKeys::MESSAGE => "Kullanıcı başarıyla aktifleştirildi"]);
         } catch (Exception $exception) {
             DB::rollBack();
-            return response()->json($this->apiException($exception), 500);
+            return response()->json([ResponseKeys::MESSAGE=> "Kullanıcı aktifleştirilemedi!",
+                ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
         }
     }
 
@@ -168,11 +174,12 @@ class UserManagementController extends ApiController
             $user = User::find($id);
             $user->delete();
             DB::commit();
-            return response()->json([ResponseHelper::MESSAGE => "Kullanıcı pasif hale getirildi"]);
+            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı pasif hale getirildi"]);
         }
         catch (Exception $exception) {
             DB::rollBack();
-            return response()->json($this->apiException($exception), 500);
+            return response()->json([ResponseKeys::MESSAGE=> "Kullanıcı pasifleştirilemedi!",
+                ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
         }
     }
 }

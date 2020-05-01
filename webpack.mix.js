@@ -16,15 +16,22 @@ const webpack = require('webpack')
  |
  */
 mix.webpackConfig({
-  plugins: [new BundleAnalyzerPlugin(),
+  plugins: [
+    new BundleAnalyzerPlugin(),
     new webpack.IgnorePlugin(/\.\/locale$/),
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /tr/)],
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /tr/)
+  ],
   externals: {
     jquery: 'jQuery',
     'jquery.dataTables': 'jquery.dataTables',
     moment: 'moment'
   }
 })
+
+// mix.babelConfig({
+//   presets: ['@babel/preset-env'],
+//   plugins: ['@babel/plugin-syntax-dynamic-import']
+// })
 
 mix.copyDirectory('resources/images', 'public/images')
 // mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
