@@ -29,12 +29,12 @@ class SettingController extends ApiController
             if (strpos($result, "Migrated") !== false) {
                 return response()->json([
                     ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                    ResponseKeys::MESSAGE => "Veritabanı son sürüme güncellendi"
+                    ResponseKeys::MESSAGE => "Veritabanı son sürüme güncellendi."
                 ]);
             }
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-                ResponseKeys::MESSAGE => "Veritabanı güncel"
+                ResponseKeys::MESSAGE => "Veritabanı güncel durumda."
             ]);
         }
         catch(Exception $exception) {

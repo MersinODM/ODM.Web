@@ -38,6 +38,7 @@ Route::group([
     Route::get('general_info', 'Setting\SettingController@getGeneralInfo');
     
 });
+Route::get('settings/migrate_up', "Setting\SettingController@migrateUp");
 
 //Bütün doğrulanması gereken api istekleri bu grup altına yazılacak
 //İstekler yapılırken http://tam_url/otomasyon/api/ nin arkasına ilgili istekler eklenecek

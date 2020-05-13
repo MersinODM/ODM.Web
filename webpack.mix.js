@@ -25,7 +25,10 @@ mix.webpackConfig({
     jquery: 'jQuery',
     'jquery.dataTables': 'jquery.dataTables',
     moment: 'moment'
-  }
+  }//,
+  // output: {
+  //   chunkFilename: '[name].js'
+  // }
 })
 
 // mix.babelConfig({
