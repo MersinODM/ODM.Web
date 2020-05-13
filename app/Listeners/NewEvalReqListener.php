@@ -6,11 +6,9 @@ use App\Events\NewEvalReqEvent;
 use App\Models\Branch;
 use App\Models\Setting;
 use App\User;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
-class NewEvalReqListener implements ShouldQueue
+class NewEvalReqListener
 {
     /**
      * Create the event listener.

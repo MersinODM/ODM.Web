@@ -166,11 +166,6 @@ const router = new Router({
           path: 'app_settings',
           name: 'appSettings',
           component: AppSettings
-        },
-        {
-          path: 'mails/sync',
-          name: 'mailSync',
-          component: MailSync
         }
       ]
     },

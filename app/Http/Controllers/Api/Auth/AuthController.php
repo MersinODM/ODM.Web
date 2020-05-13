@@ -63,7 +63,8 @@ class AuthController extends ApiController
                     'max:16',
                     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$^+=!*()@%&\.]).{8,16}$/'
                 ],
-                'recaptcha' => ['required', $recaptcha]
+                'recaptcha' => 'required'
+//                'recaptcha' => ['required', $recaptcha]
             ]);
         }else {
             $validationResult = $this->apiValidator($request, [
