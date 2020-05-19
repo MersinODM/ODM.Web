@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <header-delete-request-component
+            <header-delete-request
               title="Soru Değerlendirme"
               :question="question"
             />
@@ -270,11 +270,11 @@ import usersImg from '../../../images/users.png'
 import Question from '../../components/questions/Question'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import UserService from '../../services/UserService'
-import HeaderDeleteRequestComponent from '../../components/HeaderDeleteRequestComponent'
+import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 
 export default {
   name: 'SetEvaluatorsForQuestion',
-  components: { HeaderDeleteRequestComponent, vSelect, Question },
+  components: { HeaderDeleteRequest, vSelect, Question },
   data () {
     return {
       question: null,

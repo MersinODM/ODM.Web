@@ -10,7 +10,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <header-delete-request-component
+            <header-delete-request
               title="Soru İnceleme"
               :question="question"
             />
@@ -39,11 +39,11 @@ import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
 import usersImg from '../../../images/users.png'
 import Timeline from '../../components/questions/Timeline'
-import HeaderDeleteRequestComponent from '../../components/HeaderDeleteRequestComponent'
+import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 
 export default {
   name: 'ShowQuestion',
-  components: { Timeline, Question, HeaderDeleteRequestComponent },
+  components: { Timeline, Question, HeaderDeleteRequest },
   data () {
     return {
       question: null,

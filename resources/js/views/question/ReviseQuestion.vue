@@ -10,7 +10,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <header-delete-request-component
+            <header-delete-request
               title="Soru Revizyonu"
               :question="question"
             />
@@ -185,11 +185,11 @@ import vSelect from 'vue-select'
 import moment from 'moment'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
-import HeaderDeleteRequestComponent from '../../components/HeaderDeleteRequestComponent'
+import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 
 export default {
   name: 'ShowQuestion',
-  components: { vSelect, Question, HeaderDeleteRequestComponent },
+  components: { vSelect, Question, HeaderDeleteRequest },
   data () {
     return {
       moment: moment,

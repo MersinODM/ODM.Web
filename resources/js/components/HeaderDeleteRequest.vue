@@ -36,7 +36,7 @@ import QuestionService from '../services/QuestionService'
 import AuthService from '../services/AuthService'
 
 export default {
-  name: 'HeaderDeleteRequestComponent',
+  name: 'HeaderDeleteRequest',
   props: {
     title: {
       type: String,
