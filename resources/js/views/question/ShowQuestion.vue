@@ -10,21 +10,10 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <h4>
-              Soru İnceleme
-              <div
-                v-if="isOwner"
-                class="pull-right"
-              >
-                <button
-                  class="btn btn-danger pull-right"
-                  style="margin-right: 10px"
-                  @click="deleteRequest"
-                >
-                  Silme Talep Et
-                </button>
-              </div>
-            </h4>
+            <header-delete-request-component
+              title="Soru İnceleme"
+              :question="question"
+            />
           </div>
           <div class="box-body">
             <div class="col-md-12">
@@ -37,82 +26,7 @@
         </div>
       </div>
     </div>
-    <div
-      v-show="checkEvals"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary direct-chat direct-chat-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirmeler
-            </h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <div class="direct-chat-messages">
-              <div
-                v-for="(evaluation, index) in evaluations"
-                :key="evaluation.id"
-                class="direct-chat-msg"
-              >
-                <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
-                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
-                </div>
-                <img
-                  class="direct-chat-img"
-                  :src="userImage"
-                  alt="Message User Image"
-                >
-                <div class="direct-chat-text">
-                  {{ evaluation.comment }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      v-show="revisions !== null && revisions.length > 0"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary direct-chat direct-chat-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Gözden geçirmeler
-            </h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <!-- Conversations are loaded here -->
-            <div class="direct-chat-messages">
-              <!-- Message. Default to the left -->
-              <div
-                v-for="rev in revisions"
-                :key="rev.id"
-                class="direct-chat-msg"
-              >
-                <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">{{ rev.title }}</span>
-                  <span class="direct-chat-timestamp pull-right">{{ rev.date }}</span>
-                </div>
-                <img
-                  class="direct-chat-img"
-                  :src="userImage"
-                  alt="Message User Image"
-                >
-                <div class="direct-chat-text">
-                  {{ rev.comment }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <timeline :question-id="questionId" />
   </section>
 </template>
 
@@ -120,15 +34,16 @@
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import RevisionService from '../../services/CommentService'
-import usersImg from '../../../images/users.png'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-import AuthService from '../../services/AuthService'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
-import Question from '../../components/Question'
+import Question from '../../components/questions/Question'
+import usersImg from '../../../images/users.png'
+import Timeline from '../../components/questions/Timeline'
+import HeaderDeleteRequestComponent from '../../components/HeaderDeleteRequestComponent'
 
 export default {
   name: 'ShowQuestion',
-  components: { Question },
+  components: { Timeline, Question, HeaderDeleteRequestComponent },
   data () {
     return {
       question: null,
@@ -136,7 +51,8 @@ export default {
       oldQuestionFile: null,
       revisions: [],
       evaluations: [],
-      userImage: usersImg
+      userImage: usersImg,
+      questionId: null
     }
   },
   computed: {
@@ -149,20 +65,10 @@ export default {
         'label-success': this.question.status === QuestionStatuses.APPROVED,
         'label-default': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
       }
-    },
-    checkEvals () {
-      return this.evaluations !== null && this.evaluations.length > 0
-    },
-    isOwner () {
-      if (this.question) {
-        return ((this.question.creator_id === AuthService.getUserId() || this.$isInRole('admin')) && !this.question.has_delete_request)
-      }
-      return false
     }
   },
   created () {
     setTimeout(() => { this.getFile() }, 1500)
-    setTimeout(() => { this.findElectorsByBranchId() }, 1000)
   },
   beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId
@@ -176,6 +82,7 @@ export default {
           vm.question = question
           vm.revisions = revisions
           vm.evaluations = evaluations.filter(e => !e.is_open)
+          vm.questionId = questionId
         })
       })
   },

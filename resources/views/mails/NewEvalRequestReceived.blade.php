@@ -361,7 +361,7 @@
                                                         <tr>
                                                             <td class="user-msg" style="text-align: justify">
                                                                 Otomasyon sistemimiz üzerinden tarafınıza değerlendirilmek üzere {{$branch->name}}
-                                                                branşından/alanından bir adet soru gönderilmiştir. Mümkün olan en kısa zamanda değerlendirmenizi,
+                                                                branşından/alanından bir adet soru gönderilmiştir. Mümkün olan en kısa zamanda değerlendirmenizi
                                                                 yapmanızı rica eder iyi çalışmalar dileriz...
                                                                 <br>
                                                                 Verdiğiniz ve vereceğiniz katkılar için ise ayrıca teşekkür ederiz.

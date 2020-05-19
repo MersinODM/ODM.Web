@@ -228,7 +228,7 @@ class QuestionEvalRequestController extends ApiController
                 'qer.comment',
                 'qer.point',
                 'qer.is_open',
-                'qer.updated_at')
+                'qer.updated_at as date')
             ->get();
         return response()->json($res);
     }

@@ -121,7 +121,7 @@
           <div class="box-body">
             <div class="direct-chat-messages">
               <div
-                v-for="(evaluation, index) in filteredEvalList"
+                v-for="(evaluation) in filteredEvalList"
                 :key="evaluation.id"
                 class="direct-chat-msg"
               >
@@ -143,23 +143,26 @@
         </div>
       </div>
     </div>
+    <timeline :question-id="questionId" />
   </section>
 </template>
 
 <script>
-  import vSelect from 'vue-select'
-  import QuestionService from '../../services/QuestionService'
-  import Messenger from '../../helpers/messenger'
-  import {MessengerConstants} from '../../helpers/constants'
-  import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-  import usersImg from '../../../images/users.png'
-  import AuthService from '../../services/AuthService'
-  import Question from '../../components/Question'
-  import {QuestionStatuses} from '../../helpers/QuestionStatuses'
+import vSelect from 'vue-select'
+import QuestionService from '../../services/QuestionService'
+import Messenger from '../../helpers/messenger'
+import { MessengerConstants } from '../../helpers/constants'
+import QuestionEvaluationService from '../../services/QuestionEvaluationService'
+import usersImg from '../../../images/users.png'
+import AuthService from '../../services/AuthService'
+import Question from '../../components/questions/Question'
+import { QuestionStatuses } from '../../helpers/QuestionStatuses'
+// import RevisionService from '../../services/CommentService'
+import Timeline from '../../components/questions/Timeline'
 
-  export default {
+export default {
   name: 'EvaluateQuestion',
-  components: { vSelect, Question },
+  components: { Timeline, vSelect, Question },
   data () {
     return {
       question: null,
@@ -173,9 +176,11 @@
       ],
       point: '',
       comment: '',
+      revisions: [],
       evaluationList: [],
       filteredEvalList: [],
-      userImage: usersImg
+      userImage: usersImg,
+      questionId: 0
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -185,7 +190,8 @@
         next(vm => {
           vm.question = res
           vm.getFile()
-          vm.getEvals()
+          vm.questionId = questionId
+          // vm.getEvals()
         })
       })
   },
@@ -218,14 +224,21 @@
         .then(value => { this.question = value })
         .catch(reason => Messenger.showError(reason))
     },
-    getEvals () {
-      QuestionEvaluationService.findByQuestionId(this.question.id)
-        .then(qeList => {
-          this.evaluationList = qeList
-          this.filteredEvalList = qeList.filter(q => q.point !== null && q.point > 0)
-        })
-        .catch(() => Messenger.showError(MessengerConstants.errorMessage))
-    },
+    // getEvals () {
+    //   QuestionEvaluationService.findByQuestionId(this.question.id)
+    //     .then(qeList => {
+    //       this.evaluationList = qeList
+    //       this.filteredEvalList = qeList.filter(q => q.point !== null && q.point > 0)
+    //     })
+    //     .catch(() => Messenger.showError('Değerlendirme listesi yüklenemedi!'))
+    // },
+    // getRevisions () {
+    //   RevisionService.getRevisions(this.$route.params.questionId)
+    //     .then((revisions) => {
+    //       this.revisions = revisions
+    //     })
+    //     .catch(() => Messenger.showError('Revizyonlar yüklenemedi!'))
+    // },
     saveEval () {
       this.$validator.validateAll()
         .then(value => {

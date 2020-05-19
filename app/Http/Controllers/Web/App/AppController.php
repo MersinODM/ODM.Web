@@ -8,11 +8,13 @@
 namespace App\Http\Controllers\Web\App;
 
 
+use App\Models\Setting;
 use Illuminate\Routing\Controller;
 
 class AppController extends Controller
 {
     public function app() {
-        return view('app');
+        $settings = Setting::first();
+        return view('app', ['city' => $settings->city]);
     }
 }

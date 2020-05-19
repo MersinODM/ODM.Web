@@ -53,7 +53,7 @@
 
 <script>
 
-import { QuestionStatuses } from '../helpers/QuestionStatuses'
+import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 
 export default {
   name: 'Question',

@@ -112,6 +112,9 @@ class AuthController extends ApiController
         return $this->respondWithToken($token);
     }
 
+    /*
+     * Bu fonksiyon throttling için gerekli
+     */
     private function username()
     {
         return 'email';

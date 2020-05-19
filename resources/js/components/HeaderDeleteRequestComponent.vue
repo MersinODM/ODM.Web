@@ -8,6 +8,14 @@
   <h4>
     {{ title }}
     <div
+      v-if="hasDeleteRequest"
+      class="pull-right"
+    >
+      <h2 class="label label-danger">
+        Silme Talep Edilmiş
+      </h2>
+    </div>
+    <div
       v-if="isOwner"
       class="pull-right"
     >
@@ -25,7 +33,7 @@
 <script>
 import Messenger from '../helpers/messenger'
 import QuestionService from '../services/QuestionService'
-import AuthService from '../services/AuthService';
+import AuthService from '../services/AuthService'
 
 export default {
   name: 'HeaderDeleteRequestComponent',
@@ -42,7 +50,15 @@ export default {
   computed: {
     isOwner () {
       if (this.question) {
-        return ((this.question.creator_id === AuthService.getUserId() || this.$isInRole('admin')) && !this.question.has_delete_request)
+        return ((this.question.creator_id === AuthService.getUserId() ||
+          this.$isInRole('admin')) &&
+          !this.question.has_delete_request)
+      }
+      return false
+    },
+    hasDeleteRequest () {
+      if (this.question) {
+        return this.question.has_delete_request
       }
       return false
     }

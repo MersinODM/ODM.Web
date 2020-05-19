@@ -62,7 +62,7 @@ class QuestionRevisionController extends ApiController {
 
     public function findByQuestionId($id) {
         $revisions = QuestionRevisions::where("question_id", "=", $id)
-            ->select("id", "title", "comment", DB::raw("DATE_FORMAT(created_at, '%d.%m.%Y') as date"))
+            ->select("id", "title", "comment", "created_at as date")
             ->get();
         return response()->json($revisions);
     }

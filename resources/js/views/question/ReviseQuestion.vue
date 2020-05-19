@@ -1,4 +1,4 @@
-<!--
+ <!--
   - Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar
   - Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
   - Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
@@ -10,21 +10,10 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header with-border">
-            <h4>
-              Soru Revizyonu
-              <div
-                v-if="isOwner"
-                class="pull-right"
-              >
-                <button
-                  class="btn btn-danger pull-right"
-                  style="margin-right: 10px"
-                  @click="deleteRequest"
-                >
-                  Silme Talep Et
-                </button>
-              </div>
-            </h4>
+            <header-delete-request-component
+              title="Soru Revizyonu"
+              :question="question"
+            />
           </div>
           <div class="box-body">
             <div class="col-md-12">
@@ -195,11 +184,12 @@ import AuthService from '../../services/AuthService'
 import vSelect from 'vue-select'
 import moment from 'moment'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
-import Question from '../../components/Question'
+import Question from '../../components/questions/Question'
+import HeaderDeleteRequestComponent from '../../components/HeaderDeleteRequestComponent'
 
 export default {
   name: 'ShowQuestion',
-  components: { vSelect, Question },
+  components: { vSelect, Question, HeaderDeleteRequestComponent },
   data () {
     return {
       moment: moment,

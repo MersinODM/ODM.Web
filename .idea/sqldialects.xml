@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$USER_HOME$/Desktop/JOBS.o5000q46qj9tkh4ad.sql" dialect="MariaDB" />
+    <file url="file://$USER_HOME$/Desktop/Kapadokya ÇPAL 051566 Seyehat Faturaları.pdf" dialect="MariaDB" />
     <file url="PROJECT" dialect="MySQL" />
   </component>
   <component name="SqlResolveMappings">
