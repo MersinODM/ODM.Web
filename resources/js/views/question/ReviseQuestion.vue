@@ -113,25 +113,17 @@ import Timeline from '../../components/questions/Timeline'
 export default {
   name: 'ShowQuestion',
   components: { Question, HeaderDeleteRequest, Timeline },
-  data () {
-    return {
-      moment: moment,
-      question: null,
-      questionFile: null,
-      oldQuestionFile: null,
-      questionFileURL: null,
-      comment: null,
-      evaluators: [],
-      selectedEvaluator: '',
-      selectedEvaluators: [],
-      savedEvaluators: [],
-      changeCount: 0,
-      revisions: [],
-      evaluationList: [],
-      userImage: usersImg,
-      questionId: null
-    }
-  },
+  data: () => ({
+    moment: moment,
+    question: null,
+    questionFile: null,
+    oldQuestionFile: null,
+    questionFileURL: null,
+    comment: null,
+    changeCount: 0,
+    userImage: usersImg,
+    questionId: null
+  }),
   computed: {
     checkRevisionRequest () {
       // Sorunun revizyon isteği var mı yok mu kontrol ediliyor

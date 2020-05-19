@@ -220,43 +220,7 @@
         </div>
       </div>
     </div>
-    <div
-      v-show="filteredEvalList !== null && filteredEvalList.length > 0"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary direct-chat direct-chat-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirmeler
-            </h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <div class="direct-chat-messages">
-              <div
-                v-for="(evaluation, index) in filteredEvalList"
-                :key="evaluation.id"
-                class="direct-chat-msg"
-              >
-                <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">Değerlendirici {{ index + 1 }}</span>
-                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
-                </div>
-                <img
-                  class="direct-chat-img"
-                  :src="userImage"
-                  alt="Message User Image"
-                >
-                <div class="direct-chat-text">
-                  {{ evaluation.comment }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <timeline :question-id="$route.params.questionId" />
   </section>
 </template>
 
@@ -271,23 +235,21 @@ import Question from '../../components/questions/Question'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import UserService from '../../services/UserService'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
+import Timeline from '../../components/questions/Timeline'
 
 export default {
   name: 'SetEvaluatorsForQuestion',
-  components: { HeaderDeleteRequest, vSelect, Question },
-  data () {
-    return {
-      question: null,
-      questionFile: null,
-      evaluators: [],
-      selectedEvaluator: '',
-      selectedEvaluators: [],
-      savedEvaluators: [],
-      evaluationList: [],
-      filteredEvalList: [],
-      userImage: usersImg
-    }
-  },
+  components: { Timeline, HeaderDeleteRequest, vSelect, Question },
+  data: () => ({
+    question: null,
+    questionFile: null,
+    evaluators: [],
+    selectedEvaluator: '',
+    selectedEvaluators: [],
+    savedEvaluators: [],
+    filteredEvalList: [],
+    userImage: usersImg
+  }),
   beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId
     Promise.all([
@@ -412,7 +374,7 @@ export default {
         .then(value => {
           if (!value) return
           const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
-          if (this.point >= 4) data.comment = this.points.reduce(p => p.key === this.point).title
+          // if (this.point >= 4) data.comment = this.points.reduce(p => p.key === this.point).title
           QuestionEvaluationService.save(this.question.id, data)
             .then(res => {
               Messenger.showInfo(res.message)
