@@ -27,8 +27,6 @@ const AuthService = {
     return new Promise((resolve, reject) => {
       http.post('/auth/login', credentials)
         .then(response => {
-          localStorage.setItem(Constants.accessToken, response.data.access_token)
-          localStorage.setItem(Constants.expires_in, response.data.expires_in)
           resolve(response.data)
         })
         .catch((error) => {
@@ -53,9 +51,6 @@ const AuthService = {
         http.get('/users/current/permissions'),
         http.get('/users/current/roles')
       ]).then(([permission, roles]) => {
-        // Hem rol hem izin bilgileri sistemden çekiliyor ve localStorage a yazılıyor
-        localStorage.setItem(Constants.permissions, JSON.stringify(permission.data))
-        localStorage.setItem(Constants.roles, JSON.stringify(roles.data))
         resolve({ roles: roles.data, permissions: permission.data })
       })
         .catch(error => {
@@ -64,19 +59,13 @@ const AuthService = {
         })
     })
   },
-  getUser: (callback) => {
-    let user = null
-    const id = jwt(localStorage.getItem(Constants.accessToken)).sub
-    http.get(`/users/${id}`)
-      .then(response => {
-        user = response.data
-        callback(null, user)
-        // console.log(user)
-      })
-      .catch(e => {
-        callback(e, null)
-        // console.log(e)
-      })
+  getUser () {
+    return new Promise((resolve, reject) => {
+      const id = this.getUserId()
+      http.get(`/users/${id}`)
+        .then(response => resolve(response.data))
+        .catch(e => { reject(e) })
+    })
   },
   getUserId () {
     const token = localStorage.getItem(Constants.accessToken)

@@ -5,18 +5,18 @@
   -->
 
 <template>
-  <div class="hold-transition login-page">
-    <div class="login-box">
-      <div class="login-logo">
-        <!--        <div class="row">-->
-        <!--          <div class="text-center">-->
-        <!--            <img src="images/Logo.PNG" class="img-circle" alt="...">-->
-        <!--          </div>-->
-        <!--        </div>-->
-        <a :href="sanitizeUrl"><b>{{ settings.city }}</b>ÖDM</a>
-      </div>
-      <!-- /.login-logo -->
-      <div class="login-box-body">
+  <div class="login-box mt-4">
+    <div class="login-logo">
+      <!--        <div class="row">-->
+      <!--          <div class="text-center">-->
+      <!--            <img src="images/Logo.PNG" class="img-circle" alt="...">-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <a :href="sanitizeUrl"><b>{{ settings.city }}</b>ÖDM</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+      <div class="card-body login-card-body">
         <p class="login-box-msg">
           Kullanmaya başlamak için lütfen oturum açınız.
         </p>
@@ -25,49 +25,51 @@
           method="post"
           @submit.prevent
         >
-          <div
-            :class="{'has-error': errors.has('email')}"
-            class="form-group has-feedback"
-          >
+          <div class="input-group mb-3">
             <input
               v-model="email"
               v-validate="'required|email'"
               name="email"
               class="form-control"
+              :class="{'is-invalid': errors.has('email')}"
               autocomplete="username"
               placeholder="Kullancı Adı/E-Posta giriniz"
             >
-            <span class="mdi mdi-email form-control-feedback" />
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="mdi mdi-email form-control-feedback" />
+              </div>
+            </div>
             <span
               v-if="errors.has('email')"
-              class="help-block"
+              class="error invalid-feedback"
             >{{ errors.first('email') }}</span>
           </div>
-          <div
-            :class="{'has-error': errors.has('password')}"
-            class="form-group has-feedback"
-          >
+          <div class="input-group mb-3">
             <input
               v-model="password"
               v-validate="'required|min:8|max:16|verify_password'"
               name="password"
               type="password"
               class="form-control"
+              :class="{'is-invalid': errors.has('password')}"
               autocomplete="current-password"
               placeholder="Şifrenizi giriniz"
             >
-            <span class="mdi mdi-lock form-control-feedback" />
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="mdi mdi-lock form-control-feedback" />
+              </div>
+            </div>
             <span
               v-if="errors.has('password')"
-              class="help-block"
+              class="error invalid-feedback"
             >{{ errors.first('password') }}</span>
           </div>
-          <div
-            :class="{'has-error': !recaptchaVerified}"
-            class="form-group has-feedback"
-          >
+          <div class="mx-auto mb-3">
             <div
               v-if="siteKey && captchaEnabled"
+              id="captcha"
               style="text-align: center;"
             >
               <vueRecaptcha
@@ -77,16 +79,16 @@
               />
               <span
                 v-if="!recaptchaVerified"
-                class="help-block"
+                class="error invalid-feedback"
               >Lütfen robot olmadığınızı doğrulayın!</span>
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-offset-8 col-xs-4">
+            <div class="col-sm-12">
               <button
                 :class="{ disabled : validateLogin }"
                 type="submit"
-                class="btn btn-primary btn-block btn-flat"
+                class="btn btn-primary btn-block mb-3"
                 @click="loginUser"
               >
                 Oturum Aç
@@ -95,77 +97,50 @@
             <!-- /.col -->
           </div>
         </form>
-
-        <!-- /.social-auth-links -->
-
-        <router-link :to="{ name: 'forgotMyPassword' }">
+        <router-link
+          :to="{ name: 'forgotMyPassword' }"
+          class="mb-2"
+        >
           Şifremi unuttum
           <span class="mdi mdi-passport-biometric" />
         </router-link>
         <br>
         <router-link
           :to="{ name: 'register' }"
-          class="text-center"
         >
           Yeni kayıt talebi oluştur
           <span class="mdi mdi-account-plus" />
         </router-link>
       </div>
-      <!-- /.login-box-body -->
-      <div class="alert alert-success text-justify">
-        <a
-          rel="license"
-          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-        >
-          <img
-            alt="Creative Commons Lisansı"
-            style="border-width:0"
-            src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
-          >
-        </a> Bu eser <a
-          rel="license"
-          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-        > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
-        <a
-          class="btn btn-block btn-social btn-github"
-          href="https://github.com/electropsycho/ODM.Web"
-        >
-          <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
-        </a>
-      </div>
     </div>
-    <!-- /.login-box -->
+    <licence-login />
   </div>
 </template>
 
 <script>
-// import axios from 'axios';
-// import { mapGetters, mapActions } from 'vuex';
-// import { createNamespacedHelpers } from 'vuex';
-import AuthService from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
 import { SettingService } from '../../services/SettingService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import { ResponseCodes } from '../../helpers/constants'
+import LicenceLogin from '../../components/LicenceLogin'
+import SkinHelper from '../../helpers/SkinHelper'
+import Auth from '../../services/AuthService'
 
-// const { mapActions, mapGetters } = createNamespacedHelpers('some/nested/module');
 export default {
   name: 'Login',
-  components: { vueRecaptcha },
-  data () {
-    return {
-      recaptchaVerified: false,
-      captchaToken: '',
-      email: '',
-      password: '',
-      isSigningIn: false,
-      settings: {},
-      web_address: '',
-      siteKey: '',
-      captchaEnabled: true
-    }
-  },
+  components: { LicenceLogin, vueRecaptcha },
+  data: () => ({
+    recaptchaVerified: false,
+    captchaToken: '',
+    email: '',
+    password: '',
+    isSigningIn: false,
+    settings: {},
+    web_address: '',
+    siteKey: '',
+    captchaEnabled: true
+  }),
   beforeRouteEnter (to, from, next) {
     SettingService.getGeneralInfo()
       .then(value => {
@@ -189,8 +164,7 @@ export default {
     }
   },
   beforeCreate () {
-    document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
-    document.body.classList.add('hold-transition', 'login-page')
+    SkinHelper.LoginSkin()
   },
   methods: {
     loginUser () {
@@ -204,7 +178,7 @@ export default {
             }
             this.isSigningIn = true
             const loader = this.$loading.show()
-            AuthService.login(credentials)
+            Auth.login(credentials)
               .then(value => {
                 if (value.code === ResponseCodes.CODE_UNAUTHORIZED) {
                   Messenger.showWarning(value.message)
@@ -228,11 +202,16 @@ export default {
       // console.log(response)
       this.captchaToken = response
       this.recaptchaVerified = true
+    },
+    getUser () {
+      Auth.getUser()
+        .then(user => { this.user = user })
+        .catch(err => Messenger.showError(err.message))
     }
   },
   beforeRouteLeave (to, from, next) {
     if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
-      AuthService.setRoleAndPermissions()
+      Auth.setRoleAndPermissions()
         .then(value => next())
         .catch(reason => {
           console.log(reason)
@@ -244,13 +223,6 @@ export default {
 }
 </script>
 
-<style>
-  @media screen and (max-width: 575px) {
-    #rc-imageselect, .g-recaptcha
-    {
-      transform:scale(0.77);
-      -webkit-transform:scale(0.77);transform-origin:0 0;
-      -webkit-transform-origin:0 0;
-    }
-  }
+<style lang="scss">
+
 </style>

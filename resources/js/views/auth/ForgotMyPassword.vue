@@ -10,101 +10,90 @@
       <div class="login-logo">
         <a :href="sanitizeUrl"><b>{{ city }}</b>ÖDM</a>
       </div>
-      <!-- /.login-logo -->
-      <div
-        :class="{disabled : isSending}"
-        class="login-box-body"
-      >
-        <p class="login-box-msg">
-          Lütfen e posta adresinizi giriniz.
-        </p>
+      <div class="card">
+        <div class="card-body login-card-body">
+          <div
+            :class="{disabled : isSending}"
+            class="login-box-body"
+          >
+            <p class="login-box-msg">
+              Lütfen e posta adresinizi giriniz.
+            </p>
 
-        <form
-          method="post"
-          @submit.prevent
-        >
-          <!--          <div class="form-group has-feedback">-->
-          <!--            <input v-model="email" class="form-control" placeholder="Kullancı Adı/E-Posta giriniz">-->
-          <!--            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
-          <!--          </div>-->
-          <div
-            :class="{'has-error': errors.has('email') || isSending}"
-            class="form-group has-feedback"
-          >
-            <input
-              v-model="email"
-              v-validate="'required|email'"
-              type="text"
-              name="email"
-              class="form-control"
-              placeholder="Email adresinizi giriniz"
+            <form
+              method="post"
+              @submit.prevent
             >
-            <span class="mdi mdi-textbox-password form-control-feedback" />
-            <span
-              v-if="errors.has('email')"
-              class="help-block"
-            >{{ errors.first('email') }}</span>
-          </div>
-          <div
-            v-if="captchaToken"
-            :class="{'has-error': !recaptchaVerified}"
-            class="form-group has-feedback"
-          >
-            <div style="text-align: center;">
-              <vueRecaptcha
-                style="display: inline-block;"
-                :sitekey="captchaToken"
-                @verify="markRecaptchaAsVerified"
-              />
-              <span
-                v-if="!recaptchaVerified"
-                class="help-block"
-              >Lütfen robot olmadığınızı doğrulayın!</span>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-offset-4 col-xs-4">
-              <button
-                :class="{ disabled : errors.any() ||!recaptchaVerified || isSending }"
-                type="submit"
-                class="btn btn-primary btn-block btn-flat"
-                @click="sendEmail"
+              <div class="input-group mb-3">
+                <input
+                  v-model="email"
+                  v-validate="'required|email'"
+                  type="text"
+                  name="email"
+                  class="form-control"
+                  :class="{'is-invalid': errors.has('email') || isSending}"
+                  placeholder="Email adresinizi giriniz"
+                >
+                <div class="input-group-append">
+                  <div class="input-group-text">
+                    <span class="mdi mdi-email  form-control-feedback" />
+                  </div>
+                </div>
+                <span
+                  v-if="errors.has('email')"
+                  class="error invalid-feedback"
+                >{{ errors.first('email') }}</span>
+              </div>
+              <div
+                v-if="captchaToken"
+                :class="{'is-invalid': !recaptchaVerified}"
+                class="mx-auto"
               >
-                Oluştur
-              </button>
+                <div style="text-align: center;">
+                  <vueRecaptcha
+                    style="display: inline-block;"
+                    :sitekey="captchaToken"
+                    @verify="markRecaptchaAsVerified"
+                  />
+                  <span
+                    v-if="!recaptchaVerified"
+                    class="error invalid-feedback"
+                  >Lütfen robot olmadığınızı doğrulayın!</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 mt-2">
+                  <button
+                    :class="{ disabled : errors.any() ||!recaptchaVerified || isSending }"
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                    @click="sendEmail"
+                  >
+                    Gönder
+                  </button>
+                </div>
+                <!-- /.col -->
+              </div>
+            </form>
+            <div class="row mt-2">
+              <div class="col-sm-12">
+                <router-link
+                  :to="{ name: 'login' }"
+                >
+                  Şifremi hatırladım
+                  <span class="mdi mdi-head-lightbulb" />
+                </router-link>
+              </div>
             </div>
-            <!-- /.col -->
           </div>
-        </form>
+        </div>
       </div>
-      <div class="alert alert-success text-justify">
-        <a
-          rel="license"
-          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-        >
-          <img
-            alt="Creative Commons Lisansı"
-            style="border-width:0"
-            src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
-          >
-        </a> Bu eser <a
-          rel="license"
-          href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-        > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
-        <a
-          class="btn btn-block btn-social btn-github"
-          href="https://github.com/electropsycho/ODM.Web"
-        >
-          <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
-        </a>
-      </div>
+      <licence-login />
       <spinner
         v-if="isSending"
         spin-style="wave"
       />
-      <!-- /.login-box-body -->
     </div>
-    <!-- /.login-box -->
   </div>
 </template>
 
@@ -115,10 +104,12 @@ import vueRecaptcha from 'vue-recaptcha'
 import AuthService from '../../services/AuthService'
 import Constants, { MessengerConstants } from '../../helpers/constants'
 import { sanitizeUrl } from '@braintree/sanitize-url'
+import LicenceLogin from '../../components/LicenceLogin'
+import SkinHelper from '../../helpers/SkinHelper'
 
 export default {
   name: 'ResetPassword',
-  components: { Spinner, vueRecaptcha },
+  components: { LicenceLogin, Spinner, vueRecaptcha },
   data () {
     return {
       email: '',
@@ -141,8 +132,7 @@ export default {
     })
   },
   beforeCreate () {
-    document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'register-page')/* , 'fixed' */
-    document.body.classList.add('hold-transition', 'login-page')
+    SkinHelper.LoginSkin()
   },
   methods: {
     sendEmail () {

@@ -60,7 +60,7 @@
             </div>
           </div>
         </li>
-        <li>
+        <li v-if="questionEvents.length > 0">
           <i class="fa fa-clock-o bg-gray" />
         </li>
       </ul>

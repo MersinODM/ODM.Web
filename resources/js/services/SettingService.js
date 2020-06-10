@@ -12,10 +12,10 @@ export const SettingService = {
     return new Promise((resolve, reject) => {
       http.get('auth/general_info')
         .then(value => {
-          localStorage.setItem(Constants.generalInfo, JSON.stringify(value.data))
+          // localStorage.setItem(Constants.generalInfo, JSON.stringify(value.data))
           resolve(value.data)
         })
-        .catch(reason => reject(reason.data))
+        .catch(reason => reject(reason))
     })
   },
   getSettings () {

@@ -5,29 +5,33 @@
   -->
 
 <template>
-  <h4>
-    {{ title }}
-    <div
-      v-if="hasDeleteRequest"
-      class="pull-right"
-    >
-      <h2 class="label label-danger">
-        Silme Talep Edilmiş
-      </h2>
+  <div class="row">
+    <div class="col-sm-8">
+      <slot />
     </div>
-    <div
-      v-if="isOwner"
-      class="pull-right"
-    >
-      <button
-        class="btn btn-danger pull-right"
-        style="margin-right: 10px"
-        @click="deleteRequest"
+    <div class="col-sm-4">
+      <div
+        v-if="hasDeleteRequest"
+        class="float-right"
       >
-        Silme Talep Et
-      </button>
+        <h2 class="label label-danger">
+          Silme Talep Edilmiş
+        </h2>
+      </div>
+      <div
+        v-if="isOwner"
+        class="float-right"
+      >
+        <button
+          class="btn btn-danger float-right"
+          style="margin-right: 10px"
+          @click="deleteRequest"
+        >
+          Silme Talep Et
+        </button>
+      </div>
     </div>
-  </h4>
+  </div>
 </template>
 
 <script>
@@ -38,10 +42,6 @@ import AuthService from '../services/AuthService'
 export default {
   name: 'HeaderDeleteRequest',
   props: {
-    title: {
-      type: String,
-      default: ''
-    },
     question: {
       type: Object,
       default: Object

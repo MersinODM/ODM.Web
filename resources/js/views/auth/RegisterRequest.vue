@@ -6,184 +6,164 @@
   -->
 
 <template>
-  <div class="register-box">
+  <div class="register-box mt-4">
     <div class="register-logo">
       <a :href="sanitizeUrl"><b>{{ city }}</b>ÖDM</a>
     </div>
 
-    <div class="register-box-body">
-      <p class="login-box-msg">
-        Yeni kullanıcı açma talep formu
-      </p>
-      <form
-        method="post"
-        @submit.prevent
-      >
-        <div
-          class="form-group has-feedback"
-          :class="{'has-error': errors.has('full_name')}"
+    <div class="card">
+      <div class="card-body register-card-body">
+        <p class="login-box-msg">
+          Yeni kullanıcı açma talep formu
+        </p>
+        <form
+          method="post"
+          @submit.prevent
         >
-          <input
-            v-model="full_name"
-            v-validate="'required|min:2|alpha_spaces'"
-            name="full_name"
-            type="text"
-            class="form-control"
-            placeholder="Ad Soyad"
-          >
-          <span class="glyphicon glyphicon-user form-control-feedback" />
-          <span
-            v-if="errors.has('full_name')"
-            class="help-block"
-          >{{ errors.first('full_name') }}</span>
-        </div>
-        <div
-          class="form-group has-feedback"
-          :class="{'has-error': errors.has('inst')}"
-        >
-          <v-select
-            v-model="inst"
-            v-validate="'required'"
-            :options="institutions"
-            :reduce="inst => inst.id"
-            label="name"
-            name="inst"
-            placeholder="Kurum adını en az 3 harf girin"
-            @search="searchInstitutions"
-          >
-            <div slot="no-options">
-              Burada bişey bulamadık :-(
-            </div>
-          </v-select>
-          <span
-            v-if="errors.has('inst')"
-            class="help-block"
-          >{{ errors.first('inst') }}</span>
-        </div>
-        <div
-          class="form-group has-feedback"
-          :class="{'has-error': errors.has('branch')}"
-        >
-          <v-select
-            v-model="branch"
-            v-validate="'required'"
-            :options="branches"
-            :reduce="branch => branch.id"
-            label="name"
-            name="branch"
-            placeholder="Alan/Ders seçiniz"
-          >
-            <div slot="no-options">
-              Burada bişey bulamadık :-(
-            </div>
-          </v-select>
-          <span
-            v-if="errors.has('branch')"
-            class="help-block"
-          >{{ errors.first('branch') }}</span>
-          <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-          <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-        </div>
-        <div
-          class="form-group has-feedback"
-          :class="{'has-error': errors.has('email')}"
-        >
-          <input
-            v-model="email"
-            v-validate="'required|email'"
-            name="email"
-            class="form-control"
-            type="email"
-            placeholder="E-Posta adresi"
-          >
-          <span class="glyphicon glyphicon-envelope form-control-feedback" />
-          <span
-            v-if="errors.has('email')"
-            class="help-block"
-          >{{ errors.first('email') }}</span>
-        </div>
-        <div
-          class="form-group has-feedback"
-          :class="{'has-error': errors.has('phone')}"
-        >
-          <input
-            v-model="phone"
-            v-mask="'### ### ####'"
-            v-validate="{ required: true, regex:/[0-9]{1,3}[ ][0-9]{1,3}[ ][0-9]{4}$/ }"
-            type="text"
-            name="phone"
-            class="form-control"
-            placeholder="Tel. num. başında 0(sıfır) olmadan giriniz"
-          >
-          <span class="glyphicon glyphicon-phone form-control-feedback" />
-          <span
-            v-if="errors.has('phone')"
-            class="help-block"
-          >{{ errors.first('phone') }}</span>
-        </div>
-        <div
-          :class="{'has-error': !recaptchaVerified}"
-          class="form-group has-feedback"
-        >
-          <div
-            v-if="siteKey"
-            style="text-align: center;"
-          >
-            <vueRecaptcha
-              style="display: inline-block;"
-              :sitekey="siteKey"
-              @verify="markRecaptchaAsVerified"
-            />
-            <span
-              v-if="!recaptchaVerified"
-              class="help-block"
-            >Lütfen robot olmadığınızı doğrulayın!</span>
-          </div>
-        </div>
-        <div class="row">
-          <!-- /.col -->
-          <div class="col-xs-offset-3 col-xs-6">
-            <button
-              :class="{ disabled: errors.any() ||!recaptchaVerified || isSending }"
-              class="btn btn-primary btn-block btn-flat"
-              @click="sendRegisterRequest"
+          <div class="input-group mb-3">
+            <input
+              v-model="full_name"
+              v-validate="'required|min:2|alpha_spaces'"
+              name="full_name"
+              type="text"
+              class="form-control"
+              :class="{'is-invalid': errors.has('full_name')}"
+              placeholder="Ad Soyad"
             >
-              Kayıt Talebi Oluştur
-            </button>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="mdi mdi-account" />
+              </div>
+            </div>
+            <span
+              v-if="errors.has('full_name')"
+              class="error invalid-feedback"
+            >{{ errors.first('full_name') }}</span>
           </div>
-          <!-- /.col -->
-        </div>
-      </form>
-      <br>
-      <router-link
-        :to="{name: 'login' }"
-        exact
-      >
-        Halihazırda bir hesabım var
-        <span class="mdi mdi-passport" />
-      </router-link>
-    </div>
-    <div class="alert alert-success text-justify">
-      <a
-        rel="license"
-        href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-      >
-        <img
-          alt="Creative Commons Lisansı"
-          style="border-width:0"
-          src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+          <div class="form-group mb-3">
+            <v-select
+              v-model="inst"
+              v-validate="'required'"
+              :options="institutions"
+              :reduce="inst => inst.id"
+              :class="{'is-invalid': errors.has('inst')}"
+              label="name"
+              name="inst"
+              placeholder="Kurum adını en az 3 harf girin"
+              @search="searchInstitutions"
+            >
+              <div slot="no-options">
+                Burada bişey bulamadık :-(
+              </div>
+            </v-select>
+            <span
+              v-if="errors.has('inst')"
+              class="error invalid-feedback"
+            >{{ errors.first('inst') }}</span>
+          </div>
+          <div class="form-group has-feedback">
+            <v-select
+              v-model="branch"
+              v-validate="'required'"
+              :options="branches"
+              :reduce="branch => branch.id"
+              :class="{'is-invalid': errors.has('branch')}"
+              label="name"
+              name="branch"
+              placeholder="Alan/Ders seçiniz"
+            >
+              <div slot="no-options">
+                Burada bişey bulamadık :-(
+              </div>
+            </v-select>
+            <span
+              v-if="errors.has('branch')"
+              class="error invalid-feedback"
+            >{{ errors.first('branch') }}</span>
+          </div>
+          <div class="input-group mb-3">
+            <input
+              v-model="email"
+              v-validate="'required|email'"
+              name="email"
+              class="form-control"
+              :class="{'is-invalid': errors.has('email')}"
+              type="email"
+              placeholder="E-Posta adresi"
+            >
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="mdi mdi-email" />
+              </div>
+            </div>
+            <span
+              v-if="errors.has('email')"
+              class="error invalid-feedback"
+            >{{ errors.first('email') }}</span>
+          </div>
+          <div class="input-group mb-3">
+            <input
+              v-model="phone"
+              v-mask="'### ### ####'"
+              v-validate="{ required: true, regex:/[0-9]{1,3}[ ][0-9]{1,3}[ ][0-9]{4}$/ }"
+              type="text"
+              name="phone"
+              class="form-control"
+              :class="{'is-invalid': errors.has('phone')}"
+              placeholder="Tel. no başında 0 olmadan giriniz"
+            >
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="mdi mdi-phone" />
+              </div>
+            </div>
+            <span
+              v-if="errors.has('phone')"
+              class="error invalid-feedback"
+            >{{ errors.first('phone') }}</span>
+          </div>
+          <div
+            :class="{'is-invalid': !recaptchaVerified}"
+            class="mx-auto mb-3"
+          >
+            <div
+              v-if="siteKey"
+              style="text-align: center;"
+            >
+              <vueRecaptcha
+                style="display: inline-block;"
+                :sitekey="siteKey"
+                @verify="markRecaptchaAsVerified"
+              />
+              <span
+                v-if="!recaptchaVerified"
+                class="error invalid-feedback"
+              >Lütfen robot olmadığınızı doğrulayın!</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <button
+                :class="{ disabled: errors.any() ||!recaptchaVerified || isSending }"
+                class="btn btn-primary btn-block"
+                @click="sendRegisterRequest"
+              >
+                Kayıt Talebi Oluştur
+              </button>
+            </div>
+          </div>
+        </form>
+        <br>
+        <router-link
+          :to="{name: 'login' }"
+          exact
         >
-      </a> Bu eser <a
-        rel="license"
-        href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-      > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
-      <a
-        class="btn btn-block btn-social btn-github"
-        href="https://github.com/electropsycho/ODM.Web"
-      >
-        <i class="fa fa-github" /> GitHub (Kaynak Kodlar)
-      </a>
+          Halihazırda bir hesabım var
+          <span class="mdi mdi-passport" />
+        </router-link>
+      </div>
     </div>
+    <licence-login />
   </div>
 </template>
 
@@ -197,10 +177,12 @@ import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
 import AuthService from '../../services/AuthService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
+import LicenceLogin from '../../components/LicenceLogin'
+import SkinHelper from "../../helpers/SkinHelper";
 
 export default {
   name: 'RegisterRequest',
-  components: { vSelect, vueRecaptcha },
+  components: { LicenceLogin, vSelect, vueRecaptcha },
   data () {
     return {
       full_name: '',
@@ -224,8 +206,7 @@ export default {
     }
   },
   beforeCreate () {
-    document.body.classList.remove('skin-blue-light', 'sidebar-mini', 'wysihtml5-supported', 'login-page')/* , 'fixed' */
-    document.body.classList.add('hold-transition', 'register-page')
+    SkinHelper.LoginSkin()
   },
   beforeRouteEnter (to, from, next) {
     BranchService.getAllForRegisterReq()

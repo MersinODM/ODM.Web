@@ -131,95 +131,6 @@
         </div>
       </div>
     </div>
-    <div
-      v-if="hasOwnEval"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirme Kaydet
-            </h3>
-          </div>
-          <div class="box-body">
-            <div class="col-md-12">
-              <div
-                class="row"
-              >
-                <div class="col-md-offset-4 col-md-4">
-                  <div
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalPoint')}"
-                  >
-                    <label>Değerlendirme Puanı</label>
-                    <v-select
-                      v-model="point"
-                      v-validate="'required'"
-                      :options="points"
-                      :reduce="p => p.key"
-                      label="title"
-                      name="evalPoint"
-                      placeholder="Puanınızı seçiniz"
-                    >
-                      <template
-                        slot="option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                      <template
-                        slot="selected-option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                    </v-select>
-                    <span
-                      v-if="errors.has('evalPoint')"
-                      class="help-block"
-                    >{{ errors.first('evalPoint') }}</span>
-                    <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                    <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                  </div>
-                  <div
-                    v-if="point <= 3"
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalComment')}"
-                  >
-                    <textarea
-                      v-model="comment"
-                      v-validate="'required'"
-                      name="evalComment"
-                      class="form-control"
-                      style="max-width: 100%; min-width: 100%; min-height: 60px"
-                      placeholder="Değerlendirmenizi kısaca açıklayınız."
-                    />
-                    <span class="glyphicon glyphicon-magnet form-control-feedback" />
-                    <span
-                      v-if="errors.has('evalComment')"
-                      class="help-block"
-                    >{{ errors.first('evalComment') }}</span>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-offset-5 col-md-2">
-                    <div class="text-center">
-                      <button
-                        class="btn btn-success"
-                        @click="saveEval"
-                      >
-                        KAYDET
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <timeline :question-id="$route.params.questionId" />
   </section>
 </template>
@@ -247,7 +158,6 @@ export default {
     selectedEvaluator: '',
     selectedEvaluators: [],
     savedEvaluators: [],
-    filteredEvalList: [],
     userImage: usersImg
   }),
   beforeRouteEnter (to, from, next) {
@@ -293,7 +203,9 @@ export default {
     getQuestion () {
       const questionId = this.$route.params.questionId
       QuestionService.findById(questionId)
-        .then(value => { this.question = value })
+        .then(value => {
+          this.question = value
+        })
         .catch(reason => Messenger.showError(reason))
     },
     findElectorsByBranchId () {
@@ -320,7 +232,9 @@ export default {
     setElectors () {
       if (this.selectedEvaluators.length >= 2) {
         let electors = ''
-        this.selectedEvaluators.forEach(value => { electors += ` ${value.full_name}` })
+        this.selectedEvaluators.forEach(value => {
+          electors += ` ${value.full_name}`
+        })
         Messenger.showPrompt(`Bu soruya değerlendirici olarak${electors} adlı kişileri seçtiniz. Onaylıyor musunuz?`,
           {
             cancel: 'İptal',
@@ -331,17 +245,21 @@ export default {
           })
           .then(value => {
             if (value) {
+              const loader = this.$loading.show()
               QuestionEvaluationService.saveElectors(this.question.id, this.selectedEvaluators)
                 .then(resp => {
+                  loader.hide()
                   Messenger.showSuccess(resp.message)
                     .then(() => {
                       this.refreshQuestion()
                     })
                 })
                 .catch(reason => Messenger.showError(reason.message))
+                .finally(() => loader.hide())
             }
           })
-          .catch(reason => {})
+          .catch(reason => {
+          })
       } else {
         Messenger.showWarning('Lütfen en az iki tane değerlendirici seçiniz!')
       }
@@ -367,13 +285,14 @@ export default {
               .catch(reason => Messenger.showError(reason.message))
           }
         })
-        .catch(reason => {})
+        .catch(reason => {
+        })
     },
     saveEval () {
       this.$validator.validateAll()
         .then(value => {
           if (!value) return
-          const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
+          const data = {qer_id: this.$route.params.qerId, point: this.point, comment: this.comment}
           // if (this.point >= 4) data.comment = this.points.reduce(p => p.key === this.point).title
           QuestionEvaluationService.save(this.question.id, data)
             .then(res => {
@@ -398,7 +317,7 @@ export default {
       Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
         .then(result => {
           if (result) {
-            QuestionService.sendDeleteRequest(this.question.id, { reason: result })
+            QuestionService.sendDeleteRequest(this.question.id, {reason: result})
               .then(resp => {
                 Messenger.showInfoV2(resp.message)
                   .then(() => this.$router.push({ name: 'stats' }))

@@ -82,15 +82,16 @@ let qTable = null
 export default {
   name: 'QuestionEvaluationRequestList',
   components: { vSelect },
-  data () {
-    return {
-      branches: [],
-      selectedBranch: '',
-      user: ''
-    }
-  },
+  data: () => ({
+    branches: [],
+    selectedBranch: '',
+    user: ''
+  }),
   beforeRouteEnter (to, from, next) {
-    Promise.all([BranchService.getBranches(), UserService.findById(Auth.getUserId())])
+    Promise.all([
+      BranchService.getBranches(),
+      UserService.findById(Auth.getUserId())
+    ])
       .then(([branches, user]) => {
         next(vm => {
           vm.user = user
@@ -251,6 +252,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  @import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'
+  @import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'
 </style>

@@ -197,6 +197,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  @import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'
+  @import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'
 </style>

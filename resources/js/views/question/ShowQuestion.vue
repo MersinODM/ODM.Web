@@ -33,8 +33,6 @@
 <script>
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
-import RevisionService from '../../services/CommentService'
-import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
 import usersImg from '../../../images/users.png'
@@ -72,16 +70,10 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId
-    Promise.all([
-      QuestionService.findById(questionId),
-      RevisionService.getRevisions(questionId),
-      QuestionEvaluationService.findByQuestionId(questionId)
-    ])
-      .then(([question, revisions, evaluations]) => {
+    QuestionService.findById(questionId)
+      .then((question) => {
         next(vm => {
           vm.question = question
-          vm.revisions = revisions
-          vm.evaluations = evaluations.filter(e => !e.is_open)
           vm.questionId = questionId
         })
       })
@@ -92,31 +84,11 @@ export default {
       QuestionService.getFile(this.$route.params.questionId)
         .then(value => {
           this.questionFile = value
-          loader.hide()
         })
         .catch(reason => {
-          loader.hide()
           Messenger.showError(reason.message)
         })
-    },
-    getRevisions () {
-      RevisionService.getRevisions(this.$route.params.questionId)
-        .then((revisions) => {
-          this.revisions = revisions
-        })
-    },
-    deleteRequest () {
-      Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
-        .then(result => {
-          if (result) {
-            QuestionService.sendDeleteRequest(this.question.id, { reason: result })
-              .then(resp => {
-                Messenger.showInfoV2(resp.message)
-                  .then(() => this.$router.push({ name: 'stats' }))
-              })
-              .catch(err => Messenger.showError(err.message))
-          }
-        })
+        .finally(() => loader.hide())
     }
   }
 }

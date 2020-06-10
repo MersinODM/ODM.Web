@@ -106,43 +106,6 @@
         </div>
       </div>
     </div>
-    <div
-      v-show="filteredEvalList !== null && filteredEvalList.length > 0"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary direct-chat direct-chat-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirmeler
-            </h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <div class="direct-chat-messages">
-              <div
-                v-for="(evaluation) in filteredEvalList"
-                :key="evaluation.id"
-                class="direct-chat-msg"
-              >
-                <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">Değerlendirici {{ evaluation.code }}</span>
-                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
-                </div>
-                <img
-                  class="direct-chat-img"
-                  :src="userImage"
-                  alt="Message User Image"
-                >
-                <div class="direct-chat-text">
-                  {{ evaluation.comment }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <timeline :question-id="questionId" />
   </section>
 </template>

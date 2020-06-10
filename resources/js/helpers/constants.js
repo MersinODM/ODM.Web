@@ -25,5 +25,18 @@ const MessengerConstants = {
   errorMessage: 'Sunucu bazlı bir hata meydana geldi!'
 }
 
-export { MessengerConstants, ResponseCodes }
+const Mutations = {
+  LOGIN_SUCCESSFUL: 'loginSuccessful',
+  LOGOUT: 'logout',
+  LOGIN_ERROR: 'loginError',
+  IS_SIGNING_IN: 'isSigningIn',
+  SEARCH_QUESTIONS: 'searchQuestions',
+  SET_SEARCH_QUESTIONS_RESULT: 'setSearchQuestionsResult',
+  SET_USER: 'setUser',
+  SAVE_TOKEN: 'saveToken',
+  SET_ROLES: 'setRoles',
+  SET_GENERAL_INFO: 'setGeneralInfo'
+}
+
+export { MessengerConstants, ResponseCodes, Mutations }
 export default Constants
