@@ -28,8 +28,7 @@
 <script>
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
-import Constants from '../../helpers/constants'
-import Messenger from "../../helpers/messenger";
+
 export default {
   name: 'NHeader',
   data () {
@@ -38,10 +37,6 @@ export default {
       user: null,
       name: ''
     }
-  },
-  created () {
-    this.getUser()
-    // this.getSettings()
   },
   mounted () {
     $('[data-widget="pushmenu"]').PushMenu()

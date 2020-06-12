@@ -7,6 +7,7 @@
 // import ProgressBar from 'progressbar.js/dist/progressbar.min'
 import Swal from 'sweetalert2/dist/sweetalert2.all.min'
 import router from '../router'
+import Constants from './constants'
 
 const axios = require('axios').default
 
@@ -23,7 +24,7 @@ http.interceptors.request.use(function (config) {
   // eslint-disable-next-line no-undef
   // pace.start()
   config.headers['X-CSRF-TOKEN'] = Laravel.csrfToken
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem(Constants.accessToken)
   if (token !== null) {
     config.headers.Authorization = `Bearer ${token}`
   }

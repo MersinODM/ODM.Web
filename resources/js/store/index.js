@@ -4,18 +4,14 @@ import Vuex from 'vuex'
 // import authModule from './auth.store'
 // import questionModule from './question.store'
 // import { abilityPlugin } from './ability.store';
-import user from './modules/app'
+import app from './modules/app'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
-    user
-  }//,
-  // plugins: [
-  //   // createPersistedState(),
-  //   // abilityPlugin,
-  // ]
+    app
+  }
 })
 
 export default store

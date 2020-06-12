@@ -5,7 +5,6 @@
  */
 
 import http from '../helpers/axios'
-import Constants from '../helpers/constants'
 
 export const SettingService = {
   getGeneralInfo () {

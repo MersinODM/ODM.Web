@@ -203,19 +203,19 @@ export default {
       if (search) {
         loading(true)
         InstitutionService.findByName(search)
-                          .then(data => {
-                            this.institutions = data
-                            loading(false)
-                          })
-                          .catch(err => {
-                            Messenger.showError(err)
-                            loading(false)
-                          })
+          .then(data => {
+            this.institutions = data
+            loading(false)
+          })
+          .catch(err => {
+            Messenger.showError(err)
+            loading(false)
+          })
       }
     }, 1000),
     resendForgetPassword () {
       // let data = { email: this.email, recaptcha: this.captchaToken }
-      let data = { email: this.user.email }
+      const data = { email: this.user.email }
       Messenger.showPrompt('Kullanıcıya şifre yenileme e-postası göndermek istediğinize emin misiniz?',
         {
           cancel: 'İptal',
@@ -226,14 +226,14 @@ export default {
         }).then(value => {
         if (value) {
           AuthService.forgetPassword(data)
-                       .then(value => {
-                         Messenger.showInfo(value.message, () => {
-                           this.$router.push({ name: 'users' })
-                         })
-                       })
-                       .catch(() => {
-                         Messenger.showError(MessengerConstants.errorMessage)
-                       })
+            .then(value => {
+              Messenger.showInfo(value.message, () => {
+                this.$router.push({ name: 'users' })
+              })
+            })
+            .catch(() => {
+              Messenger.showError(MessengerConstants.errorMessage)
+            })
         }
       })
     },
@@ -248,8 +248,8 @@ export default {
         }).then(value => {
         if (value) {
           UserService.delete(this.$route.params.id)
-                  .then(res => { Messenger.showSuccess(res) })
-                  .catch(err => { Messenger.showError(err) })
+            .then(res => { Messenger.showSuccess(res) })
+            .catch(err => { Messenger.showError(err) })
         }
       })
     },
@@ -263,7 +263,7 @@ export default {
           }
         }).then(value => {
         if (value) {
-          let data = {
+          const data = {
             branch_id: this.selectedBranch.id,
             inst_id: this.selectedInst.id,
             full_name: this.user.full_name,
@@ -272,8 +272,8 @@ export default {
             role: this.selectedRole
           }
           UserService.update(this.user.id, data)
-                     .then((resp) => Messenger.showSuccess(resp.message))
-                     .catch(() => Messenger.showError('Kayıt işlemi başarısız!'))
+            .then((resp) => Messenger.showSuccess(resp.message))
+            .catch(() => Messenger.showError('Kayıt işlemi başarısız!'))
         }
       })
     }

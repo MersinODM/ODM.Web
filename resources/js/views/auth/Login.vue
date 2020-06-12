@@ -126,6 +126,8 @@ import { ResponseCodes } from '../../helpers/constants'
 import LicenceLogin from '../../components/LicenceLogin'
 import SkinHelper from '../../helpers/SkinHelper'
 import Auth from '../../services/AuthService'
+import { mapActions } from 'vuex'
+import store from '../../store'
 
 export default {
   name: 'Login',
@@ -142,8 +144,8 @@ export default {
     captchaEnabled: true
   }),
   beforeRouteEnter (to, from, next) {
-    SettingService.getGeneralInfo()
-      .then(value => {
+    store.dispatch('app/getGeneralInfo')
+      .then((value) => {
         next(vm => {
           vm.settings = value
           vm.web_address = value.web_address
@@ -167,6 +169,10 @@ export default {
     SkinHelper.LoginSkin()
   },
   methods: {
+    ...mapActions('app', {
+      login: 'login',
+      getGeneralInfo: 'getGeneralInfo'
+    }),
     loginUser () {
       this.$validator.validateAll()
         .then(valRes => {
@@ -178,21 +184,21 @@ export default {
             }
             this.isSigningIn = true
             const loader = this.$loading.show()
-            Auth.login(credentials)
+            this.login(credentials)
               .then(value => {
-                if (value.code === ResponseCodes.CODE_UNAUTHORIZED) {
+                if (!value.code && value.code === ResponseCodes.CODE_UNAUTHORIZED) {
                   Messenger.showWarning(value.message)
                   this.isSigningIn = false
                 } else {
                   this.$router.push({ name: 'stats' })
-                  this.isSigningIn = true
+                    .then(() => { this.isSigningIn = true })
+                  // this.isSigningIn = true
                 }
               })
-              .catch((err) => {
-                console.log(err)
+              .catch(() => {
                 this.isSigningIn = false
                 Messenger.showWarning('Oturumunuz açılamadı, e-posta, şifre ve robot doğrulamasını kontrol ediniz.\n' +
-                                 'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
+                'Hatasız giriş yatığınızı düşünüyosanız sistem yöneticinize başvurunuz.')
               })
               .finally(() => loader.hide())
           }
@@ -208,18 +214,18 @@ export default {
         .then(user => { this.user = user })
         .catch(err => Messenger.showError(err.message))
     }
-  },
-  beforeRouteLeave (to, from, next) {
-    if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
-      Auth.setRoleAndPermissions()
-        .then(value => next())
-        .catch(reason => {
-          console.log(reason)
-          Messenger.showError('Roller ve yetkiler ayarlanamadı!')
-          next('/login')
-        })
-    }
-  }
+  } //,
+  // beforeRouteLeave (to, from, next) {
+  //   if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
+  //     Auth.setRoleAndPermissions()
+  //       .then(value => next())
+  //       .catch(reason => {
+  //         console.log(reason)
+  //         Messenger.showError('Roller ve yetkiler ayarlanamadı!')
+  //         next('/login')
+  //       })
+  //   }
+  // }
 }
 </script>
 
