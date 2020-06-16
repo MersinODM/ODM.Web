@@ -14,7 +14,7 @@
           </div>
           <div class="box-body">
             <div
-              class="table-responsive"
+              class="dataTables_wrapper dt-bootstrap4"
               :class="{ disabled : isApproving }"
             >
               <table

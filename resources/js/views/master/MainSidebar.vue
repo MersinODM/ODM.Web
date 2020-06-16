@@ -14,7 +14,7 @@
       <span class="brand-text font-weight-light">{{ generalInfo.city }} ÖDM</span>
     </a>
     <div class="sidebar">
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-center">
         <div class="info">
           <a
             href="javascript:0;"
@@ -331,6 +331,10 @@ export default {
       user: 'currentUser',
       generalInfo: 'generalInfo'
     })
+  },
+  mounted () {
+    $('body').Layout('fixLayoutHeight')
+    $('ul').Treeview('init')
   }
 }
 </script>

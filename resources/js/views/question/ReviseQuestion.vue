@@ -5,86 +5,97 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <header-delete-request
-              title="Soru Revizyonu"
-              :question="question"
-            />
-          </div>
-          <div class="box-body">
-            <div class="col-md-12">
-              <question
-                :question="question"
-                :question-file="questionFileURL"
-              />
-            </div>
-            <div
-              v-if="checkRevisionRequest"
-              class="row"
-            >
+  <page>
+    <template v-slot:header>
+      <header-delete-request
+        :question="question"
+      >
+        <h4>Soru Revizyonu</h4>
+      </header-delete-request>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
               <div class="col-md-12">
-                <div class="row">
-                  <div class="col-md-offset-2 col-md-8">
-                    <div
-                      class="form-group has-feedback"
-                      :class="{'has-error': errors.has('comment')}"
-                    >
-                      <label>Gözden geçirme metni</label>
-                      <textarea
-                        v-model="comment"
-                        v-validate="'required'"
-                        name="comment"
-                        class="form-control"
-                        style="max-width: 100%; min-width: 100%; min-height: 60px"
-                        placeholder="Gözden geçirmenizi kısaca yazınız"
-                      />
-                      <span class="mdi mdi-comment form-control-feedback" />
-                      <span
-                        v-if="errors.has('comment')"
-                        class="error invalid-feedback"
-                      >{{ errors.first('comment') }}</span>
-                    </div>
-                  </div>
+                <question
+                  :question="question"
+                  :question-file="questionFileURL"
+                />
+                <div class="mb-2">
+                  <hr>
                 </div>
                 <div
-                  v-if="errors.has('questionFile')"
+                  v-if="checkRevisionRequest"
                   class="row"
                 >
-                  <div class="text-center">
-                    <span class="badge alert-error">{{ errors.first('questionFile') }}</span>
-                  </div>
-                  <br>
-                </div>
-                <div class="row">
-                  <div class="col-md-offset-2 col-md-8">
-                    <div class="text-center">
-                      <label class="btn btn-success">
-                        <input
-                          ref="qFile"
-                          v-validate="'required|size:1024'"
-                          name="questionFile"
-                          type="file"
-                          style="display: none !important;"
-                          accept="application/pdf"
-                          @change="selectFile($event)"
-                        >Dosya seçiniz
-                      </label>
-                      <button
-                        class="btn btn-primary"
-                        @click="save"
-                      >
-                        Kaydet
-                      </button>
-                      <button
-                        class="btn btn-danger"
-                        @click="cancel"
-                      >
-                        İptal Et
-                      </button>
+                  <div class="col-md-12">
+                    <div class="row justify-content-md-center">
+                      <div class="col-md-8">
+                        <div
+                          class="form-group"
+                        >
+                          <label>Gözden geçirme metni</label>
+                          <textarea
+                            v-model="comment"
+                            v-validate="'required'"
+                            name="comment"
+                            class="form-control"
+                            :class="{'is-invalid': errors.has('comment')}"
+                            style="max-width: 100%; min-width: 100%; min-height: 60px"
+                            placeholder="Gözden geçirmenizi kısaca yazınız"
+                          />
+                          <span
+                            v-if="errors.has('comment')"
+                            class="error invalid-feedback"
+                          >{{ errors.first('comment') }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      v-if="errors.has('questionFile')"
+                      class="row"
+                    >
+                      <div class="text-center">
+                        <span class="badge alert-error">{{ errors.first('questionFile') }}</span>
+                      </div>
+                      <br>
+                    </div>
+                    <div class="row justify-content-md-center">
+                      <div class="col-md-8">
+                        <div class="row justify-content-md-center">
+                          <div class="col-md-4">
+                            <label class="btn btn-success btn-block">
+                              <input
+                                ref="qFile"
+                                v-validate="'required|size:1024'"
+                                name="questionFile"
+                                type="file"
+                                style="display: none !important;"
+                                accept="application/pdf"
+                                @change="selectFile($event)"
+                              >Dosya seçiniz
+                            </label>
+                          </div>
+                          <div class="col-md-4 mb-2">
+                            <button
+                              class="btn btn-primary btn-block"
+                              @click="save"
+                            >
+                              Kaydet
+                            </button>
+                          </div>
+                          <div class="col-md-4">
+                            <button
+                              class="btn btn-danger btn-block"
+                              @click="cancel"
+                            >
+                              İptal Et
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -92,10 +103,10 @@
             </div>
           </div>
         </div>
+        <timeline :question-id="questionId" />
       </div>
-    </div>
-    <timeline :question-id="questionId" />
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -109,10 +120,11 @@ import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Timeline from '../../components/questions/Timeline'
+import Page from '../../components/Page'
 
 export default {
   name: 'ShowQuestion',
-  components: { Question, HeaderDeleteRequest, Timeline },
+  components: { Page, Question, HeaderDeleteRequest, Timeline },
   data: () => ({
     moment: moment,
     question: null,

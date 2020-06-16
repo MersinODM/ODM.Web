@@ -84,7 +84,7 @@
                   class="row"
                 >
                   <div class="col-md-12">
-                    <div class="table-responsive">
+                    <div class="dataTables_wrapper dt-bootstrap4">
                       <table
                         class="table"
                         style="width: 100%"
