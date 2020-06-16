@@ -135,7 +135,7 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization', `Bearer ${token}`)
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -252,6 +252,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'
-  @import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

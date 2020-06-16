@@ -42,7 +42,7 @@
                 <span class="mdi mdi-textbox-password form-control-feedback" />
                 <span
                   v-if="errors.has('password')"
-                  class="help-block"
+                  class="error invalid-feedback"
                 >{{ errors.first('password') }}</span>
               </div>
               <div
@@ -60,7 +60,7 @@
                 <span class="mdi mdi-textbox-password form-control-feedback" />
                 <span
                   v-if="errors.has('retypePassword')"
-                  class="help-block"
+                  class="error invalid-feedback"
                 >{{ errors.first('retypePassword') }}</span>
               </div>
               <div class="row">

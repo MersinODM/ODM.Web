@@ -8,6 +8,7 @@
 import Swal from 'sweetalert2/dist/sweetalert2.all.min'
 import router from '../router'
 import Constants from './constants'
+import pace from 'pace-progressbar'
 
 const axios = require('axios').default
 
@@ -24,7 +25,7 @@ http.interceptors.request.use(function (config) {
   // eslint-disable-next-line no-undef
   // pace.start()
   config.headers['X-CSRF-TOKEN'] = Laravel.csrfToken
-  const token = localStorage.getItem(Constants.accessToken)
+  const token = localStorage.getItem(Constants.ACCESS_TOKEN)
   if (token !== null) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -46,11 +47,11 @@ http.interceptors.response.use(function (response) {
       icon: 'warning',
       confirmButtonText: 'Tamam'
     }).then((value) => {
-      // pace.stop()
+      pace.stop()
       router.push({ name: 'login' })
     })
   } else {
-    // pace.stop()
+    pace.stop()
     return Promise.reject(error)
   }
 })
@@ -70,10 +71,10 @@ http.interceptors.response.use(function (response) {
       icon: 'warning',
       confirmButtonText: 'Tamam'
     }).then(() => {
-      // pace.stop()
+      pace.stop()
     })
   } else {
-    // pace.stop()
+    pace.stop()
     return Promise.reject(error)
   }
 })

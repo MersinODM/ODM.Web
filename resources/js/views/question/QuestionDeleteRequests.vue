@@ -5,47 +5,49 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4><span class="mdi mdi-delete-restore" /> Soru Silme İstekleri</h4>
-          </div>
-          <div class="box-body">
-            <div
-              class="table-responsive"
-            >
-              <table
-                id="qdrList"
-                style="width:100%"
-                class="table table-bordered table-hover dataTable"
-                role="grid"
+  <page>
+    <template v-slot:header>
+      <h4><span class="mdi mdi-delete-restore" /> Soru Silme İstekleri</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div
+                class="dataTables_wrapper dt-bootstrap4"
               >
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>QuestionId</th>
-                    <th>Oluşturan</th>
-                    <th>Açıklama</th>
-                    <th>Kazanım</th>
-                    <th
-                      data-type="date"
-                      data-format="DD.MM.YYYY"
-                    >
-                      Kayıt Tarihi
-                    </th>
-                    <th>Onaylayan</th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+                <table
+                  id="qdrList"
+                  style="width:100%"
+                  class="table table-bordered table-hover dataTable dtr-inline"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>QuestionId</th>
+                      <th>Oluşturan</th>
+                      <th>Açıklama</th>
+                      <th>Kazanım</th>
+                      <th
+                        data-type="date"
+                        data-format="DD.MM.YYYY"
+                      >
+                        Kayıt Tarihi
+                      </th>
+                      <th>Onaylayan</th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -54,9 +56,11 @@ import Auth from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import { QuestionDeleteService } from '../../services/QuestionDeleteRequestService'
 import tr from '../../helpers/dataTablesTurkish'
+import Page from '../../components/Page'
 
 export default {
   name: 'QuestionDeleteRequests',
+  components: { Page },
   mounted () {
     const vm = this
     const table = $('#qdrList')
@@ -70,13 +74,10 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization',
                         `Bearer ${token}`)
           }
-          // error: function (jqXHR, textStatus, errorThrown) {
-          //   console.log(errorThrown)
-          // }
         },
         language: tr,
         columns: [
@@ -198,6 +199,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'
-  @import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

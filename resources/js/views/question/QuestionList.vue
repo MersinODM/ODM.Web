@@ -52,7 +52,7 @@
                     </v-select>
                     <span
                       v-if="errors.has('selectedBranch')"
-                      class="help-block"
+                      class="error invalid-feedback"
                     >{{ errors.first('selectedBranch') }}</span>
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -77,7 +77,7 @@
                     </v-select>
                     <span
                       v-if="errors.has('selectedClassLevel')"
-                      class="help-block"
+                      class="error invalid-feedback"
                     >{{ errors.first('selectedClassLevel') }}</span>
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -101,7 +101,7 @@
                     <span class="mdi mdi-search-web form-control-feedback" />
                     <span
                       v-if="errors.has('searchedContent')"
-                      class="help-block"
+                      class="error invalid-feedback"
                     >{{ errors.first('searchedContent') }}</span>
                   </div>
                 </div>

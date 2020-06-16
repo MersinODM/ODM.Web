@@ -120,7 +120,6 @@
 <script>
 import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
-import { SettingService } from '../../services/SettingService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import { ResponseCodes } from '../../helpers/constants'
 import LicenceLogin from '../../components/LicenceLogin'

@@ -213,7 +213,7 @@ export default {
       .then((branches) => {
         next(vm => {
           vm.branches = branches
-          const settings = JSON.parse(localStorage.getItem(Constants.generalInfo))
+          const settings = JSON.parse(localStorage.getItem(Constants.GENERAL_INFO))
           vm.siteKey = settings.captcha_public_key
           vm.city = settings.city
           vm.web_address = settings.web_address

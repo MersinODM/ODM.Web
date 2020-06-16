@@ -53,7 +53,7 @@
                   </v-select>
                   <span
                     v-if="errors.has('branch')"
-                    class="help-block"
+                    class="error invalid-feedback"
                   >{{ errors.first('branch') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -74,7 +74,7 @@
                   />
                   <span
                     v-if="errors.has('selectedClassLevel')"
-                    class="help-block"
+                    class="error invalid-feedback"
                   >{{ errors.first('selectedClassLevel') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -114,7 +114,7 @@
                   </v-select>
                   <span
                     v-if="errors.has('learningOutCome')"
-                    class="help-block"
+                    class="error invalid-feedback"
                   >{{ errors.first('learningOutCome') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -136,7 +136,7 @@
                   />
                   <span
                     v-if="errors.has('difficulty')"
-                    class="help-block"
+                    class="error invalid-feedback"
                   >{{ errors.first('difficulty') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -156,7 +156,7 @@
                   />
                   <span
                     v-if="errors.has('correctAnswer')"
-                    class="help-block"
+                    class="error invalid-feedback"
                   >{{ errors.first('correctAnswer') }}</span>
                   <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                   <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->

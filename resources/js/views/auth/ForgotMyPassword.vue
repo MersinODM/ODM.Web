@@ -126,7 +126,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      const settings = JSON.parse(localStorage.getItem(Constants.generalInfo))
+      const settings = JSON.parse(localStorage.getItem(Constants.GENERAL_INFO))
       vm.captchaToken = settings.captcha_public_key
       vm.city = settings.city
     })

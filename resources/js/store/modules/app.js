@@ -17,29 +17,32 @@ const state = () => ({
 
 const getters = {
   currentUser: (state, getters, rootState) => {
+    if (!state.user) {
+      state.user = JSON.parse(localStorage.getItem(Constants.CURRENT_USER))
+    }
     return state.user
   },
   token: (state, getters, rootState) => {
     if (!state.accessToken) {
-      state.accessToken = JSON.parse(localStorage.getItem(Constants.accessToken))
+      state.accessToken = JSON.parse(localStorage.getItem(Constants.ACCESS_TOKEN))
     }
     return state.accessToken
   },
   expires_in: (state, getters, rootState) => {
     if (!state.expires_in) {
-      state.expires_in = JSON.parse(localStorage.getItem(Constants.expires_in))
+      state.expires_in = JSON.parse(localStorage.getItem(Constants.EXPIRES_IN))
     }
     return state.expires_in
   },
   generalInfo: (state, getters, rootState) => {
     if (!state.generalInfo) {
-      state.generalInfo = JSON.parse(localStorage.getItem(Constants.generalInfo))
+      state.generalInfo = JSON.parse(localStorage.getItem(Constants.GENERAL_INFO))
     }
     return state.generalInfo
   },
   roles: (state, getters, rootState) => {
     if (!state.roles) {
-      state.roles = JSON.parse(localStorage.getItem(Constants.roles))
+      state.roles = JSON.parse(localStorage.getItem(Constants.ROLES))
     }
     return state.roles
   }
@@ -48,29 +51,30 @@ const getters = {
 const mutations = {
   [Mutations.SET_USER] (state, user) {
     state.user = user
+    localStorage.setItem(Constants.CURRENT_USER, JSON.stringify(user))
   },
   [Mutations.SET_GENERAL_INFO] (state, info) {
     state.generalInfo = info
-    localStorage.setItem(Constants.generalInfo, info)
+    localStorage.setItem(Constants.GENERAL_INFO, JSON.stringify(info))
   },
   [Mutations.SAVE_TOKEN] (state, token) {
     state.accessToken = token
-    localStorage.setItem(Constants.accessToken, token.access_token)
-    localStorage.setItem(Constants.expires_in, token.expires_in)
+    localStorage.setItem(Constants.ACCESS_TOKEN, token.access_token)
+    localStorage.setItem(Constants.EXPIRES_IN, token.expires_in)
   },
   [Mutations.SET_ROLES] (state, rolesAndPermissions) {
     state.roles = rolesAndPermissions.roles
     // Hem rol hem izin bilgileri sistemden çekiliyor ve localStorage a yazılıyor
-    localStorage.setItem(Constants.roles, JSON.stringify(rolesAndPermissions.roles))
-    localStorage.setItem(Constants.permissions, JSON.stringify(rolesAndPermissions.permissions))
+    localStorage.setItem(Constants.ROLES, JSON.stringify(rolesAndPermissions.roles))
+    localStorage.setItem(Constants.PERMISSIONS, JSON.stringify(rolesAndPermissions.permissions))
   },
   [Mutations.LOGOUT] (state) {
     Object.keys(state).forEach(k => { state[k] = null })
-    localStorage.removeItem(Constants.generalInfo)
-    localStorage.removeItem(Constants.accessToken)
-    localStorage.removeItem(Constants.expires_in)
-    localStorage.removeItem(Constants.roles)
-    localStorage.removeItem(Constants.permissions)
+    localStorage.removeItem(Constants.GENERAL_INFO)
+    localStorage.removeItem(Constants.ACCESS_TOKEN)
+    localStorage.removeItem(Constants.EXPIRES_IN)
+    localStorage.removeItem(Constants.ROLES)
+    localStorage.removeItem(Constants.PERMISSIONS)
   }
 }
 

@@ -6,10 +6,10 @@
 
 <template>
   <page>
-    <template slot="header">
+    <template v-slot:header>
       <h1>Branş Listesi</h1>
     </template>
-    <template slot="content">
+    <template v-slot:content>
       <div class="row">
         <div class="col-md-12">
           <div
@@ -66,13 +66,7 @@ export default {
   components: { Page },
   data () {
     return {
-      branchGroup: null,
-      colors: [
-        'bg-yellow', 'bg-teal', 'bg-yellow',
-        'bg-red', 'bg-pink', 'bg-purple',
-        'bg-blue', 'bg-indigo', 'bg-maroon',
-        'bg-gray', 'bg-olive',
-        'bg-orange', 'bg-fuchsia']
+      branchGroup: null
     }
   },
   created () {

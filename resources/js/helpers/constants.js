@@ -5,11 +5,12 @@
  */
 
 const Constants = {
-  accessToken: 'access_token',
-  permissions: 'permissions',
-  roles: 'roles',
-  expires_in: 'expires_in',
-  generalInfo: 'general_info'
+  CURRENT_USER: 'current_user',
+  ACCESS_TOKEN: 'access_token',
+  PERMISSIONS: 'permissions',
+  ROLES: 'roles',
+  EXPIRES_IN: 'expires_in',
+  GENERAL_INFO: 'general_info'
 }
 
 const ResponseCodes = {

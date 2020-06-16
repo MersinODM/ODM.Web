@@ -22,11 +22,11 @@ const AuthService = {
     })
   },
   logout: () => {
-    localStorage.removeItem(Constants.accessToken)
-    localStorage.removeItem(Constants.expires_in)
-    localStorage.removeItem(Constants.permissions)
-    localStorage.removeItem(Constants.roles)
-    localStorage.removeItem(Constants.generalInfo)
+    localStorage.removeItem(Constants.ACCESS_TOKEN)
+    localStorage.removeItem(Constants.EXPIRES_IN)
+    localStorage.removeItem(Constants.PERMISSIONS)
+    localStorage.removeItem(Constants.ROLES)
+    localStorage.removeItem(Constants.GENERAL_INFO)
     router.push({ name: 'login' })
   },
   check: () => {
@@ -55,9 +55,9 @@ const AuthService = {
     })
   },
   getUserId () {
-    const token = localStorage.getItem(Constants.accessToken)
+    const token = localStorage.getItem(Constants.ACCESS_TOKEN)
     if (token) {
-      return jwt(localStorage.getItem(Constants.accessToken)).sub
+      return jwt(localStorage.getItem(Constants.ACCESS_TOKEN)).sub
     }
     return null
   },

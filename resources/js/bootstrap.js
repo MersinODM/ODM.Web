@@ -26,15 +26,18 @@
 // const axios = require('./helpers/axios')
 require('./helpers/filters')
 require('bootstrap/dist/js/bootstrap.bundle.min')
-require('jquery-ui')
 require('jquery-slimscroll/jquery.slimscroll.min')
 require('fastclick/lib/fastclick')
 require('admin-lte/dist/js/adminlte.min')
 require('admin-lte/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min')
+
 // require('pace-js/pace.min')
 
 // Datatables için err mode kapatılıyot tüm hataları biz yakalayacağız
 $.fn.dataTable.ext.errMode = 'none'
+$.fn.DataTable.ext.pager.numbers_length = 5
+
+// eslint-disable-next-line no-undef
 
 // console.log(window.axios)
 //

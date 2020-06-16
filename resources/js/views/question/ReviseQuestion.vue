@@ -45,7 +45,7 @@
                       <span class="mdi mdi-comment form-control-feedback" />
                       <span
                         v-if="errors.has('comment')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('comment') }}</span>
                     </div>
                   </div>
