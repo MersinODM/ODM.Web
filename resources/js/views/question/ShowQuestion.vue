@@ -61,18 +61,6 @@ export default {
       questionId: null
     }
   },
-  computed: {
-    getStatusClass () {
-      return {
-        'label-danger': this.question.status === QuestionStatuses.NOT_MUST_ASKED,
-        'label-info': this.question.status === QuestionStatuses.IN_ELECTION,
-        'label-primary': this.question.status === QuestionStatuses.REVISION_COMPLETED,
-        'label-warning': this.question.status === QuestionStatuses.NEED_REVISION,
-        'label-success': this.question.status === QuestionStatuses.APPROVED,
-        'label-default': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
-      }
-    }
-  },
   created () {
     setTimeout(() => { this.getFile() }, 1500)
   },

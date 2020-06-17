@@ -16,6 +16,7 @@ namespace App\Http\Controllers\Api\Question;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils;
+use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\LearningOutcome;
@@ -46,38 +47,39 @@ class QuestionController extends ApiController
             return response()->json($validationResult, 422);
         }
 
-        $question = $request->all();
-        $lesson_id = $question["lesson_id"];
-        if (!isset($lesson_id))
-            $lesson_id = Auth::user()->branch_id;
-        $lo_id = $question["learning_outcome_id"];
-        $difficulty = $question["difficulty"];
-        $keywords = $question["keywords"];
-        $correct_answer = $question["correct_answer"];
-        $question_file = $question["question_file"];
+        // İstek içindeki tüm gelenleri alalım bi değikene
+        $qReq = $request->all();
+        $question_file = $qReq["question_file"];
+        $path = '';
 
         try {
             DB::beginTransaction();
             $question = new Question();
-            $question->lesson_id = $lesson_id;
-            $question->learning_outcome_id = $lo_id;
-            $question->difficulty = $difficulty;
-            $question->correct_answer = $correct_answer;
-            $question->keywords = $keywords;
+            if (!isset($qReq["lesson_id"])) {
+                $question->lesson_id = Auth::user()->branch_id;
+            } else {
+                $question->lesson_id = $qReq["lesson_id"];
+            }
+            $question->learning_outcome_id = $qReq["learning_outcome_id"];
+            $question->difficulty =  $qReq["difficulty"];
+            $question->correct_answer = $qReq["correct_answer"];
+            $question->keywords = $qReq["keywords"];
+            $question->is_design_required = json_decode($qReq["is_design_required"], true);
             $question->creator_id = Auth::id();
             $isSaved = $question->save();
-            $lo = LearningOutcome::findOrFail($lo_id)->code;
+            $lo = LearningOutcome::find($qReq["learning_outcome_id"])->code;
             $loCode = str_replace(".", "-", $lo);
             if ($isSaved) {
-                $code = Branch::find($lesson_id)->code;
+                $code = Branch::find($qReq["lesson_id"])->code;
                 if ($question_file !== null) {
+                    // İlginç bir şekile aşağıdaki kod parçası çift satırda yazılmaz ise çalışmıyor
                     $expl = explode(".", $question_file->getClientOriginalName());
                     $ext = end($expl);
 
                     //Tüm dosyalar ana klasör altındaki storage->app->public altına ekleniyot
-                    //Path formatı: public/Kazanım kodu-kullanıcı id-soru id-dosya uzantısı
-                    //örn: public/T-7-4-2-31-73.pdf
-                    $path = 'public/' . $loCode . $question->creator_id . '-' . $question->id . '.' . $ext;
+                    //Path formatı: public/Ders Kodu/Kazanım kodu-kullanıcı id-soru id-dosya uzantısı
+                    //örn: public/DERS_KODU(FEN, İMAT vs.)/T-7-4-2-31-73.pdf
+                    $path = 'public/'. $code . '/' . $loCode . $question->creator_id . '-' . $question->id . '.' . $ext;
                     Storage::put($path, file_get_contents($question_file->getPathName()));
                     $question->content_url = $path;
                     $question->save();
@@ -89,7 +91,10 @@ class QuestionController extends ApiController
             Storage::delete($path);
             return response()->json($this->apiException($exception), 500);
         }
-        return response()->json([ResponseKeys::MESSAGE => "Soru ekleme işlemi başarılı."], 201);
+        return response()->json([
+            ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+            ResponseKeys::MESSAGE => "Soru ekleme işlemi başarılı."
+        ], 201);
     }
 
     public function findById($id)
@@ -107,6 +112,7 @@ class QuestionController extends ApiController
                 "q.keywords",
                 "q.difficulty",
                 "q.correct_answer",
+                "q.is_design_required",
                 "q.status",
                 DB::raw("CASE
                                 WHEN status = 0 THEN 'İşleme alınmamış'
@@ -127,7 +133,10 @@ class QuestionController extends ApiController
         if (isset($question)) {
             return response()->json($question, 200);
         }
-        return response()->json([ResponseKeys::MESSAGE => "Böyle bir soru yok!"], 404);
+        return response()->json([
+            ResponseKeys::CODE => ResponseCodes::CODE_NOT_FOUND,
+            ResponseKeys::MESSAGE => "Böyle bir soru yok!"
+        ], 404);
     }
 
     public function findByContentAndClassLevelAndBranch(Request $request)

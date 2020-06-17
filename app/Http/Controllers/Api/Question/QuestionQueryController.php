@@ -45,6 +45,10 @@ class QuestionQueryController extends Controller
         $branchId = $request->input('branch_id');
         $classLevel = $request->input('class_level');
         $status = $request->input('question_status');
+        $isDesignRequired = json_decode($request->input('is_design_required'), true);
+//        if (isset($isDesignRequired)){
+//            $isDesignRequired = json_decode($request->input('is_design_required'), true);
+//        }
 
         //TODO başlangıç ve bitiş tarihlerine göre de sınırlama yapılabilir
         $startData = $endDate = null;
@@ -53,7 +57,7 @@ class QuestionQueryController extends Controller
         $table = DB::table('questions as q')
             ->join('learning_outcomes as l', 'l.id', '=', 'q.learning_outcome_id')
             ->join('branches as b', 'b.id', '=', 'q.lesson_id')
-            ->join('users as u', 'u.id', '=', 'q.creator_id')
+            ->leftjoin('users as u', 'u.id', '=', 'q.creator_id') //TODO: Öksüz soruların durumu tartşılacak
             ->select('q.id',
                 'q.creator_id',
                 DB::raw('l.id as lo_id'),
@@ -90,6 +94,10 @@ class QuestionQueryController extends Controller
                 $table->where('q.lesson_id', $branchId);
             }
             $this->checkStatus($status, $table);
+        }
+
+        if (isset($isDesignRequired)) {
+            $table->where('q.is_design_required', $isDesignRequired);
         }
 
         return Datatables::of($table)

@@ -63,6 +63,22 @@
                     />
                   </div>
                 </div>
+                <div class="col-md-3 col-xs-12">
+                  <div
+                    class="form-group has-feedback"
+                  >
+                    <label>Tasarım İhtiyacı</label>
+                    <v-select
+                      ref="qIsDesignReq"
+                      v-model="isDesignRequired"
+                      :options="designOptions"
+                      :reduce="b => b.key"
+                      label="value"
+                      placeholder="Tasarım durumu seçebilirsiniz"
+                      @input="onSelectionChanged"
+                    />
+                  </div>
+                </div>
               </div>
               <div class="dataTables_wrapper dt-bootstrap4">
                 <table
@@ -130,6 +146,14 @@ export default {
 
       classLevels: [],
       selectedClassLevel: '',
+
+      designOptions: [
+        { key: '', value: 'Belirsiz' },
+        { key: true, value: 'İhtiyaç Var' },
+        { key: false, value: 'İhtiyaç Yok' }
+      ],
+      isDesignRequired: '',
+
       user: ''
     }
   },
@@ -178,6 +202,7 @@ export default {
         // yeni parametre eklemek için ateşleniyor
         data.question_status = vm.selectedStatus
         data.branch_id = vm.selectedBranch
+        data.is_design_required = vm.isDesignRequired
         if (vm.selectedClassLevel !== 'Hepsi') { data.class_level = vm.selectedClassLevel }
       })
       .DataTable({
@@ -219,7 +244,10 @@ export default {
           {
             data: 'full_name',
             name: 'u.full_name',
-            searchable: true
+            searchable: true,
+            render (data, type, row, meta) {
+              return data || 'Silinmiş Kullanıcı'
+            }
           },
           {
             data: 'branch_name',

@@ -39,6 +39,9 @@
             <span style="font-weight: bold">Zorluk Seviyesi: </span>{{ getDifficulty() }}
           </h6>
           <h6 v-if="question != null">
+            <span style="font-weight: bold">Tasarım ihtiyacı: </span>{{ question.is_design_required ? 'Var' : 'Yok' }}
+          </h6>
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Durumu: </span>
             <span
               class="label"

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$USER_HOME$/Desktop/JOBS.o5000q46qj9tkh4ad.sql" dialect="MariaDB" />
-    <file url="file://$USER_HOME$/Desktop/Kapadokya ÇPAL 051566 Seyehat Faturaları.pdf" dialect="MariaDB" />
-    <file url="PROJECT" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$" dialect="MariaDB" />
+    <file url="PROJECT" dialect="MariaDB" />
   </component>
   <component name="SqlResolveMappings">
-    <file url="file://$PROJECT_DIR$/app/Http/Controllers/Api/Question/QuestionController.php" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;655ffc5a-58aa-44d8-8887-71216ed6761b&quot;    },    &quot;group&quot;:{     &quot;@kind&quot;:&quot;schema&quot;,     &quot;node&quot;:{      &quot;name&quot;:{       &quot;@qname&quot;:&quot;o5000q46qj9tkh4ad&quot;      }     }    }   }  } }}" />
-    <file url="PROJECT" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;655ffc5a-58aa-44d8-8887-71216ed6761b&quot;    },    &quot;group&quot;:{     &quot;@kind&quot;:&quot;schema&quot;,     &quot;node&quot;:{      &quot;name&quot;:{       &quot;@qname&quot;:&quot;o5000q46qj9tkh4ad&quot;      }     }    }   }  } }}" />
+    <file url="file://$PROJECT_DIR$/app/Http/Controllers/Api/Question/QuestionController.php" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;cfdfbcb1-2edc-4b05-b3e0-6b5bae768608&quot;    },    &quot;group&quot;:{     &quot;@kind&quot;:&quot;schema&quot;,     &quot;node&quot;:{      &quot;name&quot;:{       &quot;@qname&quot;:&quot;o5000q46qj9tkh4ad&quot;      }     }    }   }  } }}" />
+    <file url="PROJECT" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;cfdfbcb1-2edc-4b05-b3e0-6b5bae768608&quot;    },    &quot;group&quot;:{     &quot;@kind&quot;:&quot;schema&quot;,     &quot;node&quot;:{      &quot;name&quot;:{       &quot;@qname&quot;:&quot;o5000q46qj9tkh4ad&quot;      }     }    }   }  } }}" />
   </component>
 </project>

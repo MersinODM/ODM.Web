@@ -165,7 +165,25 @@
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                   </div>
                   <div
-                    v-if="selectedCorrectAnswer !== ''"
+                    v-if="selectedCorrectAnswer !== null"
+                    class="form-group has-feedback"
+                  >
+                    <label>Görsel tasarım ihtiyacı</label>
+                    <br>
+                    <p-check
+                      v-model="isDesignRequired"
+                      class="p-icon p-smooth"
+                      color="success"
+                    >
+                      <i
+                        slot="extra"
+                        class="icon fa fa-check"
+                      />
+                      Tasarıma ihtiyaç {{ isDesignRequired ? 'vardır' : 'yoktur' }}
+                    </p-check>
+                  </div>
+                  <div
+                    v-if="selectedCorrectAnswer !== null"
                     class="form-group"
                   >
                     <label>Soru Kökü/Anahtar Kelimeler</label>
@@ -258,7 +276,7 @@ export default {
       questionFile: null,
       keywords: '',
       answers: ['A', 'B', 'C', 'D', 'E'],
-      selectedCorrectAnswer: '',
+      selectedCorrectAnswer: null,
 
       questionFileURL: null,
       selectedClassLevel: null,
@@ -267,7 +285,8 @@ export default {
       selectedLearningOutCome: null,
       learningOutComes: [],
       isSending: false,
-      user: ''
+      user: '',
+      isDesignRequired: false
     }
   },
   computed: {
@@ -351,6 +370,7 @@ export default {
             fd.append('difficulty', this.selectedDifficulty)
             fd.append('keywords', this.keywords)
             fd.append('correct_answer', this.selectedCorrectAnswer)
+            fd.append('is_design_required', this.isDesignRequired)
             fd.append('question_file', this.questionFile, this.questionFile.name)
             QuestionService.save(fd, progress => {})
               .then(value => {
