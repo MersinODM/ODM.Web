@@ -25,7 +25,7 @@
 // window.Vue = require('vue')
 // const axios = require('./helpers/axios')
 require('./helpers/filters')
-require('bootstrap/dist/js/bootstrap.bundle.min')
+require('admin-lte/plugins/bootstrap/js/bootstrap.min')
 require('jquery-slimscroll/jquery.slimscroll.min')
 require('fastclick/lib/fastclick')
 require('admin-lte/dist/js/adminlte.min')
