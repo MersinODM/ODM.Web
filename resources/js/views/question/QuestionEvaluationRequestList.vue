@@ -5,67 +5,68 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Soru Değerlendirme İstekleri</h4>
-          </div>
-          <div class="box-body">
-            <h4>Listeleme Parametreleri</h4>
-            <div class="row">
-              <div class="col-md-12 col-xs-12">
-                <div
-                  v-if="checkPermission"
-                  class="col-md-3 col-xs-12"
-                >
+  <page>
+    <template v-slot:header>
+      <h4>Soru Değerlendirme İstekleri</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 col-xs-12">
                   <div
-                    class="form-group has-feedback"
+                    v-if="checkPermission"
+                    class="col-md-3 col-xs-12"
                   >
-                    <label>Ders/Alan Seçimi</label>
-                    <v-select
-                      v-model="selectedBranch"
-                      :options="branches"
-                      :reduce="b => b.id"
-                      label="name"
-                      placeholder="Alan/Ders seçebilirsiniz"
-                      @input="onSelectionChanged"
-                    />
+                    <div
+                      class="form-group has-feedback"
+                    >
+                      <label>Ders/Alan Seçimi</label>
+                      <v-select
+                        v-model="selectedBranch"
+                        :options="branches"
+                        :reduce="b => b.id"
+                        label="name"
+                        placeholder="Alan/Ders seçebilirsiniz"
+                        @input="onSelectionChanged"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="table-responsive">
-              <table
-                id="qerList"
-                style="width:100%"
-                class="table row-border table-hover dataTable"
-                role="grid"
-              >
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Oluşturucu Id</th>
-                    <th>Soru Id</th>
-                    <th>Değerlendrici Id</th>
-                    <th>İsteği Yapan</th>
-                    <th>Değerlendirici</th>
-                    <th>Branş/Ders</th>
-                    <th>Kod</th>
-                    <th>Yorum</th>
-                    <th>Puan</th>
-                    <th>Kayıt Tarihi</th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+              <div class="dataTables_wrapper dt-bootstrap4">
+                <table
+                  id="qerList"
+                  style="width:100%"
+                  class="table row-border table-hover dataTable"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Oluşturucu Id</th>
+                      <th>Soru Id</th>
+                      <th>Değerlendrici Id</th>
+                      <th>İsteği Yapan</th>
+                      <th>Değerlendirici</th>
+                      <th>Branş/Ders</th>
+                      <th>Kod</th>
+                      <th>Yorum</th>
+                      <th>Puan</th>
+                      <th>Kayıt Tarihi</th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -76,21 +77,23 @@ import Messenger from '../../helpers/messenger'
 import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
 import UserService from '../../services/UserService'
+import Page from '../../components/Page'
 
 let qTable = null
 
 export default {
   name: 'QuestionEvaluationRequestList',
-  components: { vSelect },
-  data () {
-    return {
-      branches: [],
-      selectedBranch: '',
-      user: ''
-    }
-  },
+  components: { Page, vSelect },
+  data: () => ({
+    branches: [],
+    selectedBranch: '',
+    user: ''
+  }),
   beforeRouteEnter (to, from, next) {
-    Promise.all([BranchService.getBranches(), UserService.findById(Auth.getUserId())])
+    Promise.all([
+      BranchService.getBranches(),
+      UserService.findById(Auth.getUserId())
+    ])
       .then(([branches, user]) => {
         next(vm => {
           vm.user = user
@@ -134,7 +137,7 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization', `Bearer ${token}`)
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -251,6 +254,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

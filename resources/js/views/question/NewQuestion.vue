@@ -37,7 +37,7 @@
                       </v-select>
                       <span
                         v-if="errors.has('branch')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('branch') }}</span>
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -56,7 +56,7 @@
                       />
                       <span
                         v-if="errors.has('selectedClassLevel')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('selectedClassLevel') }}</span>
                       <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                       <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -83,7 +83,7 @@
                       </v-select>
                       <span
                         v-if="errors.has('learningOutCome')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('learningOutCome') }}</span>
                     <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                     <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
@@ -109,7 +109,7 @@
                       >
                       <span
                         v-if="errors.has('questionFile')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('questionFile') }}</span>
                     </div>
                     <div class="form-group has-feedback">
@@ -134,7 +134,7 @@
                       />
                       <span
                         v-if="errors.has('itemRoot')"
-                        class="help-block"
+                        class="error invalid-feedback"
                       >{{ errors.first('itemRoot') }}</span>
                     </div>
                   </div>
@@ -202,7 +202,7 @@
                                 >
                                 <span
                                   v-if="errors.has('choiceFile')"
-                                  class="help-block"
+                                  class="error invalid-feedback"
                                 >{{ errors.first('choiceFile') }}</span>
                               </div>
                             </div>
@@ -227,7 +227,7 @@
                       <div class="col-md-12">
                         <div class="form-group has-error">
                           <label
-                            class="help-block"
+                            class="error invalid-feedback"
                           >* Seçenek sayısı 4(dört)'ten az olamaz!</label>
                         </div>
                       </div>
@@ -239,7 +239,7 @@
                       <div class="col-md-12">
                         <div class="form-group has-error">
                           <label
-                            class="help-block"
+                            class="error invalid-feedback"
                           >* Seçenekler biri doğru yanıt olmalıdır!</label>
                         </div>
                       </div>
@@ -251,7 +251,7 @@
                       <div class="col-md-12">
                         <div class="form-group has-error">
                           <label
-                            class="help-block"
+                            class="error invalid-feedback"
                           >* Seçenekler en az 1(bir) resim veya içeriğe sahip olmalıdır!</label>
                         </div>
                       </div>
@@ -263,7 +263,7 @@
             <div class="row">
               <div class="col-md-offset-4 col-md-4">
                 <button
-                  class="btn btn-success btn btn-block btn-flat"
+                  class="btn btn-success btn btn-block"
                   :class="{'disabled': errors.any() || showError3 || isThereACorrectAnswer || isSending }"
                   @click="save"
                 >
@@ -285,6 +285,7 @@
 // import QuestionService from '../../services/QuestionService'
 // import Messenger from '../../helpers/messenger'
 // import { MessengerConstants } from '../../helpers/constants'
+import range from 'lodash/range'
 
 export default {
   name: 'NewQuestion',
@@ -309,7 +310,7 @@ export default {
       choices: [],
 
       selectedClassLevel: null,
-      classLevels: _.range(4, 13),
+      classLevels: range(4, 13),
 
       learningOutCome: null,
       learningOutComes: [],
@@ -352,12 +353,12 @@ export default {
   // },
   methods: {
     atLeastOneImageOrContentMustBeAddedToTheOptions () {
-      let res = this.choices.filter(value => {
+      const res = this.choices.filter(value => {
         if (value.content.match('<p>&nbsp;</p>')) {
           value.content = ''
         }
-        let c = !!value.content
-        let f = !!value.file
+        const c = !!value.content
+        const f = !!value.file
         return c || f
       }).length < 4
       this.showError3 = res
@@ -420,7 +421,7 @@ export default {
     searchLearningOutcomes (search, loading) {
       // TODO: Burada refactoring yapılcak servis içine alınacak bu kod parçası
       if (search.length < 3) { return }
-      let data = {
+      const data = {
         class_level: this.selectedClassLevel,
         content: search,
         lesson_id: this.branch
@@ -438,7 +439,7 @@ export default {
       this.$validator.validateAll().then(valRes => {
         if (valRes) {
           this.isSending = true
-          let fd = new FormData()
+          const fd = new FormData()
           fd.append('lesson_id', this.branch)
           fd.append('learning_outcome_id', this.learningOutCome)
           fd.append('header', this.header)
@@ -466,9 +467,10 @@ export default {
           //   // Messenger.showError(MessengerConstants.errorMessage)
           // })
         }
-      }).catch(e => {
-        this.isSending = false
       })
+        .catch(e => {
+          this.isSending = false
+        })
       this.isSending = false
     }
   }

@@ -1,150 +1,119 @@
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Soru Değerlendirme</h4>
-          </div>
-          <div class="box-body">
+  <page>
+    <template v-slot:header>
+      <h4>Soru Değerlendirme</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
             <div class="col-md-12">
-              <question
-                :question="question"
-                :question-file="questionFile"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="hasOpenEval"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirme Kaydet
-            </h3>
-          </div>
-          <div class="box-body">
-            <div class="col-md-12">
-              <div
-                class="row"
-              >
-                <div class="col-md-offset-4 col-md-4">
-                  <div
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalPoint')}"
-                  >
-                    <label>Değerlendirme Puanı</label>
-                    <v-select
-                      v-model="point"
-                      v-validate="'required'"
-                      :options="points"
-                      :reduce="p => p.key"
-                      label="title"
-                      name="evalPoint"
-                      placeholder="Puanınızı seçiniz"
-                    >
-                      <template
-                        slot="option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                      <template
-                        slot="selected-option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                    </v-select>
-                    <span
-                      v-if="errors.has('evalPoint')"
-                      class="help-block"
-                    >{{ errors.first('evalPoint') }}</span>
-                    <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                    <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                  </div>
-                  <div
-                    v-if="point <= 3"
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalComment')}"
-                  >
-                    <textarea
-                      v-model="comment"
-                      v-validate="'required'"
-                      name="evalComment"
-                      class="form-control"
-                      style="max-width: 100%; min-width: 100%; min-height: 60px"
-                      placeholder="Değerlendirmenizi kısaca açıklayınız."
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-12">
+                    <question
+                      :question="question"
+                      :question-file="questionFile"
                     />
-                    <span class="glyphicon glyphicon-magnet form-control-feedback" />
-                    <span
-                      v-if="errors.has('evalComment')"
-                      class="help-block"
-                    >{{ errors.first('evalComment') }}</span>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-offset-5 col-md-2">
-                    <div class="text-center">
-                      <button
-                        class="btn btn-success"
-                        @click="saveEval"
-                      >
-                        KAYDET
-                      </button>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="hasOpenEval"
+            class="row"
+          >
+            <div class="col-md-12">
+              <div class="card card-primary">
+                <div class="card-header with-border">
+                  <h3 class="card-title">
+                    Değerlendirme Kaydet
+                  </h3>
+                </div>
+                <div class="card-body">
+                  <div class="col-md-12">
+                    <div
+                      class="row"
+                    >
+                      <div class="col-md-offset-4 col-md-4">
+                        <div
+                          class="form-group has-feedback"
+                          :class="{'has-error': errors.has('evalPoint')}"
+                        >
+                          <label>Değerlendirme Puanı</label>
+                          <v-select
+                            v-model="point"
+                            v-validate="'required'"
+                            :options="points"
+                            :reduce="p => p.key"
+                            label="title"
+                            name="evalPoint"
+                            placeholder="Puanınızı seçiniz"
+                          >
+                            <template
+                              slot="option"
+                              slot-scope="option"
+                            >
+                              {{ option.key }} - {{ option.title }}
+                            </template>
+                            <template
+                              slot="selected-option"
+                              slot-scope="option"
+                            >
+                              {{ option.key }} - {{ option.title }}
+                            </template>
+                          </v-select>
+                          <span
+                            v-if="errors.has('evalPoint')"
+                            class="error invalid-feedback"
+                          >{{ errors.first('evalPoint') }}</span>
+                          <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
+                          <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
+                        </div>
+                        <div
+                          v-if="point <= 3"
+                          class="form-group has-feedback"
+                          :class="{'has-error': errors.has('evalComment')}"
+                        >
+                          <textarea
+                            v-model="comment"
+                            v-validate="'required'"
+                            name="evalComment"
+                            class="form-control"
+                            style="max-width: 100%; min-width: 100%; min-height: 60px"
+                            placeholder="Değerlendirmenizi kısaca açıklayınız."
+                          />
+                          <span class="glyphicon glyphicon-magnet form-control-feedback" />
+                          <span
+                            v-if="errors.has('evalComment')"
+                            class="error invalid-feedback"
+                          >{{ errors.first('evalComment') }}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-offset-5 col-md-2">
+                          <div class="text-center">
+                            <button
+                              class="btn btn-success"
+                              @click="saveEval"
+                            >
+                              KAYDET
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <timeline :question-id="questionId" />
         </div>
       </div>
-    </div>
-    <div
-      v-show="filteredEvalList !== null && filteredEvalList.length > 0"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary direct-chat direct-chat-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirmeler
-            </h3>
-          </div>
-          <!-- /.box-header -->
-          <div class="box-body">
-            <div class="direct-chat-messages">
-              <div
-                v-for="(evaluation) in filteredEvalList"
-                :key="evaluation.id"
-                class="direct-chat-msg"
-              >
-                <div class="direct-chat-info clearfix">
-                  <span class="direct-chat-name pull-left">Değerlendirici {{ evaluation.code }}</span>
-                  <span class="direct-chat-timestamp pull-right">{{ evaluation.date }}</span>
-                </div>
-                <img
-                  class="direct-chat-img"
-                  :src="userImage"
-                  alt="Message User Image"
-                >
-                <div class="direct-chat-text">
-                  {{ evaluation.comment }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <timeline :question-id="questionId" />
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -159,10 +128,11 @@ import Question from '../../components/questions/Question'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 // import RevisionService from '../../services/CommentService'
 import Timeline from '../../components/questions/Timeline'
+import Page from '../../components/Page'
 
 export default {
   name: 'EvaluateQuestion',
-  components: { Timeline, vSelect, Question },
+  components: { Timeline, vSelect, Question, Page },
   data () {
     return {
       question: null,

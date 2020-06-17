@@ -5,48 +5,50 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Kullanıcı Listesi</h4>
-          </div>
-          <div class="box-body">
-            <div
-              class="table-responsive"
-              :class="{ disabled : isApproving }"
-            >
-              <table
-                id="userList"
-                style="width:100%"
-                class="table table-bordered table-hover dataTable"
-                role="grid"
+  <page>
+    <template v-slot:header>
+      <h4>Kullanıcı Listesi</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div
+                class="dataTables_wrapper dt-bootstrap4"
+                :class="{ disabled : isApproving }"
               >
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Ad Soyad</th>
-                    <th>Telefon</th>
-                    <th>Branş/Ders</th>
-                    <th>Kurum</th>
-                    <th>Onaylayan</th>
-                    <th
-                      data-type="date"
-                      data-format="DD/MM/YYYY"
-                    >
-                      Kayıt Tarihi
-                    </th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+                <table
+                  id="userList"
+                  style="width:100%"
+                  class="table table-bordered table-hover dataTable"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Ad Soyad</th>
+                      <th>Telefon</th>
+                      <th>Branş/Ders</th>
+                      <th>Kurum</th>
+                      <th>Onaylayan</th>
+                      <th
+                        data-type="date"
+                        data-format="DD/MM/YYYY"
+                      >
+                        Kayıt Tarihi
+                      </th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -55,9 +57,11 @@ import Auth from '../../services/AuthService'
 import UserService from '../../services/UserService'
 import Messenger from '../../helpers/messenger'
 import tr from '../../helpers/dataTablesTurkish'
+import Page from '../../components/Page'
 
 export default {
   name: 'UserList',
+  components: { Page },
   data () {
     return {
       isApproving: false,
@@ -77,7 +81,7 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization',
               `Bearer ${token}`)
           }
@@ -127,13 +131,13 @@ export default {
             width: '15%',
             render (data, type, row, meta) {
               if (row.activator_name !== null) {
-                return '<div class="btn-group">' +
-                    '<button class="btn btn-xs btn-info">Göster</button>' +
+                return '<div class="btn-group  btn-block">' +
+                    '<button class="btn btn-xs btn-default">Göster</button>' +
                     '<button class="btn btn-xs btn-danger">Pasif.</button>' +
                     '</div>'
               }
-              return '<div class="btn-group">' +
-                  '<button class="btn btn-xs btn-info">Göster</button>' +
+              return '<div class="btn-group btn-block">' +
+                  '<button class="btn btn-xs btn-default">Göster</button>' +
                   '<button class="btn btn-xs btn-warning">Onayla</button>' +
                   '<button class="btn btn-xs btn-danger">Sil</button>' +
                   '</div>'
@@ -151,7 +155,7 @@ export default {
     //   console.log($(this).attr('id'));
     // });
 
-    table.on('click', '.btn-info', (e) => {
+    table.on('click', '.btn-default', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       vm.$router.push({ name: 'user', params: { id: data.id } })
@@ -197,6 +201,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

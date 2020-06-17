@@ -5,17 +5,16 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Soru Listesi</h4>
-          </div>
-          <div class="box-body">
-            <h4>Listeleme Parametreleri</h4>
-            <div class="row">
-              <div class="col-md-12 col-xs-12">
+  <page>
+    <template v-slot:header>
+      <h4>Soru Listesi</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
                 <div
                   v-if="checkPermission"
                   class="col-md-3 col-xs-12"
@@ -65,34 +64,34 @@
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="table-responsive">
-              <table
-                id="questionList"
-                style="width:100%"
-                class="table row-border table-hover dataTable"
-                role="grid"
-              >
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Oluşturucu Id</th>
-                    <th>Kazanım Id</th>
-                    <th>Ad Soyad</th>
-                    <th>Branş/Ders</th>
-                    <th>Kazanım Kodu</th>
-                    <th>Durum</th>
-                    <th>Kayıt Tarihi</th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+              <div class="dataTables_wrapper dt-bootstrap4">
+                <table
+                  id="questionList"
+                  style="width:100%"
+                  class="table row-border table-hover dataTable"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Oluşturucu Id</th>
+                      <th>Kazanım Id</th>
+                      <th>Ad Soyad</th>
+                      <th>Branş/Ders</th>
+                      <th>Kazanım Kodu</th>
+                      <th>Durum</th>
+                      <th>Kayıt Tarihi</th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -106,12 +105,13 @@ import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
 import UserService from '../../services/UserService'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
+import Page from '../../components/Page'
 
 let qTable = null
 
 export default {
   name: 'QuestionTableList',
-  components: { vSelect },
+  components: { Page, vSelect },
   data () {
     return {
       statuses: [
@@ -190,7 +190,7 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization',
               `Bearer ${token}`)
           },
@@ -260,7 +260,7 @@ export default {
           {
             data: '',
             className: 'text-center',
-            width: '10%',
+            width: '15%',
             render (data, type, row, meta) {
               const number = Number(row.status)
               if (number === QuestionStatuses.NEED_REVISION) {
@@ -322,6 +322,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

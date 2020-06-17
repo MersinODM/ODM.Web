@@ -1,227 +1,145 @@
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <header-delete-request
-              title="Soru Değerlendirme"
-              :question="question"
-            />
-          </div>
-          <div class="box-body">
+  <page>
+    <template v-slot:header>
+      <header-delete-request
+        :question="question"
+      >
+        <h4>Soru Değerlendirme</h4>
+      </header-delete-request>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
             <div class="col-md-12">
-              <question
-                :question="question"
-                :question-file="questionFile"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="box box-info">
-          <div class="box-header with-border">
-            <h4>Değerlendirici Ataması</h4>
-          </div>
-          <div class="box-body">
-            <div class="row">
-              <div class="col-md-12">
-                <div
-                  v-if="checkForEvaluationReq"
-                  class="row"
-                >
-                  <div class="col-md-offset-3 col-md-5 col-xs-12">
-                    <div
-                      class="form-group has-feedback"
-                    >
-                      <label>Değerlendirici Seçiniz</label>
-                      <v-select
-                        ref="evaluatorsRef"
-                        v-model="selectedEvaluator"
-                        label="full_name"
-                        :options="evaluators"
-                        placeholder="Değerlendirici seçebilirsiniz"
-                        @input="addElector"
-                      >
-                        <div slot="no-options">
-                          Maalesef hiç değerlendiricimiz yok
-                        </div>
-                      </v-select>
-                    </div>
-                  </div>
-                  <div class="col-md-offset-4 col-md-3 col-xs-12">
-                    <button
-                      class="btn btn-primary btn-block"
-                      style="margin-bottom: 10px"
-                      @click="setElectors"
-                    >
-                      Değerlendiricileri Kaydet
-                    </button>
-                  </div>
-                  <div
-                    v-if="selectedEvaluators !== null && selectedEvaluators.length>0"
-                    class="row"
-                  >
-                    <div class="col-md-offset-3 col-md-5 col-xs-12">
-                      <ul class="list-group">
-                        <li
-                          v-for="(elector, index) in selectedEvaluators"
-                          :key="index"
-                          class="list-group-item"
-                        >
-                          {{ index + 1 }}. {{ elector.full_name }}
-                          <a
-                            href=""
-                            class="label label-danger pull-right"
-                            @click.prevent="removeElector(elector.id)"
-                          >x</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  v-if="savedEvaluators !== null && savedEvaluators.length>0"
-                  class="row"
-                >
+              <div class="card">
+                <div class="card-body">
                   <div class="col-md-12">
-                    <div class="table-responsive">
-                      <table
-                        class="table"
-                        style="width: 100%"
-                      >
-                        <thead>
-                          <tr>
-                            <th>Sıra</th>
-                            <th>Ad Soyad</th>
-                            <th>Kod</th>
-                            <th>Yorum</th>
-                            <th>Puan</th>
-                            <th>Tarih</th>
-                            <th>Aksiyon</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(elector, index) in savedEvaluators"
-                            :key="index"
-                          >
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ elector.full_name }}</td>
-                            <td>{{ elector.code }}</td>
-                            <td>{{ elector.comment }}</td>
-                            <td>{{ elector.point }}</td>
-                            <td>{{ elector.updated_at | trDate }}</td>
-                            <td>
-                              <button
-                                class="btn btn-danger btn-xs"
-                                @click="deleteEvaluationRequests(elector.code)"
-                              >
-                                Sil
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="hasOwnEval"
-      class="row"
-    >
-      <div class="col-md-12">
-        <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">
-              Değerlendirme Kaydet
-            </h3>
-          </div>
-          <div class="box-body">
-            <div class="col-md-12">
-              <div
-                class="row"
-              >
-                <div class="col-md-offset-4 col-md-4">
-                  <div
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalPoint')}"
-                  >
-                    <label>Değerlendirme Puanı</label>
-                    <v-select
-                      v-model="point"
-                      v-validate="'required'"
-                      :options="points"
-                      :reduce="p => p.key"
-                      label="title"
-                      name="evalPoint"
-                      placeholder="Puanınızı seçiniz"
-                    >
-                      <template
-                        slot="option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                      <template
-                        slot="selected-option"
-                        slot-scope="option"
-                      >
-                        {{ option.key }} - {{ option.title }}
-                      </template>
-                    </v-select>
-                    <span
-                      v-if="errors.has('evalPoint')"
-                      class="help-block"
-                    >{{ errors.first('evalPoint') }}</span>
-                    <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                    <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                  </div>
-                  <div
-                    v-if="point <= 3"
-                    class="form-group has-feedback"
-                    :class="{'has-error': errors.has('evalComment')}"
-                  >
-                    <textarea
-                      v-model="comment"
-                      v-validate="'required'"
-                      name="evalComment"
-                      class="form-control"
-                      style="max-width: 100%; min-width: 100%; min-height: 60px"
-                      placeholder="Değerlendirmenizi kısaca açıklayınız."
+                    <question
+                      :question="question"
+                      :question-file="questionFile"
                     />
-                    <span class="glyphicon glyphicon-magnet form-control-feedback" />
-                    <span
-                      v-if="errors.has('evalComment')"
-                      class="help-block"
-                    >{{ errors.first('evalComment') }}</span>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-offset-5 col-md-2">
-                    <div class="text-center">
-                      <button
-                        class="btn btn-success"
-                        @click="saveEval"
+              </div>
+              <div class="card card-warning">
+                <div class="card-header with-border">
+                  <h4>Değerlendirici Ataması</h4>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div
+                        v-if="checkForEvaluationReq"
+                        class="row justify-content-md-center"
                       >
-                        KAYDET
-                      </button>
+                        <div class="col-md-5 col-xs-12">
+                          <div
+                            class="form-group has-feedback"
+                          >
+                            <label>Değerlendirici Seçiniz</label>
+                            <v-select
+                              ref="evaluatorsRef"
+                              v-model="selectedEvaluator"
+                              label="full_name"
+                              :options="evaluators"
+                              placeholder="Değerlendirici seçebilirsiniz"
+                              @input="addElector"
+                            >
+                              <div slot="no-options">
+                                Maalesef hiç değerlendiricimiz yok
+                              </div>
+                            </v-select>
+                          </div>
+                          <div class="col-md-12 col-xs-12">
+                            <button
+                              class="btn btn-primary btn-block"
+                              style="margin-bottom: 10px"
+                              @click="setElectors"
+                            >
+                              Değerlendiricileri Kaydet
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        v-if="selectedEvaluators !== null && selectedEvaluators.length>0"
+                        class="row justify-content-md-center"
+                      >
+                        <div class="col-md-5 col-xs-12">
+                          <ul class="list-group">
+                            <li
+                              v-for="(elector, index) in selectedEvaluators"
+                              :key="index"
+                              class="list-group-item"
+                            >
+                              {{ index + 1 }}. {{ elector.full_name }}
+                              <a
+                                href=""
+                                class="float-right"
+                                @click.prevent="removeElector(elector.id)"
+                              ><i class="mdi mdi-close-circle-outline text-red" /></a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div
+                        v-if="savedEvaluators !== null && savedEvaluators.length>0"
+                        class="row"
+                      >
+                        <div class="col-md-12">
+                          <div class="dataTables_wrapper dt-bootstrap4">
+                            <table
+                              class="table"
+                              style="width: 100%"
+                            >
+                              <thead>
+                                <tr>
+                                  <th>Sıra</th>
+                                  <th>Ad Soyad</th>
+                                  <th>Kod</th>
+                                  <th>Yorum</th>
+                                  <th>Puan</th>
+                                  <th>Tarih</th>
+                                  <th>Aksiyon</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  v-for="(elector, index) in savedEvaluators"
+                                  :key="index"
+                                >
+                                  <td>{{ index + 1 }}</td>
+                                  <td>{{ elector.full_name }}</td>
+                                  <td>{{ elector.code }}</td>
+                                  <td>{{ elector.comment }}</td>
+                                  <td>{{ elector.point }}</td>
+                                  <td>{{ elector.updated_at | trDate }}</td>
+                                  <td>
+                                    <button
+                                      class="btn btn-danger btn-xs"
+                                      @click="deleteEvaluationRequests(elector.code)"
+                                    >
+                                      Sil
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <timeline :question-id="$route.params.questionId" />
         </div>
       </div>
-    </div>
-    <timeline :question-id="$route.params.questionId" />
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -236,10 +154,11 @@ import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import UserService from '../../services/UserService'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Timeline from '../../components/questions/Timeline'
+import Page from '../../components/Page'
 
 export default {
   name: 'SetEvaluatorsForQuestion',
-  components: { Timeline, HeaderDeleteRequest, vSelect, Question },
+  components: { Page, Timeline, HeaderDeleteRequest, vSelect, Question },
   data: () => ({
     question: null,
     questionFile: null,
@@ -247,7 +166,6 @@ export default {
     selectedEvaluator: '',
     selectedEvaluators: [],
     savedEvaluators: [],
-    filteredEvalList: [],
     userImage: usersImg
   }),
   beforeRouteEnter (to, from, next) {
@@ -293,7 +211,9 @@ export default {
     getQuestion () {
       const questionId = this.$route.params.questionId
       QuestionService.findById(questionId)
-        .then(value => { this.question = value })
+        .then(value => {
+          this.question = value
+        })
         .catch(reason => Messenger.showError(reason))
     },
     findElectorsByBranchId () {
@@ -320,7 +240,9 @@ export default {
     setElectors () {
       if (this.selectedEvaluators.length >= 2) {
         let electors = ''
-        this.selectedEvaluators.forEach(value => { electors += ` ${value.full_name}` })
+        this.selectedEvaluators.forEach(value => {
+          electors += ` ${value.full_name}`
+        })
         Messenger.showPrompt(`Bu soruya değerlendirici olarak${electors} adlı kişileri seçtiniz. Onaylıyor musunuz?`,
           {
             cancel: 'İptal',
@@ -331,17 +253,21 @@ export default {
           })
           .then(value => {
             if (value) {
+              const loader = this.$loading.show()
               QuestionEvaluationService.saveElectors(this.question.id, this.selectedEvaluators)
                 .then(resp => {
+                  loader.hide()
                   Messenger.showSuccess(resp.message)
                     .then(() => {
                       this.refreshQuestion()
                     })
                 })
                 .catch(reason => Messenger.showError(reason.message))
+                .finally(() => loader.hide())
             }
           })
-          .catch(reason => {})
+          .catch(reason => {
+          })
       } else {
         Messenger.showWarning('Lütfen en az iki tane değerlendirici seçiniz!')
       }
@@ -367,7 +293,8 @@ export default {
               .catch(reason => Messenger.showError(reason.message))
           }
         })
-        .catch(reason => {})
+        .catch(reason => {
+        })
     },
     saveEval () {
       this.$validator.validateAll()

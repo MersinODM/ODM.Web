@@ -39,7 +39,7 @@
                         >
                         <span class="mdi mdi-textbox-password form-control-feedback"></span>
                         @error('password')
-                            <span class="help-block">{{ $message }}</span>
+                            <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="form-group has-feedback @error('password_confirmation') has-error @enderror">
@@ -49,7 +49,7 @@
                                 placeholder="Şifrenizi tekrar giriniz">
                         <span class="mdi mdi-textbox-password form-control-feedback"></span>
                         @error('password_confirmation')
-                            <span class="help-block">{{ $message }}</span>
+                            <span class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="row">

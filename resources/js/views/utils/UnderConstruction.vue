@@ -5,29 +5,36 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box box-danger">
-          <div class="box-header with-border">
-            <h4>Yapım aşamasında :-(</h4>
-          </div>
-          <div class="box-body">
-            <div class="col-md-6 col-md-offset-3">
-              <div class="row">
-                <p><b>Üzgünüz çünkü;</b> istedğiniz sayfa yapım aşamasında sabrınız için teşekkür ederiz.</p>
+  <page>
+    <template v-slot:header>
+      <h4 class="text-danger">
+        Yapım aşamasında 🛠️
+      </h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-danger">
+            <div class="card-title" />
+            <div class="card-body">
+              <div class="col-md-6">
+                <div class="row justify-content-md-center ">
+                  <p><b>Üzgünüz 😔</b> istediğiniz sayfa şu an için yapım aşamasındadır. Sabrınız için teşekkür ederiz.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
+import Page from '../../components/Page'
 export default {
-  name: 'UnderConstruction'
+  name: 'UnderConstruction',
+  components: { Page }
 }
 </script>
 

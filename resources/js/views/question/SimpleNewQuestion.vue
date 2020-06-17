@@ -1,14 +1,16 @@
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4 class="pull-left">
-              Yeni Hızlı Soru Oluşturma
-            </h4>
-            <div class="pull-right">
-              <label class="btn btn-success pull-right ">
+  <page>
+    <template v-slot:header>
+      <div class="row">
+        <div class="col-md-6">
+          <h4>
+            Yeni Hızlı Soru Oluşturma
+          </h4>
+        </div>
+        <div class="col-md-6">
+          <div class="row justify-content-md-end">
+            <div class="col-md-4">
+              <label class="btn btn-success btn-block">
                 <input
                   ref="qFile"
                   v-validate="'required|size:1024'"
@@ -19,8 +21,10 @@
                   @change="selectQuestionGraphic($event)"
                 >Dosya seçiniz
               </label>
+            </div>
+            <div class="col-md-2">
               <button
-                class="btn btn-warning pull-right"
+                class="btn btn-warning btn-block"
                 style="margin-right: 10px"
                 @click="clearSelection"
               >
@@ -28,185 +32,187 @@
               </button>
             </div>
           </div>
-          <div class="box-body">
-            <div class="row">
-              <div class="col-md-3">
-                <div
-                  v-if="checkBranches"
-                  class="form-group has-feedback"
-                  :class="{'has-error': errors.has('branch')}"
-                >
-                  <label>Ders/Alan Seçimi</label>
-                  <v-select
-                    v-model="selectedBranch"
-                    v-validate="'required'"
-                    :options="branches"
-                    :reduce="b => b.id"
-                    label="name"
-                    name="branch"
-                    placeholder="Alan/Ders adının en az 3 harfini girin"
-                    @input="clearClasses"
+        </div>
+      </div>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div
+                    v-if="checkBranches"
+                    class="form-group has-feedback"
                   >
-                    <div slot="no-options">
-                      Burada bişey bulamadık :-(
-                    </div>
-                  </v-select>
-                  <span
-                    v-if="errors.has('branch')"
-                    class="help-block"
-                  >{{ errors.first('branch') }}</span>
-                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                </div>
-                <div
-                  class="form-group has-feedback"
-                  :class="{'has-error': errors.has('selectedClassLevel')}"
-                >
-                  <label>Sınıf Seviyesi Seçimi</label>
-                  <v-select
-                    ref="classLevelDD"
-                    v-model="selectedClassLevel"
-                    v-validate="'required'"
-                    :options="classLevels"
-                    name="selectedClassLevel"
-                    placeholder="Sınıf seviyesini seçiniz"
-                    @input="clearLearningOutCome"
-                  />
-                  <span
-                    v-if="errors.has('selectedClassLevel')"
-                    class="help-block"
-                  >{{ errors.first('selectedClassLevel') }}</span>
-                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                </div>
-                <div
-                  v-if="selectedClassLevel !== null"
-                  class="form-group has-feedback"
-                  :class="{'has-error': errors.has('learningOutCome')}"
-                >
-                  <label>Kazanım Seçimi</label>
-                  <v-select
-                    ref="loDD"
-                    v-model="selectedLearningOutCome"
-                    v-validate="'required'"
-                    :options="learningOutComes"
-                    :reduce="lo => lo.id"
-                    label="content"
-                    name="learningOutCome"
-                    placeholder="Ara"
-                    @search="searchLearningOutcomes"
-                  >
-                    <div slot="no-options">
-                      Burada bişey bulamadık :-(
-                    </div>
-                    <template
-                      slot="option"
-                      slot-scope="option"
+                    <label>Ders/Alan Seçimi</label>
+                    <v-select
+                      v-model="selectedBranch"
+                      v-validate="'required'"
+                      :options="branches"
+                      :reduce="b => b.id"
+                      label="name"
+                      :class="{'is-invalid': errors.has('branch')}"
+                      name="branch"
+                      placeholder="Ders seçimi yapınız"
+                      @input="clearClasses"
                     >
-                      {{ option.code }} - {{ option.content }}
-                    </template>
-                    <template
-                      slot="selected-option"
-                      slot-scope="option"
+                      <div slot="no-options">
+                        Burada bişey bulamadık :-(
+                      </div>
+                    </v-select>
+                    <span
+                      v-if="errors.has('branch')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('branch') }}</span>
+                  </div>
+                  <div
+                    class="form-group has-feedback"
+                  >
+                    <label>Sınıf Seviyesi Seçimi</label>
+                    <v-select
+                      ref="classLevelDD"
+                      v-model="selectedClassLevel"
+                      v-validate="'required'"
+                      :options="classLevels"
+                      name="selectedClassLevel"
+                      :class="{'is-invalid': errors.has('selectedClassLevel')}"
+                      placeholder="Sınıf seviyesini seçiniz"
+                      @input="clearLearningOutCome"
+                    />
+                    <span
+                      v-if="errors.has('selectedClassLevel')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('selectedClassLevel') }}</span>
+                  </div>
+                  <div
+                    v-if="selectedClassLevel !== null"
+                    class="form-group has-feedback"
+                  >
+                    <label>Kazanım Seçimi</label>
+                    <v-select
+                      ref="loDD"
+                      v-model="selectedLearningOutCome"
+                      v-validate="'required'"
+                      :options="learningOutComes"
+                      :reduce="lo => lo.id"
+                      label="content"
+                      name="learningOutCome"
+                      :class="{'is-invalid': errors.has('learningOutCome')}"
+                      placeholder="Ara"
+                      @search="searchLearningOutcomes"
                     >
-                      {{ option.code }} - {{ option.content }}
-                    </template>
-                  </v-select>
-                  <span
-                    v-if="errors.has('learningOutCome')"
-                    class="help-block"
-                  >{{ errors.first('learningOutCome') }}</span>
-                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                </div>
-                <div
-                  v-if="selectedLearningOutCome !== null"
-                  class="form-group has-feedback"
-                  :class="{'has-error': errors.has('difficulty')}"
-                >
-                  <label>Zorluk Seviyesi Seçimi</label>
-                  <v-select
-                    v-model="selectedDifficulty"
-                    v-validate="'required'"
-                    :options="difficultyLevels"
-                    :reduce="d => d.degree"
-                    label="content"
-                    name="difficulty"
-                    placeholder="Zorluk seviyesini seçiniz"
-                  />
-                  <span
-                    v-if="errors.has('difficulty')"
-                    class="help-block"
-                  >{{ errors.first('difficulty') }}</span>
-                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                </div>
-                <div
-                  v-if="selectedDifficulty !== null"
-                  class="form-group has-feedback"
-                  :class="{'has-error': errors.has('correctAnswer')}"
-                >
-                  <label>Doğru Cevap</label>
-                  <v-select
-                    v-model="selectedCorrectAnswer"
-                    v-validate="'required'"
-                    :options="answers"
-                    name="correctAnswer"
-                    placeholder="Doğru cevabı seçiniz"
-                  />
-                  <span
-                    v-if="errors.has('correctAnswer')"
-                    class="help-block"
-                  >{{ errors.first('correctAnswer') }}</span>
-                  <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                  <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
-                </div>
-                <div
-                  v-if="selectedCorrectAnswer !== ''"
-                  class="form-group"
-                >
-                  <label>Soru Kökü/Anahtar Kelimeler</label>
-                  <textarea
-                    class="form-control"
-                    rows="3"
-                    placeholder="Boşluk bırakarak anahtar kelimeler girebilirsiniz."
-                    @model="keywords"
-                  />
-                </div>
-                <div
-                  v-if="selectedDifficulty !== null"
-                  class="form-group has-feedback"
-                >
-                  <button
-                    :class="{ disabled : errors.any() || isSending }"
-                    class="btn btn-primary btn-block"
-                    @click="save"
+                      <div slot="no-options">
+                        Burada bişey bulamadık :-(
+                      </div>
+                      <template
+                        slot="option"
+                        slot-scope="option"
+                      >
+                        {{ option.code }} - {{ option.content }}
+                      </template>
+                      <template
+                        slot="selected-option"
+                        slot-scope="option"
+                      >
+                        {{ option.code }} - {{ option.content }}
+                      </template>
+                    </v-select>
+                    <span
+                      v-if="errors.has('learningOutCome')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('learningOutCome') }}</span>
+                  </div>
+                  <div
+                    v-if="selectedLearningOutCome !== null"
+                    class="form-group has-feedback"
                   >
-                    Kaydet
-                  </button>
-                </div>
-              </div>
-              <div class="col-md-9">
-                <div
-                  v-if="questionFile !== null && !errors.has('questionFile')"
-                  class="row"
-                >
-                  <object
-                    id="pdf"
-                    height="600pt"
-                    width="100%"
-                    type="application/pdf"
-                    :data="questionFileURL"
+                    <label>Zorluk Seviyesi Seçimi</label>
+                    <v-select
+                      v-model="selectedDifficulty"
+                      v-validate="'required'"
+                      :options="difficultyLevels"
+                      :reduce="d => d.degree"
+                      label="content"
+                      name="difficulty"
+                      :class="{'is-invalid': errors.has('difficulty')}"
+                      placeholder="Zorluk seviyesini seçiniz"
+                    />
+                    <span
+                      v-if="errors.has('difficulty')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('difficulty') }}</span>
+                  </div>
+                  <div
+                    v-if="selectedDifficulty !== null"
+                    class="form-group has-feedback"
                   >
-                    <span>PDF eklentisi bulunamadı.</span>
-                  </object>
+                    <label>Doğru Cevap</label>
+                    <v-select
+                      v-model="selectedCorrectAnswer"
+                      v-validate="'required'"
+                      :options="answers"
+                      name="correctAnswer"
+                      :class="{'is-invalid': errors.has('correctAnswer')}"
+                      placeholder="Doğru cevabı seçiniz"
+                    />
+                    <span
+                      v-if="errors.has('correctAnswer')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('correctAnswer') }}</span>
+                    <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
+                    <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
+                  </div>
+                  <div
+                    v-if="selectedCorrectAnswer !== ''"
+                    class="form-group"
+                  >
+                    <label>Soru Kökü/Anahtar Kelimeler</label>
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      placeholder="Boşluk bırakarak anahtar kelimeler girebilirsiniz."
+                      @model="keywords"
+                    />
+                  </div>
+                  <div
+                    v-if="selectedDifficulty !== null"
+                    class="form-group has-feedback"
+                  >
+                    <button
+                      :class="{ disabled : errors.any() || isSending }"
+                      class="btn btn-primary btn-block"
+                      @click="save"
+                    >
+                      Kaydet
+                    </button>
+                  </div>
                 </div>
-                <div
-                  v-if="errors.has('questionFile')"
-                  class="row"
-                >
-                  <div class="text-center">
-                    <span class="badge alert-error">{{ errors.first('questionFile') }}</span>
+                <div class="col-md-9">
+                  <div
+                    v-if="questionFile !== null && !errors.has('questionFile')"
+                    class="row"
+                  >
+                    <object
+                      id="pdf"
+                      height="600pt"
+                      width="100%"
+                      type="application/pdf"
+                      :data="questionFileURL"
+                    >
+                      <span>PDF eklentisi bulunamadı.</span>
+                    </object>
+                  </div>
+                  <div
+                    v-if="errors.has('questionFile')"
+                    class="row justify-content-md-center"
+                  >
+                    <div class="col-md-12">
+                      <div class="row justify-content-md-center mt-4">
+                        <h4><span class="badge badge-danger">{{ errors.first('questionFile') }}</span></h4>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -214,8 +220,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -230,10 +236,11 @@ import { MessengerConstants } from '../../helpers/constants'
 import LearningOutcomesService from '../../services/LearningOutcomesService'
 import UserService from '../../services/UserService'
 import AuthService from '../../services/AuthService'
+import Page from '../../components/Page'
 
 export default {
   name: 'SimpleNewQuestion',
-  components: { vSelect },
+  components: { Page, vSelect },
   data () {
     return {
       selectedDifficulty: null,

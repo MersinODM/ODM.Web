@@ -5,53 +5,53 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Branş Listesi</h4>
-          </div>
-          <div class="box-body">
+  <page>
+    <template v-slot:header>
+      <h1>Branş Listesi</h1>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div
+            v-for="branches in branchGroup"
+            class="row"
+          >
             <div
-              v-for="branches in branchGroup"
-              class="row"
+              v-for="b in branches"
+              :key="b.id"
+              class="col-md-4"
             >
-              <div
-                v-for="b in branches"
-                :key="b.id"
-                class="col-md-4"
-              >
-                <!-- Widget: user widget style 1 -->
-                <div class="box box-widget widget-user-2">
-                  <!-- Add the bg color to the header using any of the bg-* classes -->
-                  <div
-                    class="widget-user-header"
-                    :class="colors[Math.floor(Math.random() * colors.length)]"
-                  >
-                    <!-- /.widget-user-image -->
-                    <h3 class="widget-user-username">
-                      {{ b.name }}
-                    </h3>
-                    <h5>{{ b.code }}</h5>
-                  </div>
-                  <div class="box-footer no-padding">
-                    <ul class="nav nav-stacked">
-                      <li><a href="#">Soru Sayısı <span class="pull-right badge bg-blue">{{ b.questionCount }}</span></a></li>
-                      <li><a href="#">Öğretmen Sayısı <span class="pull-right badge bg-aqua">{{ b.userCount }}</span></a></li>
-                      <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
-                      <!--                      <li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
-                    </ul>
-                  </div>
+              <!-- Widget: user widget style 1 -->
+              <div class="card">
+                <div class="card-header">
+                  <h4>
+                    {{ b.name }} - {{ b.code }}
+                  </h4>
                 </div>
-                <!-- /.widget-user -->
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="card-body">
+                  <!-- /.widget-user-image -->
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a href="javascript:0">Soru Sayısı <span class="float-right badge bg-primary mt-1">{{ b.questionCount }}</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="javascript:0">Öğretmen Sayısı <span class="float-right badge bg-primary mt-1">{{ b.userCount }}</span>
+                      </a>
+                    </li>
+                    <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->
+                    <!--                      <li><a href="#">Followers <span class="pull-right badge bg-red">842</span></a></li>-->
+                  </ul>
+                </div>
               </div>
+              <!-- /.widget-user -->
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -59,13 +59,14 @@ import BranchService from '../../services/BranchService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import chunk from 'lodash/chunk'
+import Page from '../../components/Page'
 
 export default {
   name: 'BranchList',
+  components: { Page },
   data () {
     return {
-      branchGroup: null,
-      colors: ['bg-yellow', 'bg-green', 'bg-yellow', 'bg-red', 'bg-aqua', 'bg-purple', 'bg-blue', 'bg-navy', 'bg-teal', 'bg-maroon', 'bg-black', 'bg-gray', 'bg-olive', 'bg-orange', 'bg-fuchsia']
+      branchGroup: null
     }
   },
   created () {
@@ -74,12 +75,12 @@ export default {
   methods: {
     getBranches () {
       BranchService.getBranchesWithStats()
-                   .then(data => {
-                     this.branchGroup = chunk(data, 3)
-                   })
-                   .catch(reason => {
-                     Messenger.showError(MessengerConstants.errorMessage)
-                   })
+        .then(data => {
+          this.branchGroup = chunk(data, 3)
+        })
+        .catch(reason => {
+          Messenger.showError(MessengerConstants.errorMessage)
+        })
     }
   }
 

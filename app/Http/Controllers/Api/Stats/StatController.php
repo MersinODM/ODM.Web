@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Stats;
 
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Utils;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\Question;
 use Illuminate\Http\Request;

@@ -5,88 +5,85 @@
   -->
 
 <template>
-  <div class="hold-transition login-page">
+  <div class="login-page mt-3">
     <div class="login-box">
       <div class="login-logo">
         <a href="http://nevsehirodm.meb.gov.tr/"><b>Nevşehir</b>ÖDM</a>
       </div>
       <!-- /.login-logo -->
-      <div
-        :class="{disabled : isSending}"
-        class="login-box-body"
-      >
-        <p class="login-box-msg">
-          Lütfen şifrenizi oluşturunuz.
-        </p>
+      <div class="card">
+        <div class="card-body login-card-body">
+          <div
+            :class="{disabled : isSending}"
+            class="login-box-body"
+          >
+            <p class="login-box-msg">
+              Lütfen şifrenizi oluşturunuz.
+            </p>
 
-        <form
-          method="post"
-          @submit.prevent
-        >
-          <!--          <div class="form-group has-feedback">-->
-          <!--            <input v-model="email" class="form-control" placeholder="Kullancı Adı/E-Posta giriniz">-->
-          <!--            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
-          <!--          </div>-->
-          <div
-            :class="{'has-error': errors.has('password') || isSending}"
-            class="form-group has-feedback"
-          >
-            <input
-              id="password"
-              ref="password"
-              v-model="password"
-              v-validate="'required|min:6|max:10'"
-              type="password"
-              name="password"
-              class="form-control"
-              placeholder="Şifrenizi giriniz"
+            <form
+              method="post"
+              @submit.prevent
             >
-            <span class="mdi mdi-textbox-password form-control-feedback" />
-            <span
-              v-if="errors.has('password')"
-              class="help-block"
-            >{{ errors.first('password') }}</span>
-          </div>
-          <div
-            :class="{'has-error': errors.has('retypePassword') || isSending }"
-            class="form-group has-feedback"
-          >
-            <input
-              v-model="retypePassword"
-              v-validate="'required|min:6|max:10|confirmed:password'"
-              type="password"
-              name="retypePassword"
-              class="form-control"
-              placeholder="Şifrenizi giriniz"
-            >
-            <span class="mdi mdi-textbox-password form-control-feedback" />
-            <span
-              v-if="errors.has('retypePassword')"
-              class="help-block"
-            >{{ errors.first('retypePassword') }}</span>
-          </div>
-          <div class="row">
-            <div class="col-xs-offset-4 col-xs-4">
-              <button
-                :class="{ disabled : errors.any() || isSending }"
-                type="submit"
-                class="btn btn-primary btn-block btn-flat"
-                @click="sendPassword"
+              <div
+                :class="{'has-error': errors.has('password') || isSending}"
+                class="form-group has-feedback"
               >
-                Oluştur
-              </button>
-            </div>
-            <!-- /.col -->
+                <input
+                  id="password"
+                  ref="password"
+                  v-model="password"
+                  v-validate="'required|min:6|max:10'"
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Şifrenizi giriniz"
+                >
+                <span class="mdi mdi-textbox-password form-control-feedback" />
+                <span
+                  v-if="errors.has('password')"
+                  class="error invalid-feedback"
+                >{{ errors.first('password') }}</span>
+              </div>
+              <div
+                :class="{'has-error': errors.has('retypePassword') || isSending }"
+                class="form-group has-feedback"
+              >
+                <input
+                  v-model="retypePassword"
+                  v-validate="'required|min:6|max:10|confirmed:password'"
+                  type="password"
+                  name="retypePassword"
+                  class="form-control"
+                  placeholder="Şifrenizi giriniz"
+                >
+                <span class="mdi mdi-textbox-password form-control-feedback" />
+                <span
+                  v-if="errors.has('retypePassword')"
+                  class="error invalid-feedback"
+                >{{ errors.first('retypePassword') }}</span>
+              </div>
+              <div class="row">
+                <div class="col-xs-offset-4 col-xs-4">
+                  <button
+                    :class="{ disabled : errors.any() || isSending }"
+                    type="submit"
+                    class="btn btn-primary btn-block btn-flat"
+                    @click="sendPassword"
+                  >
+                    Oluştur
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
+          <spinner
+            v-if="isSending"
+            spin-style="wave"
+          />
+        </div>
       </div>
-      <spinner
-        v-if="isSending"
-        spin-style="wave"
-      />
-      <!-- /.login-box-body -->
     </div>
-    <!-- /.login-box -->
   </div>
 </template>
 

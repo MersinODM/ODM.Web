@@ -5,48 +5,52 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4><span class="mdi mdi-bank" /> Okul/Kurum Listesi</h4>
-          </div>
-          <div class="box-body">
-            <div class="table-responsive">
-              <table
-                id="instList"
-                style="width:100%"
-                class="table table-bordered table-hover dataTable"
-                role="grid"
-              >
-                <thead>
-                  <tr>
-                    <th>Kurum Kodu</th>
-                    <th>Genel Müdürlük</th>
-                    <th>Okul/Kurum Adı</th>
-                    <th>Telefon</th>
-                    <th>Öğretmen Sayısı</th>
-                    <th>Soru Sayısı</th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+  <page>
+    <template v-slot:header>
+      <h4><span class="mdi mdi-bank" /> Okul/Kurum Listesi</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="dataTables_wrapper dt-bootstrap4">
+                <table
+                  id="instList"
+                  style="width:100%"
+                  class="table table-bordered table-hover dataTable dtr-inline"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Kurum Kodu</th>
+                      <th>Genel Müdürlük</th>
+                      <th>Okul/Kurum Adı</th>
+                      <th>Telefon</th>
+                      <th>Öğretmen Sayısı</th>
+                      <th>Soru Sayısı</th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
 import Auth from '../../services/AuthService'
 import Constants from '../../helpers/constants'
 import tr from '../../helpers/dataTablesTurkish'
+import Page from '../../components/Page'
 
 export default {
   name: 'InstitutionList',
+  components: { Page },
   data: () => ({
     instList: []
   }),
@@ -63,7 +67,7 @@ export default {
           type: 'POST',
           beforeSend (xhr) {
             Auth.check()
-            const token = localStorage.getItem(Constants.accessToken)
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization',
               `Bearer ${token}`)
           }
@@ -75,7 +79,8 @@ export default {
         columns: [
           {
             data: 'id',
-            name: 'i.id'
+            name: 'i.id',
+            width: '10%'
           },
           {
             data: 'unit_name',
@@ -123,7 +128,7 @@ export default {
       })
 
     table.on('click', '.btn-info', (e) => {
-      const data = table.row($(e.toElement).parents('tr')[0]).data()
+      // const data = table.row($(e.toElement).parents('tr')[0]).data()
       vm.$router.push({ name: 'underConstruction' })
     })
 
@@ -136,6 +141,6 @@ export default {
 </script>
 
 <style lang="sass">
-  @import '~datatables.net-bs/css/dataTables.bootstrap.min.css'
-  @import '~datatables.net-responsive-bs/css/responsive.bootstrap.min.css'
+  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
+  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

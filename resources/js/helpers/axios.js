@@ -4,13 +4,17 @@
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-import pace from 'pace-js/pace.min'
-import swal from 'sweetalert'
+// import ProgressBar from 'progressbar.js/dist/progressbar.min'
+import Swal from 'sweetalert2/dist/sweetalert2.all.min'
 import router from '../router'
+import Constants from './constants'
+import pace from 'pace-progressbar'
 
 const axios = require('axios').default
 
-let domain = document.querySelector('meta[name="base-url"]').getAttribute('content')
+// var line = new ProgressBar.Line('#loading-bar')
+
+const domain = document.querySelector('meta[name="base-url"]').getAttribute('content')
 const http = axios.create({
   baseURL: `${domain}/api`
 })
@@ -19,37 +23,32 @@ http.interceptors.request.use(function (config) {
   // Her istekte gönderilercek http başlıkları ayarlanıyor
   // config.baseURL = document.querySelector('meta[name="base-url"]').value
   // eslint-disable-next-line no-undef
-  pace.start()
+  // pace.start()
   config.headers['X-CSRF-TOKEN'] = Laravel.csrfToken
-  const token = localStorage.getItem('access_token')
+  const token = localStorage.getItem(Constants.ACCESS_TOKEN)
   if (token !== null) {
-    config.headers['Authorization'] = `Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}`
   }
   return config
 }, function (error) {
-  pace.stop()
+  // pace.stop()
   return Promise.reject(error)
 })
 
 http.interceptors.response.use(function (response) {
-  pace.stop()
+  // pace.stop()
   return response
 }, function (error) {
   if (error.response.status === 401) {
     console.log(error)
-    swal({
+    Swal.fire({
       title: 'Oturum süreniz dolmuştur',
       text: 'Kullanıcı giriş sayfasına yönlendirileceksiniz',
       icon: 'warning',
-      buttons: {
-        confirm: {
-          text: 'Tamam',
-          color: '#DD6B55'
-        }
-      }
+      confirmButtonText: 'Tamam'
     }).then((value) => {
       pace.stop()
-      router.push({ 'name': 'login' })
+      router.push({ name: 'login' })
     })
   } else {
     pace.stop()
@@ -58,24 +57,19 @@ http.interceptors.response.use(function (response) {
 })
 
 http.interceptors.response.use(function (response) {
-  pace.stop()
+  // pace.stop()
   return response
 }, function (error) {
   if (error.response.status === 422) {
     console.log(error)
-    let msg = 'Aşağıdaki doğrulama hataları giderilmelidir.'
+    const msg = 'Aşağıdaki doğrulama hataları giderilmelidir.'
     Object.keys(error.response.data)
-          .forEach((value, index) => msg + `\n${index + 1} - ${value}`)
-    swal({
+      .forEach((value, index) => msg + `\n${index + 1} - ${value}`)
+    Swal.fire({
       title: 'Veri doğrulama hatası!',
       text: msg,
       icon: 'warning',
-      buttons: {
-        confirm: {
-          text: 'Tamam',
-          color: '#DD6B55'
-        }
-      }
+      confirmButtonText: 'Tamam'
     }).then(() => {
       pace.stop()
     })

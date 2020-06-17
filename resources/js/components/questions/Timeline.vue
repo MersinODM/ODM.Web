@@ -14,15 +14,18 @@
       v-if="questionId !== '' && Number(questionId) > 0"
       class="col-md-12"
     >
-      <ul class="timeline">
-        <li v-for="event in questionEvents">
+      <div class="timeline">
+        <div
+          v-for="event in questionEvents"
+          :key="event.id"
+        >
           <i
             v-if="event.elector_id"
             class="fa fa-commenting-o bg-blue"
           />
           <i
             v-else
-            class="fa fa-recycle bg-orange"
+            class="fa fa-recycle bg-warning"
           />
 
           <div
@@ -59,11 +62,11 @@
               Revizyon Tarihi <span class="label label-warning">{{ event.date | trDate }}</span>
             </div>
           </div>
-        </li>
-        <li>
+        </div>
+        <div v-if="questionEvents.length > 0">
           <i class="fa fa-clock-o bg-gray" />
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
