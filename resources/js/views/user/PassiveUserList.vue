@@ -5,48 +5,50 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <h4>Kullanıcı Listesi</h4>
-          </div>
-          <div class="box-body">
-            <div
-              class="dataTables_wrapper dt-bootstrap4"
-              :class="{ disabled : isApproving }"
-            >
-              <table
-                id="userList"
-                style="width:100%"
-                class="table table-bordered table-hover dataTable"
-                role="grid"
+  <page>
+    <template v-slot:header>
+      <h4>Kullanıcı Listesi</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <div
+                class="dataTables_wrapper dt-bootstrap4"
+                :class="{ disabled : isApproving }"
               >
-                <thead>
-                  <tr>
-                    <th>Id</th>
-                    <th>Ad Soyad</th>
-                    <th>Telefon</th>
-                    <th>Branş/Ders</th>
-                    <th>Kurum</th>
-                    <th>Onaylayan</th>
-                    <th
-                      data-type="date"
-                      data-format="DD/MM/YYYY"
-                    >
-                      Kayıt Tarihi
-                    </th>
-                    <th>Aksiyon</th>
-                  </tr>
-                </thead>
-              </table>
+                <table
+                  id="userList"
+                  style="width:100%"
+                  class="table table-bordered table-hover dataTable"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Ad Soyad</th>
+                      <th>Telefon</th>
+                      <th>Branş/Ders</th>
+                      <th>Kurum</th>
+                      <th>Onaylayan</th>
+                      <th
+                        data-type="date"
+                        data-format="DD/MM/YYYY"
+                      >
+                        Kayıt Tarihi
+                      </th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -54,9 +56,11 @@ import Constants from '../../helpers/constants'
 import Auth from '../../services/AuthService'
 import Messenger from '../../helpers/messenger'
 import UserService from '../../services/UserService'
+import Page from '../../components/Page'
 
 export default {
   name: 'UserList',
+  components: { Page },
   data () {
     return {
       isApproving: false,
@@ -65,7 +69,7 @@ export default {
   },
   mounted () {
     const vm = this
-    let table = $('#userList')
+    const table = $('#userList')
       .DataTable({
         processing: true,
         serverSide: true,
@@ -74,7 +78,7 @@ export default {
           url: `${vm.$getBasePath()}/api/users/passives`,
           dataType: 'json',
           type: 'POST',
-          beforeSend(xhr) {
+          beforeSend (xhr) {
             Auth.check()
             const token = localStorage.getItem(Constants.ACCESS_TOKEN)
             xhr.setRequestHeader('Authorization',
@@ -85,33 +89,33 @@ export default {
           // }
         },
         language: {
-          'sDecimal': ',',
-          'sEmptyTable': 'Tabloda herhangi bir veri mevcut değil',
-          'sInfo': '_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor',
-          'sInfoEmpty': 'Kayıt yok',
-          'sInfoFiltered': '(_MAX_ kayıt içerisinden bulunan)',
-          'sInfoPostFix': '',
-          'sInfoThousands': '.',
-          'sLengthMenu': 'Sayfada _MENU_ kayıt göster',
-          'sLoadingRecords': 'Yükleniyor...',
-          'sProcessing': 'İşleniyor...',
-          'sSearch': 'Ara:',
-          'sZeroRecords': 'Eşleşen kayıt bulunamadı',
-          'oPaginate': {
-            'sFirst': 'İlk',
-            'sLast': 'Son',
-            'sNext': 'Sonraki',
-            'sPrevious': 'Önceki'
+          sDecimal: ',',
+          sEmptyTable: 'Tabloda herhangi bir veri mevcut değil',
+          sInfo: '_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor',
+          sInfoEmpty: 'Kayıt yok',
+          sInfoFiltered: '(_MAX_ kayıt içerisinden bulunan)',
+          sInfoPostFix: '',
+          sInfoThousands: '.',
+          sLengthMenu: 'Sayfada _MENU_ kayıt göster',
+          sLoadingRecords: 'Yükleniyor...',
+          sProcessing: 'İşleniyor...',
+          sSearch: 'Ara:',
+          sZeroRecords: 'Eşleşen kayıt bulunamadı',
+          oPaginate: {
+            sFirst: 'İlk',
+            sLast: 'Son',
+            sNext: 'Sonraki',
+            sPrevious: 'Önceki'
           },
-          'oAria': {
-            'sSortAscending': ': artan sütun sıralamasını aktifleştir',
-            'sSortDescending': ': azalan sütun sıralamasını aktifleştir'
+          oAria: {
+            sSortAscending: ': artan sütun sıralamasını aktifleştir',
+            sSortDescending: ': azalan sütun sıralamasını aktifleştir'
           },
-          'select': {
-            'rows': {
-              '_': '%d kayıt seçildi',
-              '0': '',
-              '1': '1 kayıt seçildi'
+          select: {
+            rows: {
+              _: '%d kayıt seçildi',
+              0: '',
+              1: '1 kayıt seçildi'
             }
           }
         },
@@ -167,7 +171,7 @@ export default {
       })
 
     table.on('click', '.btn-info', (e) => {
-      let data = table.row($(e.toElement).parents('tr')[0]).data()
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
       Messenger.showPrompt('Bu kullanıcı tekrar aktive etmek istediğinizden emin misiniz?', {
         cancel: 'İptal',
         ok: {

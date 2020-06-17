@@ -11,7 +11,7 @@
     </template>
     <template content="content">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="card card-success">
             <div class="box-header with-border">
               <h4 class="pull-left">
@@ -76,13 +76,8 @@
             </div>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
           <div class="card">
-            <div class="card-header">
-              <h4 class="float-left">
-                Soru Sayılarına Göre Kazanımlar
-              </h4>
-            </div>
             <div class="card-body">
               <ul class="nav flex-column">
                 <li

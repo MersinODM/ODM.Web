@@ -19,32 +19,32 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <h4 v-if="question != null">
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Madde Kökü/Anahtar Kelimeler: </span>{{ question.keywords == null ?
               'Girilmemiş' : question.keywords }}
-          </h4>
-          <h4 v-if="question !== null && $isInRole('admin')">
+          </h6>
+          <h6 v-if="question !== null && $isInRole('admin')">
             <span style="font-weight: bold">Soru yazarı: </span>{{ question.creator }}
-          </h4>
-          <h4 v-if="question != null">
+          </h6>
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Kazanım: </span>{{ question.learning_outcome }}
-          </h4>
-          <h4 v-if="question != null">
+          </h6>
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Sınıf seviyesi: </span>{{ question.class_level }} .Sınıf
-          </h4>
-          <h4 v-if="question != null">
-            <span style="font-weight: bold">Doğru Cevap: </span>{{ question.correct_answer }}
-          </h4>
-          <h4 v-if="question != null">
+          </h6>
+          <h6 v-if="question != null">
+            <span style="font-weight: bold">Doğru Cevap: </span><span class="text-red text-bold">{{ question.correct_answer }}</span> Seçeneği
+          </h6>
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Zorluk Seviyesi: </span>{{ getDifficulty() }}
-          </h4>
-          <h4 v-if="question != null">
+          </h6>
+          <h6 v-if="question != null">
             <span style="font-weight: bold">Durumu: </span>
             <span
               class="label"
               :class="getStatusClass"
             >{{ question.status_title }} </span>
-          </h4>
+          </h6>
         </div>
       </div>
     </div>

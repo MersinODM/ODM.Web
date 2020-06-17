@@ -1,138 +1,145 @@
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <header-delete-request
-              title="Soru Değerlendirme"
-              :question="question"
-            />
-          </div>
-          <div class="box-body">
+  <page>
+    <template v-slot:header>
+      <header-delete-request
+        :question="question"
+      >
+        <h4>Soru Değerlendirme</h4>
+      </header-delete-request>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
             <div class="col-md-12">
-              <question
-                :question="question"
-                :question-file="questionFile"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="box box-info">
-          <div class="box-header with-border">
-            <h4>Değerlendirici Ataması</h4>
-          </div>
-          <div class="box-body">
-            <div class="row">
-              <div class="col-md-12">
-                <div
-                  v-if="checkForEvaluationReq"
-                  class="row"
-                >
-                  <div class="col-md-offset-3 col-md-5 col-xs-12">
-                    <div
-                      class="form-group has-feedback"
-                    >
-                      <label>Değerlendirici Seçiniz</label>
-                      <v-select
-                        ref="evaluatorsRef"
-                        v-model="selectedEvaluator"
-                        label="full_name"
-                        :options="evaluators"
-                        placeholder="Değerlendirici seçebilirsiniz"
-                        @input="addElector"
-                      >
-                        <div slot="no-options">
-                          Maalesef hiç değerlendiricimiz yok
-                        </div>
-                      </v-select>
-                    </div>
-                  </div>
-                  <div class="col-md-offset-4 col-md-3 col-xs-12">
-                    <button
-                      class="btn btn-primary btn-block"
-                      style="margin-bottom: 10px"
-                      @click="setElectors"
-                    >
-                      Değerlendiricileri Kaydet
-                    </button>
-                  </div>
-                  <div
-                    v-if="selectedEvaluators !== null && selectedEvaluators.length>0"
-                    class="row"
-                  >
-                    <div class="col-md-offset-3 col-md-5 col-xs-12">
-                      <ul class="list-group">
-                        <li
-                          v-for="(elector, index) in selectedEvaluators"
-                          :key="index"
-                          class="list-group-item"
-                        >
-                          {{ index + 1 }}. {{ elector.full_name }}
-                          <a
-                            href=""
-                            class="label label-danger pull-right"
-                            @click.prevent="removeElector(elector.id)"
-                          >x</a>
-                        </li>
-                      </ul>
-                    </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-12">
+                    <question
+                      :question="question"
+                      :question-file="questionFile"
+                    />
                   </div>
                 </div>
-                <div
-                  v-if="savedEvaluators !== null && savedEvaluators.length>0"
-                  class="row"
-                >
-                  <div class="col-md-12">
-                    <div class="dataTables_wrapper dt-bootstrap4">
-                      <table
-                        class="table"
-                        style="width: 100%"
+              </div>
+              <div class="card card-warning">
+                <div class="card-header with-border">
+                  <h4>Değerlendirici Ataması</h4>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div
+                        v-if="checkForEvaluationReq"
+                        class="row justify-content-md-center"
                       >
-                        <thead>
-                          <tr>
-                            <th>Sıra</th>
-                            <th>Ad Soyad</th>
-                            <th>Kod</th>
-                            <th>Yorum</th>
-                            <th>Puan</th>
-                            <th>Tarih</th>
-                            <th>Aksiyon</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(elector, index) in savedEvaluators"
-                            :key="index"
+                        <div class="col-md-5 col-xs-12">
+                          <div
+                            class="form-group has-feedback"
                           >
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ elector.full_name }}</td>
-                            <td>{{ elector.code }}</td>
-                            <td>{{ elector.comment }}</td>
-                            <td>{{ elector.point }}</td>
-                            <td>{{ elector.updated_at | trDate }}</td>
-                            <td>
-                              <button
-                                class="btn btn-danger btn-xs"
-                                @click="deleteEvaluationRequests(elector.code)"
-                              >
-                                Sil
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                            <label>Değerlendirici Seçiniz</label>
+                            <v-select
+                              ref="evaluatorsRef"
+                              v-model="selectedEvaluator"
+                              label="full_name"
+                              :options="evaluators"
+                              placeholder="Değerlendirici seçebilirsiniz"
+                              @input="addElector"
+                            >
+                              <div slot="no-options">
+                                Maalesef hiç değerlendiricimiz yok
+                              </div>
+                            </v-select>
+                          </div>
+                          <div class="col-md-12 col-xs-12">
+                            <button
+                              class="btn btn-primary btn-block"
+                              style="margin-bottom: 10px"
+                              @click="setElectors"
+                            >
+                              Değerlendiricileri Kaydet
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        v-if="selectedEvaluators !== null && selectedEvaluators.length>0"
+                        class="row justify-content-md-center"
+                      >
+                        <div class="col-md-5 col-xs-12">
+                          <ul class="list-group">
+                            <li
+                              v-for="(elector, index) in selectedEvaluators"
+                              :key="index"
+                              class="list-group-item"
+                            >
+                              {{ index + 1 }}. {{ elector.full_name }}
+                              <a
+                                href=""
+                                class="float-right"
+                                @click.prevent="removeElector(elector.id)"
+                              ><i class="mdi mdi-close-circle-outline text-red" /></a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div
+                        v-if="savedEvaluators !== null && savedEvaluators.length>0"
+                        class="row"
+                      >
+                        <div class="col-md-12">
+                          <div class="dataTables_wrapper dt-bootstrap4">
+                            <table
+                              class="table"
+                              style="width: 100%"
+                            >
+                              <thead>
+                                <tr>
+                                  <th>Sıra</th>
+                                  <th>Ad Soyad</th>
+                                  <th>Kod</th>
+                                  <th>Yorum</th>
+                                  <th>Puan</th>
+                                  <th>Tarih</th>
+                                  <th>Aksiyon</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  v-for="(elector, index) in savedEvaluators"
+                                  :key="index"
+                                >
+                                  <td>{{ index + 1 }}</td>
+                                  <td>{{ elector.full_name }}</td>
+                                  <td>{{ elector.code }}</td>
+                                  <td>{{ elector.comment }}</td>
+                                  <td>{{ elector.point }}</td>
+                                  <td>{{ elector.updated_at | trDate }}</td>
+                                  <td>
+                                    <button
+                                      class="btn btn-danger btn-xs"
+                                      @click="deleteEvaluationRequests(elector.code)"
+                                    >
+                                      Sil
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <timeline :question-id="$route.params.questionId" />
         </div>
       </div>
-    </div>
-    <timeline :question-id="$route.params.questionId" />
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -147,10 +154,11 @@ import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import UserService from '../../services/UserService'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Timeline from '../../components/questions/Timeline'
+import Page from '../../components/Page'
 
 export default {
   name: 'SetEvaluatorsForQuestion',
-  components: { Timeline, HeaderDeleteRequest, vSelect, Question },
+  components: { Page, Timeline, HeaderDeleteRequest, vSelect, Question },
   data: () => ({
     question: null,
     questionFile: null,
@@ -292,7 +300,7 @@ export default {
       this.$validator.validateAll()
         .then(value => {
           if (!value) return
-          const data = {qer_id: this.$route.params.qerId, point: this.point, comment: this.comment}
+          const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
           // if (this.point >= 4) data.comment = this.points.reduce(p => p.key === this.point).title
           QuestionEvaluationService.save(this.question.id, data)
             .then(res => {
@@ -317,7 +325,7 @@ export default {
       Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
         .then(result => {
           if (result) {
-            QuestionService.sendDeleteRequest(this.question.id, {reason: result})
+            QuestionService.sendDeleteRequest(this.question.id, { reason: result })
               .then(resp => {
                 Messenger.showInfoV2(resp.message)
                   .then(() => this.$router.push({ name: 'stats' }))

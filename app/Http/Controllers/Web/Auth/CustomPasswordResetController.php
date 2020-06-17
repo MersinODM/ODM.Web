@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Web\Auth;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Utils;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Setting;
 use App\Traits\ValidationTrait;
 use Carbon\Carbon;

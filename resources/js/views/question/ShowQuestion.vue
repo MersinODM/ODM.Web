@@ -5,29 +5,36 @@
   -->
 
 <template>
-  <section class="content">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box">
-          <div class="box-header with-border">
-            <header-delete-request
-              title="Soru İnceleme"
-              :question="question"
-            />
-          </div>
-          <div class="box-body">
+  <page>
+    <template v-slot:header>
+      <header-delete-request
+        :question="question"
+      >
+        <h3>Soru İnceleme</h3>
+      </header-delete-request>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
             <div class="col-md-12">
-              <question
-                :question="question"
-                :question-file="questionFile"
-              />
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-12">
+                    <question
+                      :question="question"
+                      :question-file="questionFile"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          <timeline :question-id="questionId" />
         </div>
       </div>
-    </div>
-    <timeline :question-id="questionId" />
-  </section>
+    </template>
+  </page>
 </template>
 
 <script>
@@ -38,10 +45,11 @@ import Question from '../../components/questions/Question'
 import usersImg from '../../../images/users.png'
 import Timeline from '../../components/questions/Timeline'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
+import Page from '../../components/Page'
 
 export default {
   name: 'ShowQuestion',
-  components: { Timeline, Question, HeaderDeleteRequest },
+  components: { Page, Timeline, Question, HeaderDeleteRequest },
   data () {
     return {
       question: null,

@@ -6,17 +6,17 @@
 
 <template>
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col-md-8 col-sm-6">
       <slot />
     </div>
-    <div class="col-sm-4">
+    <div class="col-md-4 col-sm-6">
       <div
         v-if="hasDeleteRequest"
-        class="float-right"
+        class=" center-block float-right"
       >
-        <h2 class="label label-danger">
-          Silme Talep Edilmiş
-        </h2>
+        <h4>
+          <span class="badge badge-danger">Silme Talep Edilmiş</span>
+        </h4>
       </div>
       <div
         v-if="isOwner"
