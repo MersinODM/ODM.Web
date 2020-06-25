@@ -40,9 +40,7 @@
 <script>
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
-import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
-import usersImg from '../../../images/users.png'
 import Timeline from '../../components/questions/Timeline'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Page from '../../components/Page'
@@ -50,17 +48,14 @@ import Page from '../../components/Page'
 export default {
   name: 'ShowQuestion',
   components: { Page, Timeline, Question, HeaderDeleteRequest },
-  data () {
-    return {
-      question: null,
-      questionFile: null,
-      oldQuestionFile: null,
-      revisions: [],
-      evaluations: [],
-      userImage: usersImg,
-      questionId: null
-    }
-  },
+  data: () => ({
+    question: null,
+    questionFile: null,
+    oldQuestionFile: null,
+    revisions: [],
+    evaluations: [],
+    questionId: null
+  }),
   created () {
     setTimeout(() => { this.getFile() }, 1500)
   },

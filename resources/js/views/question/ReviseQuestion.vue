@@ -201,15 +201,12 @@ export default {
                 'Eski soru dosyanıza ulaşamayacaksınız\n' +
                 'Kayıt işlemini onaylıyor musunuz?'
             const promptButtons = {
-              cancel: 'İptal',
-              ok: {
-                text: 'Tamam',
-                value: true
-              }
+              cancelText: 'Hayır',
+              confirmText: 'Evet'
             }
             Messenger.showPrompt(msg, promptButtons)
               .then(promptRes => {
-                if (promptRes) {
+                if (promptRes.isConfirmed) {
                   const fd = new FormData()
                   fd.append('comment', this.comment)
                   fd.append('question_file', this.questionFile, this.questionFile.name)

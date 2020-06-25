@@ -67,8 +67,8 @@ export default {
     deleteRequest () {
       Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
         .then(result => {
-          if (result) {
-            QuestionService.sendDeleteRequest(this.question.id, { reason: result })
+          if (result.isConfirmed) {
+            QuestionService.sendDeleteRequest(this.question.id, { reason: result.value })
               .then(resp => {
                 Messenger.showInfoV2(resp.message)
                   .then(() => this.$router.go(-1))

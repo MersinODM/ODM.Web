@@ -245,14 +245,11 @@ export default {
         })
         Messenger.showPrompt(`Bu soruya değerlendirici olarak${electors} adlı kişileri seçtiniz. Onaylıyor musunuz?`,
           {
-            cancel: 'İptal',
-            ok: {
-              text: 'Evet',
-              value: true
-            }
+            cancelText: 'Hayır',
+            confirmText: 'Evet'
           })
           .then(value => {
-            if (value) {
+            if (value.isConfirmed) {
               const loader = this.$loading.show()
               QuestionEvaluationService.saveElectors(this.question.id, this.selectedEvaluators)
                 .then(resp => {
@@ -275,14 +272,11 @@ export default {
     deleteEvaluationRequests (code) {
       Messenger.showPrompt(`Bu soru için istenmiş/cevaplamış ${code} koduna sahip tüm istekler silininecektir! Onaylıyor musunuz?`,
         {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
-          }
+          cancelText: 'Hayır',
+          confirmText: 'Evet'
         })
         .then(value => {
-          if (value) {
+          if (value.isConfirmed) {
             QuestionEvaluationService.deleteByCode(this.question.id, code)
               .then(resp => {
                 Messenger.showSuccess(resp.message)
@@ -320,19 +314,6 @@ export default {
           this.savedEvaluators = savedEvaluators
         })
         .catch(reason => Messenger.showError(reason.message))
-    },
-    deleteRequest () {
-      Messenger.showInput('Soruyu neden silmek istiyorsunuz? Kısaca yazınız')
-        .then(result => {
-          if (result) {
-            QuestionService.sendDeleteRequest(this.question.id, { reason: result })
-              .then(resp => {
-                Messenger.showInfoV2(resp.message)
-                  .then(() => this.$router.push({ name: 'stats' }))
-              })
-              .catch(err => Messenger.showError(err.message))
-          }
-        })
     }
   }
 }

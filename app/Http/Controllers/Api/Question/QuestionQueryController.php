@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Question;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,9 +47,7 @@ class QuestionQueryController extends Controller
         $classLevel = $request->input('class_level');
         $status = $request->input('question_status');
         $isDesignRequired = json_decode($request->input('is_design_required'), true);
-//        if (isset($isDesignRequired)){
-//            $isDesignRequired = json_decode($request->input('is_design_required'), true);
-//        }
+
 
         //TODO başlangıç ve bitiş tarihlerine göre de sınırlama yapılabilir
         $startData = $endDate = null;
@@ -118,9 +117,9 @@ class QuestionQueryController extends Controller
 
     /**
      * @param $status
-     * @param \Illuminate\Database\Query\Builder $table
+     * @param Builder $table
      */
-    private function checkStatus($status, \Illuminate\Database\Query\Builder $table): void
+    private function checkStatus($status, Builder $table): void
     {
         if (isset($status)) {
             $table->where('q.status', $status);
@@ -129,11 +128,11 @@ class QuestionQueryController extends Controller
 
     /**
      * @param $classLevel
-     * @param \Illuminate\Database\Query\Builder $table
+     * @param Builder $table
      */
-    private function checkClassLevel($classLevel, \Illuminate\Database\Query\Builder $table): void
+    private function checkClassLevel($classLevel, Builder $table): void
     {
-//Sınıfa göre süzdürme yapılabilir
+        //Sınıfa göre süzdürme yapılabilir
         if (isset($classLevel)) {
             $table->where('l.class_level', $classLevel);
         }

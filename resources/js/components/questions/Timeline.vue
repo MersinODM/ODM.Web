@@ -14,57 +14,64 @@
       v-if="questionId !== '' && Number(questionId) > 0"
       class="col-md-12"
     >
-      <div class="timeline">
-        <div
-          v-for="event in questionEvents"
-          :key="event.id"
-        >
-          <i
-            v-if="event.elector_id"
-            class="fa fa-commenting-o bg-blue"
-          />
-          <i
-            v-else
-            class="fa fa-recycle bg-warning"
-          />
-
-          <div
-            v-if="event.elector_id"
-            class="timeline-item"
-          >
-            <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
-
-            <h3 class="timeline-header">
-              <a href="javascript:">Değerlendirici Grup Kodu: {{ event.code }}</a>
-            </h3>
-
-            <div class="timeline-body">
-              {{ event.comment }}
-            </div>
-            <div class="timeline-footer">
-              Değerlendirme Tarihi <span class="label label-primary">{{ event.date | trDate }}</span>
-            </div>
-          </div>
-          <div
-            v-else
-            class="timeline-item"
-          >
-            <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
-
-            <h3 class="timeline-header">
-              <a href="javascript:">Revizyon</a>
-            </h3>
-
-            <div class="timeline-body">
-              {{ event.comment }}
-            </div>
-            <div class="timeline-footer">
-              Revizyon Tarihi <span class="label label-warning">{{ event.date | trDate }}</span>
-            </div>
-          </div>
+      <div class="card">
+        <div class="card-header">
+          <h5>Olaylar</h5>
         </div>
-        <div v-if="questionEvents.length > 0">
-          <i class="fa fa-clock-o bg-gray" />
+        <div class="card-body">
+          <div class="timeline">
+            <div
+              v-for="event in questionEvents"
+              :key="event.id"
+            >
+              <i
+                v-if="event.elector_id"
+                class="fa fa-commenting-o bg-blue"
+              />
+              <i
+                v-else
+                class="fa fa-recycle bg-warning"
+              />
+
+              <div
+                v-if="event.elector_id"
+                class="timeline-item elevation-1"
+              >
+                <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
+
+                <h3 class="timeline-header">
+                  <a href="javascript:"><b>{{ event.code }}</b> grubundan değerlendirme</a>
+                </h3>
+
+                <div class="timeline-body">
+                  {{ event.comment }}
+                </div>
+                <div class="timeline-footer">
+                  Değerlendirme Tarihi <span class="label label-primary">{{ event.date | trDate }}</span>
+                </div>
+              </div>
+              <div
+                v-else
+                class="timeline-item elevation-1"
+              >
+                <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
+
+                <h3 class="timeline-header">
+                  <a href="javascript:">Revizyon</a>
+                </h3>
+
+                <div class="timeline-body">
+                  {{ event.comment }}
+                </div>
+                <div class="timeline-footer">
+                  Revizyon Tarihi <span class="label label-warning">{{ event.date | trDate }}</span>
+                </div>
+              </div>
+            </div>
+            <div v-if="questionEvents.length > 0">
+              <i class="fa fa-clock-o bg-gray" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

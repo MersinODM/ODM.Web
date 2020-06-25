@@ -149,14 +149,11 @@ export default {
     table.on('click', '.btn-warning', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       console.log(data)
-      Messenger.showPrompt('Bu silme talebini silmek istediğinize emin misiniz?', {
-        cancel: 'İptal',
-        ok: {
-          text: 'Evet',
-          value: true
-        }
+      Messenger.showPrompt('Bu soru silme talebinin kendisini silerek talebi iptal etmek istediğinize emin misiniz?', {
+        cancelText: 'Hayır',
+        confirmText: 'Evet'
       }).then(value => {
-        if (value) {
+        if (value.isConfirmed) {
           QuestionDeleteService.delete(data.id, data.question_id)
             .then(resp => {
               Messenger.showSuccess(resp.message)
@@ -175,13 +172,10 @@ export default {
       // console.log(data);
       Messenger.showPrompt('Bu soruya ait tüm veriler silinecek! Bu isteğe onay vermek istediğinize emin misiniz?',
         {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
-          }
+          cancelText: 'Hayır',
+          confirmText: 'Evet'
         }).then(value => {
-        if (value) {
+        if (value.isConfirmed) {
           QuestionDeleteService.approve(data.id)
             .then(res => {
               Messenger.showSuccess(res)

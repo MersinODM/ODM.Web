@@ -51,7 +51,10 @@ class QuestionDeleteRequestController extends ApiController
                 ]);
             $qdr->save();
             DB::commit();
-            return response()->json([ResponseKeys::MESSAGE => "Soru silme isteği incelenmek üzere tarafımıza ulaşmıştır."]);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Soru silme isteği incelenmek üzere tarafımıza ulaşmıştır."
+            ]);
         }
         catch (\Exception $exception){
             DB::rollBack();
@@ -73,7 +76,10 @@ class QuestionDeleteRequestController extends ApiController
             $question->delete();
             Storage::delete($question->content_url);
             DB::commit();
-            return response()->json([ResponseKeys::MESSAGE => "Soru tümüyle silinmiştir."]);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Soru tümüyle silinmiştir."
+            ]);
         }
         catch (\Exception $exception) {
             DB::rollBack();
@@ -87,7 +93,10 @@ class QuestionDeleteRequestController extends ApiController
             DB::beginTransaction();
             $qdr->delete();
             DB::commit();
-            return response()->json([ResponseKeys::MESSAGE => "Soru silme isteği silinmiştir."]);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Soru silme isteği silinmiştir."
+            ]);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -102,11 +111,10 @@ class QuestionDeleteRequestController extends ApiController
 
             return $this->buildDataTable($res);
         }
-        else  {
-            $res = $this->getTable()
-                ->where('users.id', '=', Auth::id());
-            return $this->buildDataTable($res);
-        }
+
+        $res = $this->getTable()
+            ->where('users.id', '=', Auth::id());
+        return $this->buildDataTable($res);
     }
 
     /**
