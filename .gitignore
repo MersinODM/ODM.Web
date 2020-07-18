@@ -11,3 +11,8 @@ npm-debug.log
 yarn-error.log
 /public/*
 /.idea/*
+debug.log
+package-lock.json
+php
+stats.json
+tests/Feature/QuestionEvaluationTest.php
