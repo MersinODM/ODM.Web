@@ -10,10 +10,12 @@ namespace App\Http\Controllers\Api\Question;
 use App\Events\NewEvalReqEvent;
 use App\Events\QuestionEvalCalculateRequired;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\Question;
 use App\Models\QuestionEvalRequest;
+use App\Rules\CheckElectorCount;
 use App\Traits\QuestionEvalTraits;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -68,10 +70,12 @@ class QuestionEvalRequestController extends ApiController
                 ->update(['status' => Question::IN_ELECTION]);
             DB::commit();
             //Değerlendiriciye mail atılıyor
-            foreach ($electors as $elector) {
-                event(new NewEvalReqEvent($lessonId, $elector['id']));
-            }
-            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
+//            foreach ($electors as $elector) {
+//                event(new NewEvalReqEvent($lessonId, $elector['id']));
+//            }
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -84,31 +88,42 @@ class QuestionEvalRequestController extends ApiController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addNewElector(Request $request): ?\Illuminate\Http\JsonResponse
+    public function addElectors($questionId, $code, Request $request): ?\Illuminate\Http\JsonResponse
     {
         $validationResult = $this->apiValidator($request, [
-            'elector_id' => 'required|array|min:2|max:5',
-            'question_id' => 'required',
-            'qer_id' => 'required'
+            'electors' => [
+                'required',
+                'array',
+                'min:1',
+                new CheckElectorCount($questionId, $code)],
         ]);
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
-        $qerId = $request->input('qer_id');
-        $electorId = $request->input('elector_id');
-        $questionId = $request->input('question_id');
-        $qer = QuestionEvalRequest::findOrFail($qerId);
+        //$code = $request->input('code');
+        $electors = $request->input('electors');
+//        $questionId = $request->input('question_id');
         try {
             DB::beginTransaction();
-            $qevalReq = new QuestionEvalRequest([
-                'elector_id' => $electorId,
-                'creator_id' => Auth::id(),
-                'question_id' => $questionId,
-                'code' => $qer->code
-            ]);
-            $qevalReq->save();
+            foreach ($electors as $elector) {
+                $qevalReq = new QuestionEvalRequest([
+                    'elector_id' => $elector,
+                    'creator_id' => Auth::id(),
+                    'question_id' => $questionId,
+                    'code' => $code
+                ]);
+                $qevalReq->save();
+            }
             DB::commit();
-            return response()->json([ResponseKeys::MESSAGE => 'Gruba yeni değerlendirici kaydı başarıyla eklendi.'], 200);
+            // TODO Ayarlara bir alan daha eklenip paramaterik hale getirilebilir.
+            $lessonId = Question::find($questionId)->lesson_id;
+//            foreach ($electors as $elector) {
+//                event(new NewEvalReqEvent($lessonId, $elector));
+//            }
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => 'Gruba yeni değerlendirici(lerin) kaydı başarıyla yapıldı.'
+            ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -119,12 +134,21 @@ class QuestionEvalRequestController extends ApiController
     {
         try {
             $qer = QuestionEvalRequest::findOrFail($id);
-            DB::beginTransaction();
-            $qer->delete();
-            DB::commit();
-            // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
-            event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
+            if (isset($qer->point)|| $qer->point <= 0) {
+                DB::beginTransaction();
+                $qer->delete();
+                DB::commit();
+                // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
+                // event(new QuestionEvalCalculateRequired($qer));
+                return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                    ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'
+                ], 200);
+            }
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => 'Değerlendirme isteği silinemedi çünkü puanlama yapılmış.'
+            ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -143,7 +167,10 @@ class QuestionEvalRequestController extends ApiController
             // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
             // QuestionEvalRequest::where('code', $code);
             // event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'], 200);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'
+            ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -175,12 +202,14 @@ class QuestionEvalRequestController extends ApiController
             DB::beginTransaction();
             $qer->point = $point;
             $qer->comment = $comment;
-            $qer->is_open = false;
+            // $qer->is_open = false;
             $qer->save();
             DB::commit();
             // Event fırlatarak soru puanlama ve hesaplamaları yaptırılıyor
             event(new QuestionEvalCalculateRequired($qer));
-            return response()->json([ResponseKeys::MESSAGE => 'Değerlendirmeniz kaydedilmiştir. Teşekkür ederiz.'], 201);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => 'Değerlendirmeniz kaydedilmiştir. Teşekkür ederiz.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
@@ -192,27 +221,22 @@ class QuestionEvalRequestController extends ApiController
      * @param Request $request
      * @return JsonResponse
      */
-    public function manualCalculate(Request $request): ?JsonResponse
+    public function manualCalculate($questionId, $code): ?JsonResponse
     {
-        $validationResult = $this->apiValidator($request, [
-            'question_id' => 'required', // QuestionEvaluationRequest Id
-            'code' => 'required',
-        ]);
-        if ($validationResult) {
-            return response()->json($validationResult, 422);
-        }
-
-        $questionId = $request->input('question_id');
-        $code = $request->input('code');
         try {
             if ($this->checkQuestionEval($questionId, $code)) {
                 // TODO Refactoring yapılacak
                 $this->setQuestionState($this->calculateQuestionEval($questionId, $code), $questionId);
-                return response()->json([ResponseKeys::MESSAGE => 'Soru değerlendirmesi maunel hesaplanmıştır.'], 200);
+                return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                    ResponseKeys::MESSAGE => 'Soru değerlendirmesi maunel hesaplanmıştır.'
+                ], 200);
             }
-            return response()->json([ResponseKeys::MESSAGE => 'Maalesef yeterli değerlendirme yapılmamıştır.'], 200);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => 'Maalesef yeterli değerlendirici eklenmemiş veya değerlendirme yapılmamıştır.'
+            ], 200);
         } catch (\Exception $exception) {
-            Log::error($exception->getMessage());
             return response()->json($this->apiException($exception), 500);
         }
     }
@@ -221,9 +245,11 @@ class QuestionEvalRequestController extends ApiController
     {
         $res = DB::table('question_eval_requests as qer')
             ->join('users as u', 'u.id', '=', 'qer.elector_id')
+            ->join('branches as b', 'b.id', '=', 'u.branch_id')
             ->where('qer.question_id', $questionId)
+            ->where('qer.is_open', '=', 1)
             ->select('qer.id', 'qer.elector_id',
-                'u.full_name',
+                DB::raw('CONCAT(u.full_name, " - ", b.name) as full_name'),
                 'qer.code',
                 'qer.comment',
                 'qer.point',
@@ -264,6 +290,7 @@ class QuestionEvalRequestController extends ApiController
         // Kullanıcı admin değilse çöp sorular saklansın ve sadece kendi soruları listelensin ;-)
         if (!$user->isAn('admin')) {
             $table->where('qer.elector_id', Auth::id());
+            $table->where('qer.is_open', '=', 1);
 
             if ($user->branch->code === 'SB') {
                 $branchIds = Branch::where('code', 'SB')

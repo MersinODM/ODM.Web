@@ -311,7 +311,7 @@ export default {
             this.isSending = true
             const loader = this.$loading.show()
             SettingService.update(this.settings)
-              .then((res) => { Messenger.showInfoV2(res.message) })
+              .then((res) => { Messenger.showInfo(res.message) })
               .catch((err) => {
                 Messenger.showError('Ayarlarınız güncelleyemedik lütfen sistem yöneticinize başvurunuz!')
                 console.log(err)

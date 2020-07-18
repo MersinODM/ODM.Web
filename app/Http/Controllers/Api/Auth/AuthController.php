@@ -105,7 +105,10 @@ class AuthController extends ApiController
             }
         } catch (Exception $e) {
             // Bişeyler ters giderse ;-)
-            return response()->json([ResponseKeys::MESSAGE => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
+                ResponseKeys::MESSAGE => 'Jeton oluşturulamadı!', 'error' => $e->getMessage()
+            ], 500);
         }
 
         // Herşey normal ise jetonu geri döndürelim

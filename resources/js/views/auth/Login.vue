@@ -191,7 +191,6 @@ export default {
                 } else {
                   this.$router.push({ name: 'stats' })
                     .then(() => { this.isSigningIn = true })
-                  // this.isSigningIn = true
                 }
               })
               .catch(() => {
@@ -213,18 +212,7 @@ export default {
         .then(user => { this.user = user })
         .catch(err => Messenger.showError(err.message))
     }
-  } //,
-  // beforeRouteLeave (to, from, next) {
-  //   if (to.name === 'register' || to.name === 'forgotMyPassword') { next() } else {
-  //     Auth.setRoleAndPermissions()
-  //       .then(value => next())
-  //       .catch(reason => {
-  //         console.log(reason)
-  //         Messenger.showError('Roller ve yetkiler ayarlanamadı!')
-  //         next('/login')
-  //       })
-  //   }
-  // }
+  }
 }
 </script>
 

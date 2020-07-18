@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Log;
  */
 trait QuestionEvalTraits
 {
+
+    private $code;
+
     /**
      * Bu fonksiyon yeterli değerlendirme sayısına uluaşılıp ulaşılmadığını kontrol edecek
      * @param $questionId
@@ -29,13 +32,14 @@ trait QuestionEvalTraits
     private function checkQuestionEval($questionId, $code)
     {
         //Kayıtlı değerlendirme sayısı puanlanmış değerlendirme sayısına eşit mi?
-        $savedEvalCount = QuestionEvalRequest::where('question_id', $questionId)
-            ->where('code', $code)
-            ->count();
-        return QuestionEvalRequest::where('question_id', $questionId)
-                ->where('code', $code)
-                ->whereNotNull('point')
-                ->count() === $savedEvalCount;
+        $savedEvalCount = $this->getSavedEvalCount($questionId, $code);
+        if($savedEvalCount >= 3) {
+            return QuestionEvalRequest::where('question_id', $questionId)
+                    ->where('code', $code)
+                    ->whereNotNull('point')
+                    ->count() === $savedEvalCount;
+        }
+        return false;
     }
 
     /**
@@ -74,6 +78,10 @@ trait QuestionEvalTraits
         try {
             DB::beginTransaction();
             $question->save();
+            //Burada değerlendirme bittikten sonra tüm istekler kapatılıyor
+            QuestionEvalRequest::where('question_id', $questionId)
+                ->where('code', $this->code)
+                ->update('is_open', 0);
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -88,8 +96,22 @@ trait QuestionEvalTraits
      */
     public function setQuestionStatusIfRequired($questionId, $code): void
     {
+        $this->code = $code;
         if ($this->checkQuestionEval($questionId, $code)) {
             $this->setQuestionState($this->calculateQuestionEval($questionId, $code), $questionId);
         }
+    }
+
+    /**
+     * @param $questionId
+     * @param $code
+     * @return mixed
+     */
+    public function getSavedEvalCount($questionId, $code)
+    {
+        $this->code = $code;
+        return QuestionEvalRequest::where('question_id', $questionId)
+            ->where('code', $code)
+            ->count();
     }
 }

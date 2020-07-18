@@ -375,7 +375,7 @@ export default {
             QuestionService.save(fd, progress => {})
               .then(value => {
                 this.isSending = false
-                Messenger.showInfoV2('Soru kaydı başarılı')
+                Messenger.showInfo('Soru kaydı başarılı')
                   .then(() => this.$router.push({ name: 'questionTableList' }))
               })
               .catch(reason => {

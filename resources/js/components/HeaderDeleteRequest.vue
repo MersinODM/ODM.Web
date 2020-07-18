@@ -70,7 +70,7 @@ export default {
           if (result.isConfirmed) {
             QuestionService.sendDeleteRequest(this.question.id, { reason: result.value })
               .then(resp => {
-                Messenger.showInfoV2(resp.message)
+                Messenger.showInfo(resp.message)
                   .then(() => this.$router.go(-1))
               })
               .catch(err => Messenger.showError(err.message))

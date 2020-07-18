@@ -30,6 +30,10 @@
               </div>
             </div>
           </div>
+          <evaluation
+            v-if="canShowEvalMenus"
+            :question="question"
+          />
           <timeline :question-id="questionId" />
         </div>
       </div>
@@ -44,10 +48,12 @@ import Question from '../../components/questions/Question'
 import Timeline from '../../components/questions/Timeline'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Page from '../../components/Page'
+import Evaluation from '../../components/questions/Evaluation'
+import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 
 export default {
   name: 'ShowQuestion',
-  components: { Page, Timeline, Question, HeaderDeleteRequest },
+  components: { Evaluation, Page, Timeline, Question, HeaderDeleteRequest },
   data: () => ({
     question: null,
     questionFile: null,
@@ -56,6 +62,12 @@ export default {
     evaluations: [],
     questionId: null
   }),
+  computed: {
+    canShowEvalMenus () {
+      return this.$isInRole('admin') &&
+        this.question.status === QuestionStatuses.IN_ELECTION
+    }
+  },
   created () {
     setTimeout(() => { this.getFile() }, 1500)
   },

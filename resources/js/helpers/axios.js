@@ -5,7 +5,7 @@
  */
 
 // import ProgressBar from 'progressbar.js/dist/progressbar.min'
-import Swal from 'sweetalert2/dist/sweetalert2.all.min'
+import Swal from 'admin-lte/plugins/sweetalert2/sweetalert2.all.min'
 import router from '../router'
 import Constants from './constants'
 import pace from 'pace-progressbar'
@@ -19,28 +19,25 @@ const http = axios.create({
   baseURL: `${domain}/api`
 })
 // istek interceptor u ekleniyor
-http.interceptors.request.use(function (config) {
+http.interceptors.request.use((config) => {
   // Her istekte gönderilercek http başlıkları ayarlanıyor
-  // config.baseURL = document.querySelector('meta[name="base-url"]').value
   // eslint-disable-next-line no-undef
-  // pace.start()
   config.headers['X-CSRF-TOKEN'] = Laravel.csrfToken
   const token = localStorage.getItem(Constants.ACCESS_TOKEN)
   if (token !== null) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
-}, function (error) {
+}, (error) => {
   // pace.stop()
   return Promise.reject(error)
 })
 
-http.interceptors.response.use(function (response) {
+http.interceptors.response.use((response) => {
   // pace.stop()
   return response
-}, function (error) {
+}, (error) => {
   if (error.response.status === 401) {
-    console.log(error)
     Swal.fire({
       title: 'Oturum süreniz dolmuştur',
       text: 'Kullanıcı giriş sayfasına yönlendirileceksiniz',
@@ -56,27 +53,25 @@ http.interceptors.response.use(function (response) {
   }
 })
 
-http.interceptors.response.use(function (response) {
+http.interceptors.response.use((response) => {
   // pace.stop()
   return response
-}, function (error) {
+}, (error) => {
   if (error.response.status === 422) {
-    console.log(error)
-    const msg = 'Aşağıdaki doğrulama hataları giderilmelidir.'
-    Object.keys(error.response.data)
-      .forEach((value, index) => msg + `\n${index + 1} - ${value}`)
+    const validationMessages = Object.entries(error.response.data)
+      .map(entry => entry[1])
+      .join('<br>')
+    const msg = `Aşağıdaki veri doğrulama hataları giderilmelidir.<br><b>${validationMessages}</b>`
     Swal.fire({
       title: 'Veri doğrulama hatası!',
-      text: msg,
+      html: msg,
       icon: 'warning',
       confirmButtonText: 'Tamam'
     }).then(() => {
       pace.stop()
     })
-  } else {
-    pace.stop()
-    return Promise.reject(error)
   }
+  return Promise.reject(error)
 })
 
 // window.axios = http

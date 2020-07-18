@@ -5,8 +5,6 @@
  */
 
 import http from '../helpers/axios'
-import Messenger from '../helpers/messenger'
-import { MessengerConstants } from '../helpers/constants'
 
 const UserService = {
   findById (id) {
@@ -16,20 +14,19 @@ const UserService = {
         .catch(error => reject(error))
     })
   },
-  findElectorsByBranchId(branchId) {
+  findElectorsByBranchId (branchId) {
     return new Promise((resolve, reject) => {
       http.get(`/branches/${branchId}/electors`)
         .then(value => resolve(value.data))
         .catch(reason => reject(reason.data))
     })
   },
-  approveUser (id, callback) {
-    http.put(`/users/${id}/confirm_req`)
-      .then(response => {
-        if (response === undefined) return
-        callback(response.data)
-      })
-      .catch(() => Messenger.showError(MessengerConstants.errorMessage))
+  approveUser (id) {
+    return new Promise((resolve, reject) => {
+      http.put(`/users/${id}/confirm_req`)
+        .then(response => resolve(response.data))
+        .catch(reason => reject(reason))
+    })
   },
   reactivate (id) {
     return new Promise((resolve, reject) => {

@@ -14,6 +14,7 @@ use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Question;
 use App\Models\QuestionDeleteRequest;
 use App\Models\QuestionEvalRequest;
+use App\Models\QuestionRevisions;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -66,15 +67,22 @@ class QuestionDeleteRequestController extends ApiController
         try {
             $qdr = QuestionDeleteRequest::findOrFail($id);
             $question = Question::findOrFail($qdr->question_id);
+            $explodedPath = explode("/", $question->content_url);
+            $fileName= end($explodedPath);
             DB::beginTransaction();
-            QuestionEvalRequest::where("question_id", $qdr->question_id)
-                ->delete();
             $qdr->update([
                 "acceptor_id" => Auth::id(),
-                "question_id" => null
+                "question_id" => null,
+                "comment" => $qdr->comment . " Soru Dosyası:" . $fileName
             ]);
+            // Soru silinmeden önce tüm artıklar temizlenmeli
+            QuestionEvalRequest::where('question_id', $id)
+                ->delete();
+            QuestionRevisions::where('question_id', $id)
+                ->delete();
             $question->delete();
-            Storage::delete($question->content_url);
+            // Soru dosyasını silmek yerine çöpe atıyoruz
+            Storage::move($question->content_url, 'public/trash/'.$fileName);
             DB::commit();
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,

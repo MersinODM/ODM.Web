@@ -182,7 +182,7 @@ export default {
         if (value) {
           UserService.reactivate(data.id)
             .then(resp => {
-              Messenger.showInfoV2(resp.message)
+              Messenger.showInfo(resp.message)
                 .then(() => table.ajax.reload())
             })
             .catch(err => Messenger.showError(err.message))

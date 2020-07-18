@@ -233,9 +233,8 @@ export default {
         if (value) {
           AuthService.forgetPassword(data)
             .then(value => {
-              Messenger.showInfo(value.message, () => {
-                this.$router.push({ name: 'users' })
-              })
+              Messenger.showInfo(value.message)
+                .then(() => { this.$router.push({ name: 'users' }) })
             })
             .catch(() => {
               Messenger.showError(MessengerConstants.errorMessage)

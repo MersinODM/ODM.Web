@@ -4,42 +4,34 @@
  * Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
  */
 
-// import swal from 'sweetalert'
-import Swal from 'sweetalert2'
+const Swal = require('admin-lte/plugins/sweetalert2/sweetalert2.all.min')
 
 const Messenger = {
   showError (message, callback = null) {
-    Swal.fire({
-      title: 'Hata mesajı!',
-      text: message,
-      icon: 'error',
-      confirmButtonText: 'Tamam'
-    }).then(value => {
-      if (callback !== null) callback(value)
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: 'Hata mesajı!',
+        text: message,
+        icon: 'error',
+        confirmButtonText: 'Tamam'
+      })
+        .then(value => resolve(value))
+        .catch(error => reject(error))
     })
   },
-  showInfo (message, callback = null) {
-    Swal.fire({
-      title: 'Bilgi mesajı!',
-      text: message,
-      icon: 'info',
-      confirmButtonText: 'Tamam'
-    }).then(value => {
-      if (callback !== null) callback(value)
-    })
-  },
-  showInfoV2 (message) {
+  showInfo (message) {
     return new Promise((resolve, reject) => {
       Swal.fire({
         title: 'Bilgi mesajı!',
         text: message,
         icon: 'info',
         confirmButtonText: 'Tamam'
-      }).then(value => resolve(value))
-        .catch(err => reject(err))
+      })
+        .then(value => resolve(value))
+        .catch(error => reject(error))
     })
   },
-  showSuccess (message, callback = null) {
+  showSuccess (message) {
     return new Promise((resolve, reject) => {
       Swal.fire({
         title: 'Başarı mesajı!',
@@ -50,21 +42,29 @@ const Messenger = {
         .catch(reason => reject(reason))
     })
   },
-  showWarning (message, callback = null) {
-    Swal.fire({
-      title: 'Uyarı mesajı!',
-      text: message,
-      icon: 'info',
-      confirmButtonText: 'Tamam'
-    }).then(value => {
-      if (callback !== null) callback(value)
+  showWarning (message) {
+    return new Promise((resolve, reject) => {
+      Swal.fire({
+        title: 'Uyarı mesajı!',
+        text: message,
+        icon: 'warning',
+        confirmButtonText: 'Tamam'
+      })
+        .then(value => resolve(value))
+        .catch(error => reject(error))
     })
   },
-  showPrompt (message, buttons) {
+  showPrompt (message, buttons = null) {
+    if (!buttons) {
+      buttons = {
+        confirmText: 'Evet',
+        cancelText: 'Hayır'
+      }
+    }
     return new Promise((resolve, reject) => {
       Swal.fire({
         title: 'Dikkat!',
-        text: message,
+        html: message,
         icon: 'warning',
         showCancelButton: true,
         focusCancel: true,

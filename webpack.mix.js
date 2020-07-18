@@ -3,6 +3,7 @@ const mix = require('laravel-mix')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 const webpack = require('webpack')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 // mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
@@ -15,6 +16,11 @@ const webpack = require('webpack')
  | file for the application as well as bundling up all the JS files.
  |
  */
+// const p = `${__dirname}/node_modules/sweetalert2/dist/sweetalert2.all.js`
+// const p = /node_modules/, path.resolve(__dirname, 'sweetalert2/dist/sweetalert2.all.js`)
+// console.log(`Dosya yolu:${p}`)
+// console.log(`Dirname yolu:${__dirname}`)
+
 mix.webpackConfig({
   plugins: [
     new BundleAnalyzerPlugin(),
@@ -24,7 +30,8 @@ mix.webpackConfig({
   externals: {
     jquery: 'jQuery',
     'jquery.dataTables': 'jquery.dataTables',
-    moment: 'moment'
+    moment: 'moment',
+    bootstrap: 'bootstrap'
   }//,
   // output: {
   //   chunkFilename: '[name].js'
@@ -45,7 +52,15 @@ mix.js('resources/js/main.js', 'public/js')
   .options({
     processCssUrls: false
   })
-  .extract(['vue', 'vue-router', 'vee-validate', 'sweetalert', 'bootstrap'])
+  .extract([
+    'axios',
+    'vue',
+    'vue-router',
+    'vee-validate',
+    'admin-lte',
+    'vuex',
+    'fastclick'
+  ])
 
 if (!mix.inProduction()) {
   mix.sourceMaps()
@@ -53,4 +68,14 @@ if (!mix.inProduction()) {
 
 if (mix.inProduction()) {
   mix.setResourceRoot('/otomasyon')
+  mix.webpackConfig({
+    plugins: [
+      new CompressionPlugin({
+        algorithm: 'gzip',
+        test: /\.js$|\.css$|\.html$|\.svg$/,
+        threshold: 10240,
+        minRatio: 0.8
+      })
+    ]
+  })
 }

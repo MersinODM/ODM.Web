@@ -150,9 +150,8 @@ export default {
                   Messenger.showError(value.message)
                   console.log(value.exception)
                 } else {
-                  Messenger.showInfo(value.message, () => {
-                    this.$router.go(-1)
-                  })
+                  Messenger.showInfo(value.message)
+                    .then(() => { this.$router.go(-1) })
                 }
               })
               .catch(() => {

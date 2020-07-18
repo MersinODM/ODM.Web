@@ -88,13 +88,19 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('questions/delete_requests', "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
     Route::get('questions/{id}', "Question\QuestionController@findById");
     Route::get('questions/{id}/file', "Question\QuestionController@getFile");
+    //Evals
     Route::post('questions/{questionId}/evaluations', "Question\QuestionEvalRequestController@create");
     Route::put('questions/{questionId}/evaluations', "Question\QuestionEvalRequestController@updateQuestionEval");
     Route::get('questions/{questionId}/evaluations', "Question\QuestionEvalRequestController@findByQuestionId");
     Route::delete('questions/{questionId}/evaluations/{code}', "Question\QuestionEvalRequestController@deleteByCode");
+    Route::put('questions/{questionId}/evaluations/{code}', "Question\QuestionEvalRequestController@manualCalculate");
+    Route::put('questions/{questionId}/evaluations/{code}/add_electors', "Question\QuestionEvalRequestController@addElectors");
     Route::post('questions/evaluation_requests', "Question\QuestionEvalRequestController@getQuestionRequestsList");
+    Route::delete('evaluations/{id}', "Question\QuestionEvalRequestController@delete");
+    //Revisions
     Route::post('questions/{id}/revisions', "Question\QuestionRevisionController@create");
     Route::get('questions/{id}/revisions', "Question\QuestionRevisionController@findByQuestionId");
+    //DeleteReqs
     Route::post('questions/{id}/delete_request', "Question\QuestionDeleteRequestController@create"); //Silme isteği api route
     Route::put('questions/{id}/delete_request', "Question\QuestionDeleteRequestController@approveDeleteRequest"); //Silme isteği onaylama
     Route::delete('questions/{question_id}/delete_requests/{id}', "Question\QuestionDeleteRequestController@delete"); //Silme isteği silme

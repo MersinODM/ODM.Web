@@ -22,7 +22,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card card-warning">
+              <div class="card">
                 <div class="card-header with-border">
                   <h4>Değerlendirici Ataması</h4>
                 </div>
@@ -40,11 +40,11 @@
                             <label>Değerlendirici Seçiniz</label>
                             <v-select
                               ref="evaluatorsRef"
-                              v-model="selectedEvaluator"
+                              v-model="selectedEvaluators"
+                              multiple
                               label="full_name"
                               :options="evaluators"
-                              placeholder="Değerlendirici seçebilirsiniz"
-                              @input="addElector"
+                              placeholder="Değerlendirici/leri seçebilirsiniz"
                             >
                               <div slot="no-options">
                                 Maalesef hiç değerlendiricimiz yok
@@ -60,27 +60,6 @@
                               Değerlendiricileri Kaydet
                             </button>
                           </div>
-                        </div>
-                      </div>
-                      <div
-                        v-if="selectedEvaluators !== null && selectedEvaluators.length>0"
-                        class="row justify-content-md-center"
-                      >
-                        <div class="col-md-5 col-xs-12">
-                          <ul class="list-group">
-                            <li
-                              v-for="(elector, index) in selectedEvaluators"
-                              :key="index"
-                              class="list-group-item"
-                            >
-                              {{ index + 1 }}. {{ elector.full_name }}
-                              <a
-                                href=""
-                                class="float-right"
-                                @click.prevent="removeElector(elector.id)"
-                              ><i class="mdi mdi-close-circle-outline text-red" /></a>
-                            </li>
-                          </ul>
                         </div>
                       </div>
                       <div
@@ -101,7 +80,6 @@
                                   <th>Yorum</th>
                                   <th>Puan</th>
                                   <th>Tarih</th>
-                                  <th>Aksiyon</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -115,14 +93,6 @@
                                   <td>{{ elector.comment }}</td>
                                   <td>{{ elector.point }}</td>
                                   <td>{{ elector.updated_at | trDate }}</td>
-                                  <td>
-                                    <button
-                                      class="btn btn-danger btn-xs"
-                                      @click="deleteEvaluationRequests(elector.code)"
-                                    >
-                                      Sil
-                                    </button>
-                                  </td>
                                 </tr>
                               </tbody>
                             </table>
@@ -201,12 +171,11 @@ export default {
       QuestionService.getFile(this.$route.params.questionId)
         .then(value => {
           this.questionFile = value
-          loader.hide()
         })
         .catch(reason => {
-          loader.hide()
           Messenger.showError(reason.message)
         })
+        .finally(() => { loader.hide() })
     },
     getQuestion () {
       const questionId = this.$route.params.questionId
@@ -217,33 +186,19 @@ export default {
         .catch(reason => Messenger.showError(reason))
     },
     findElectorsByBranchId () {
-      // TODO burada bir promise çağrısı daha yapılacak ve hali hazırda kabul edilmiş değerlendiricler eklenecek
       UserService.findElectorsByBranchId(this.question.branch_id)
-        .then(value => {
-          this.evaluators = value
+        .then(electors => {
+          this.evaluators = electors
         })
         .catch(reason => Messenger.showError(reason.message))
     },
-    removeElector (id) {
-      const evaluator = this.selectedEvaluators.filter(value => id === value.id)
-      this.selectedEvaluators = this.selectedEvaluators.filter(value => id !== value.id)
-      this.evaluators = this.evaluators.concat(evaluator)
-      this.$refs.evaluatorsRef.clearSelection()
-    },
-    addElector () {
-      if (this.selectedEvaluator !== null && this.selectedEvaluators.length <= 5) {
-        this.selectedEvaluators.push(this.selectedEvaluator)
-        this.evaluators = this.evaluators.filter(value => this.selectedEvaluator.id !== value.id)
-        this.$refs.evaluatorsRef.clearSelection()
-      }
-    },
     setElectors () {
-      if (this.selectedEvaluators.length >= 2) {
-        let electors = ''
-        this.selectedEvaluators.forEach(value => {
-          electors += ` ${value.full_name}`
-        })
-        Messenger.showPrompt(`Bu soruya değerlendirici olarak${electors} adlı kişileri seçtiniz. Onaylıyor musunuz?`,
+      const res = this.selectedEvaluators
+        .filter(elector => elector.branch_id === this.question.branch_id)
+        .length >= 2
+      if (res) {
+        const electors = this.selectedEvaluators.map(value => value.full_name).join(', ')
+        Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`,
           {
             cancelText: 'Hayır',
             confirmText: 'Evet'
@@ -260,52 +215,16 @@ export default {
                     })
                 })
                 .catch(reason => Messenger.showError(reason.message))
-                .finally(() => loader.hide())
+                .finally(() => {
+                  loader.hide()
+                  this.$refs.evaluatorsRef.clearSelection()
+                })
             }
           })
-          .catch(reason => {
-          })
+          .catch(reason => {})
       } else {
-        Messenger.showWarning('Lütfen en az iki tane değerlendirici seçiniz!')
+        Messenger.showWarning('Aynı alandan olmak üzere lütfen en az iki tane değerlendirici seçiniz!')
       }
-    },
-    deleteEvaluationRequests (code) {
-      Messenger.showPrompt(`Bu soru için istenmiş/cevaplamış ${code} koduna sahip tüm istekler silininecektir! Onaylıyor musunuz?`,
-        {
-          cancelText: 'Hayır',
-          confirmText: 'Evet'
-        })
-        .then(value => {
-          if (value.isConfirmed) {
-            QuestionEvaluationService.deleteByCode(this.question.id, code)
-              .then(resp => {
-                Messenger.showSuccess(resp.message)
-                  .then(() => {
-                    this.refreshQuestion()
-                  })
-              })
-              .catch(reason => Messenger.showError(reason.message))
-          }
-        })
-        .catch(reason => {
-        })
-    },
-    saveEval () {
-      this.$validator.validateAll()
-        .then(value => {
-          if (!value) return
-          const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
-          // if (this.point >= 4) data.comment = this.points.reduce(p => p.key === this.point).title
-          QuestionEvaluationService.save(this.question.id, data)
-            .then(res => {
-              Messenger.showInfo(res.message)
-              this.getEvals()
-              this.getQuestion()
-            })
-            .catch(() => {
-              Messenger.showError(Messenger.showError(MessengerConstants.errorMessage))
-            })
-        })
     },
     refreshQuestion () {
       Promise.all([QuestionService.findById(this.question.id), QuestionEvaluationService.findByQuestionId(this.question.id)])

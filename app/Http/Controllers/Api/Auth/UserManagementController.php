@@ -35,7 +35,7 @@ class UserManagementController extends ApiController
         //Doğrulama apisine gelen veri doğrrulana için gönderidiliyor
         //Doğruılama geçilemezse bu fonksiyon otomatik geriye dönüyor
         //Yani bir sonraki satırdaki işleme geçmiyor
-        $validator = Validator::make($request->all(), [
+        $validationResult =  $this->apiValidator($request, [
             'email' => 'required|string|email|max:255',
             "full_name" => "required",
             "inst_id" => "required",
@@ -44,8 +44,8 @@ class UserManagementController extends ApiController
 //            'recaptcha' => ['required', $recaptcha]
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
         }
 
         $req = User::where("email", $request->input("email"))->first();

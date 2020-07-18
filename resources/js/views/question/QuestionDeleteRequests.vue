@@ -157,12 +157,11 @@ export default {
           QuestionDeleteService.delete(data.id, data.question_id)
             .then(resp => {
               Messenger.showSuccess(resp.message)
-              table.ajax.reload()
             })
             .catch(err => {
               Messenger.showError(err)
-              table.ajax.reload()
             })
+            .finally(() => table.ajax.reload())
         }
       })
     })
@@ -178,13 +177,12 @@ export default {
         if (value.isConfirmed) {
           QuestionDeleteService.approve(data.id)
             .then(res => {
-              Messenger.showSuccess(res)
-              table.ajax.reload()
+              Messenger.showSuccess(res.message)
             })
             .catch(err => {
               Messenger.showError(err)
-              table.ajax.reload()
             })
+            .finally(() => table.ajax.reload())
         }
       })
     })

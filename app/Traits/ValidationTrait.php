@@ -21,5 +21,9 @@ trait ValidationTrait
         'password' => 'Şifre',
         'token' => 'Jeton',
         'email' => 'E-Posta',
+        'full_name' => 'Ad soyad',
+        'phone' => 'Telefon numarası',
+        'inst_id' => 'Okul/Kurum kodu',
+        'branch_id' => 'Alan/Branş'
     ];
 }

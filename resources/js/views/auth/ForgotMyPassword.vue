@@ -100,7 +100,7 @@
 <script>
 import Spinner from '../../components/Spinner'
 import Messenger from '../../helpers/messenger'
-import vueRecaptcha from 'vue-recaptcha'
+import vueRecaptcha from 'vue-recaptcha/dist/vue-recaptcha.min'
 import AuthService from '../../services/AuthService'
 import Constants, { MessengerConstants } from '../../helpers/constants'
 import { sanitizeUrl } from '@braintree/sanitize-url'
@@ -143,15 +143,14 @@ export default {
             const data = { email: this.email, recaptcha: this.captchaToken }
             AuthService.forgetPassword(data)
               .then(value => {
-                Messenger.showInfo(value.message, () => {
-                  this.$router.push({ name: 'login' })
-                })
-                this.isSending = false
+                Messenger.showInfo(value.message)
+                  .then(value => { this.$router.push({ name: 'login' }) })
+                  .catch(() => { Messenger.showError(MessengerConstants.errorMessage) })
               })
               .catch(() => {
                 Messenger.showError(MessengerConstants.errorMessage)
-                this.isSending = false
               })
+              .finally(() => { this.isSending = false })
           }
         })
     },

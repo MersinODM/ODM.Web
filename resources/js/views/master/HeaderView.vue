@@ -28,6 +28,7 @@
 <script>
 import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
+import Messenger from '../../helpers/messenger'
 
 export default {
   name: 'NHeader',
@@ -43,7 +44,12 @@ export default {
   },
   methods: {
     logout () {
-      Auth.logout()
+      Messenger.showPrompt('Oturumu kapatmak istediğinizden emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            Auth.logout()
+          }
+        })
     }
   }
 }

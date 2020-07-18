@@ -23,7 +23,7 @@ const ResponseCodes = {
 }
 
 const MessengerConstants = {
-  errorMessage: 'Sunucu bazlı bir hata meydana geldi!'
+  errorMessage: 'Üzgünüz, bir hata ile karşılaştık lütfen sistem yöneticinize başvurunuz!'
 }
 
 const MessageKeys = {

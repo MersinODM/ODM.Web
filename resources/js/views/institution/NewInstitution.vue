@@ -172,9 +172,8 @@ export default {
             }
             InstitutionService.create(inst)
               .then(value => {
-                Messenger.showInfo(value.message, () => {
-                  this.$router.push({ name: 'stats' })
-                })
+                Messenger.showInfo(value.message)
+                  .then(() => { this.$router.push({ name: 'stats' }) })
               })
               .catch(() => {
                 Messenger.showError(MessengerConstants.errorMessage)

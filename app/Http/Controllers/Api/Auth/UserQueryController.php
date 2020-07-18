@@ -125,7 +125,9 @@ class UserQueryController extends ApiController
         $electors = User::whereIs('elector')
             ->whereIn('branch_id', [$branchId, 1, 13])
             ->join('branches as b', 'b.id', '=', 'branch_id')
-            ->select('users.id', DB::raw('CONCAT(full_name, " - ", b.name) as full_name'))
+            ->select('users.id',
+                DB::raw('CONCAT(full_name, " - ", b.name) as full_name'),
+                'users.branch_id')
             ->get();
         return response()->json($electors);
     }

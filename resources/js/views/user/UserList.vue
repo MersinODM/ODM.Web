@@ -166,20 +166,14 @@ export default {
       // console.log(data);
       Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
         {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
-          }
+          confirmText: 'Evet',
+          cancelText: 'Hayır'
         }).then(value => {
         if (value) {
           UserService.delete(data.id)
-            .then(res => {
-              Messenger.showSuccess(res)
-              table.ajax.reload()
-            })
-            .catch(err => {
-              Messenger.showError(err)
+            .then(res => { Messenger.showSuccess(res) })
+            .catch(err => { Messenger.showError(err) })
+            .finally(() => {
               table.ajax.reload()
             })
         }
@@ -190,17 +184,16 @@ export default {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
       vm.isApproving = true
-      UserService.approveUser(data.id, (resp) => {
-        Messenger.showSuccess(resp.message)
-        table.ajax.reload()
-        vm.isApproving = false
-      })
+      UserService.approveUser(data.id)
+        .then(resp => {
+          Messenger.showSuccess(resp.message)
+          table.ajax.reload()
+        })
+        .finally(() => { vm.isApproving = false })
     })
   }
 }
 </script>
 
 <style lang="sass">
-  /*@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css'*/
-  /*@import '~datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css'*/
 </style>

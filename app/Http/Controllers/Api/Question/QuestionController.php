@@ -108,7 +108,7 @@ class QuestionController extends ApiController
             ->select(
                 "q.id",
                 "q.creator_id",
-                "u.branch_id",
+                "q.lesson_id as branch_id",
                 "q.keywords",
                 "q.difficulty",
                 "q.correct_answer",

@@ -172,13 +172,13 @@ import debounce from 'lodash/debounce'
 import vSelect from 'vue-select'
 import Messenger from '../../helpers/messenger'
 import Constants, { MessengerConstants } from '../../helpers/constants'
-import vueRecaptcha from 'vue-recaptcha'
+import vueRecaptcha from 'vue-recaptcha/dist/vue-recaptcha.min'
 import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
 import AuthService from '../../services/AuthService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import LicenceLogin from '../../components/LicenceLogin'
-import SkinHelper from "../../helpers/SkinHelper";
+import SkinHelper from '../../helpers/SkinHelper'
 
 export default {
   name: 'RegisterRequest',
