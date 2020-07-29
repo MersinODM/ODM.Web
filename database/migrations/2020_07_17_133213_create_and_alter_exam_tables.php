@@ -26,6 +26,10 @@ class CreateAndAlterExamTables extends Migration
 //    add purpose_id int null after creator_id;
 
 //        alter table exams
+//	add path varchar(255) null after date_of_occurrence;
+
+
+//        alter table exams
 //	add code varchar(50) null after purpose_id;
 
 

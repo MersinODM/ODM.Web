@@ -224,6 +224,7 @@ class QuestionEvalRequestController extends ApiController
     public function manualCalculate($questionId, $code): ?JsonResponse
     {
         try {
+            $questionId = (int)$questionId;
             if ($this->checkQuestionEval($questionId, $code)) {
                 // TODO Refactoring yapılacak
                 $this->setQuestionState($this->calculateQuestionEval($questionId, $code), $questionId);

@@ -44,6 +44,7 @@ mix.webpackConfig({
 // })
 
 mix.copyDirectory('resources/images', 'public/images')
+mix.copy('node_modules/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css')
 // mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 // mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 

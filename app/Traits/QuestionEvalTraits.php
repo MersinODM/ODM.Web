@@ -81,7 +81,7 @@ trait QuestionEvalTraits
             //Burada değerlendirme bittikten sonra tüm istekler kapatılıyor
             QuestionEvalRequest::where('question_id', $questionId)
                 ->where('code', $this->code)
-                ->update('is_open', 0);
+                ->update(['is_open' => 0]);
             DB::commit();
         } catch (Exception $exception) {
             DB::rollBack();

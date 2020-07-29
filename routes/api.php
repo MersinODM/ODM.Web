@@ -105,6 +105,10 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::put('questions/{id}/delete_request', "Question\QuestionDeleteRequestController@approveDeleteRequest"); //Silme isteği onaylama
     Route::delete('questions/{question_id}/delete_requests/{id}', "Question\QuestionDeleteRequestController@delete"); //Silme isteği silme
 
+    // Sınavlar ile ilgli api route tanımlamaları
+    Route::post('exams/auto', 'Exam\ExamController@createFastExam');
+    Route::get('exams/{id}/reports/detail', 'Exam\ExamController@getExamPDF');
+
     //İstatiksel api route tanımlamaları
     Route::get('stats/question_counts/total', "Stats\StatController@getQuestionCounts");
 //  Route::get("stats/question_counts/by_lo/{lo_id}", "Stats\StatController@getQuestionCountByLO");

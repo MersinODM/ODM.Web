@@ -20,7 +20,7 @@ class PermissionsTableSeeder extends Seeder
     ]);
 
     $bouncer->ability()->firstOrCreate([
-      'name' => 'manage-exam',
+      'name' => 'manage-exams',
       'title' => 'Sınav yönetimi yetkisi',
     ]);
 

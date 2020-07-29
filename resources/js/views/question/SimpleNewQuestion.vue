@@ -255,10 +255,11 @@ import LearningOutcomesService from '../../services/LearningOutcomesService'
 import UserService from '../../services/UserService'
 import AuthService from '../../services/AuthService'
 import Page from '../../components/Page'
+import PCheck from 'pretty-checkbox-vue/check'
 
 export default {
   name: 'SimpleNewQuestion',
-  components: { Page, vSelect },
+  components: { Page, vSelect, PCheck },
   data () {
     return {
       selectedDifficulty: null,
