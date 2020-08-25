@@ -31,7 +31,16 @@ use Illuminate\Support\Facades\Storage;
 class QuestionController extends ApiController
 {
     /**
-     * Soru oluşturma api fonk.
+     * @OA\Post(
+     *  path="/api/questions",
+     *  tags={"Questions"},
+     *  summary="Soru oluşturma api tanımlaması",
+     *  security={{ "apiAuth": {} }},
+     *  @OA\Response(
+     *      response=405,
+     *      description="Invalid input"
+     *     ),
+     *  )
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -61,7 +70,7 @@ class QuestionController extends ApiController
                 $question->lesson_id = $qReq["lesson_id"];
             }
             $question->learning_outcome_id = $qReq["learning_outcome_id"];
-            $question->difficulty =  $qReq["difficulty"];
+            $question->difficulty = $qReq["difficulty"];
             $question->correct_answer = $qReq["correct_answer"];
             $question->keywords = $qReq["keywords"];
             $question->is_design_required = json_decode($qReq["is_design_required"], true);
@@ -79,7 +88,7 @@ class QuestionController extends ApiController
                     //Tüm dosyalar ana klasör altındaki storage->app->public altına ekleniyot
                     //Path formatı: public/Ders Kodu/Kazanım kodu-kullanıcı id-soru id-dosya uzantısı
                     //örn: public/DERS_KODU(FEN, İMAT vs.)/T-7-4-2-31-73.pdf
-                    $path = 'public/'. $code . '/' . $loCode . $question->creator_id . '-' . $question->id . '.' . $ext;
+                    $path = 'public/' . $code . '/' . $loCode . $question->creator_id . '-' . $question->id . '.' . $ext;
                     Storage::put($path, file_get_contents($question_file->getPathName()));
                     $question->content_url = $path;
                     $question->save();

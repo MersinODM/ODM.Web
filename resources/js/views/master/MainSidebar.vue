@@ -129,7 +129,7 @@
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <router-link
-                  :to="{name: 'underConstruction' }"
+                  :to="{name: 'examList' }"
                   class="nav-link"
                 >
                   <i class="mdi mdi-book-multiple" />
@@ -138,7 +138,7 @@
               </li>
               <li class="nav-item">
                 <router-link
-                  :to="{name: 'underConstruction' }"
+                  :to="{name: 'newExam' }"
                   class="nav-link"
                 >
                   <i class="mdi mdi-book-plus" />

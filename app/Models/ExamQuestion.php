@@ -10,6 +10,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static insert(array $toArray)
+ */
 class ExamQuestion extends Model
 {
   protected $fillable = [

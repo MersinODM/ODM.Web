@@ -1,8 +1,200 @@
-<template />
+<template>
+  <page>
+    <template v-slot:header>
+      <h4>Sınav Listesi</h4>
+    </template>
+    <template v-slot:content>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <!--              <div class="row">-->
+              <!--                <div-->
+              <!--                  v-if="checkPermission"-->
+              <!--                  class="col-md-3 col-xs-12"-->
+              <!--                />-->
+              <!--                <div class="col-md-3 col-xs-12">-->
+              <!--                  <div-->
+              <!--                    class="form-group has-feedback"-->
+              <!--                  >-->
+              <!--                    <label>Sınıf Seviyesi Seçimi</label>-->
+              <!--                    <v-select-->
+              <!--                      ref="classLevelDD"-->
+              <!--                      v-model="selectedClassLevel"-->
+              <!--                      :options="classLevels"-->
+              <!--                      placeholder="Sınıf seviyesini seçebilirsiniz"-->
+              <!--                      @input="onSelectionChanged"-->
+              <!--                    />-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--                <div class="col-md-3 col-xs-12">-->
+              <!--                  <div-->
+              <!--                    class="form-group has-feedback"-->
+              <!--                  >-->
+              <!--                    <label>Sınav Durumu</label>-->
+              <!--                    <v-select-->
+              <!--                      ref="qStatusDD"-->
+              <!--                      v-model="selectedStatus"-->
+              <!--                      :options="statuses"-->
+              <!--                      :reduce="b => b.statusCode"-->
+              <!--                      label="title"-->
+              <!--                      placeholder="Sınıf seviyesini seçebilirsiniz"-->
+              <!--                      @input="onSelectionChanged"-->
+              <!--                    />-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
+              <div class="dataTables_wrapper dt-bootstrap4">
+                <table
+                  id="examList"
+                  style="width:100%"
+                  class="table row-border table-hover dataTable"
+                  role="grid"
+                >
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Oluşturucu Id</th>
+                      <th>Kod</th>
+                      <th>Başlık</th>
+                      <th>Oluşturan</th>
+                      <th>Amaç</th>
+                      <th>Durum</th>
+                      <th>Sınıf Seviyesi</th>
+                      <th>Planlanan Tarih</th>
+                      <th>Aksiyon</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </page>
+</template>
 
 <script>
+import Auth from '../../services/AuthService'
+import Constants, { MessengerConstants } from '../../helpers/constants'
+import Messenger from '../../helpers/messenger'
+import tr from '../../helpers/dataTablesTurkish'
+import Page from '../../components/Page'
+
 export default {
-  name: 'ExamList'
+  name: 'ExamList',
+  components: { Page },
+  mounted () {
+    const vm = this
+    const table = $('#examList')
+      .on('preXhr.dt', (e, settings, data) => {
+        // Bu event sunucuya datatable üzerinden veri gitmeden önce
+        // yeni parametre eklemek için ateşleniyor
+        // data.question_status = vm.selectedStatus
+        // data.branch_id = vm.selectedBranch
+        // data.is_design_required = vm.isDesignRequired
+        // if (vm.selectedClassLevel !== 'Hepsi') { data.class_level = vm.selectedClassLevel }
+      })
+      .DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+          url: `${vm.$getBasePath()}/api/exams/list`,
+          dataType: 'json',
+          type: 'POST',
+          beforeSend (xhr) {
+            Auth.check()
+            const token = localStorage.getItem(Constants.ACCESS_TOKEN)
+            xhr.setRequestHeader('Authorization',
+                  `Bearer ${token}`)
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown)
+            Messenger.showError(MessengerConstants.errorMessage)
+          }
+        },
+        language: tr,
+        columns: [
+          {
+            data: 'id',
+            name: 'e.id',
+            visible: false,
+            searchable: false
+          },
+          {
+            data: 'creator_id',
+            name: 'e.creator_id',
+            visible: false,
+            searchable: false
+
+          },
+          {
+            data: 'code',
+            name: 'e.code'
+          },
+          {
+            data: 'title',
+            name: 'e.title'
+          },
+          {
+            data: 'creator',
+            name: 'u.full_name'
+          },
+          {
+            data: 'purpose',
+            name: 'p.purpose',
+            searchable: false
+          },
+          {
+            data: 'status',
+            name: 'status',
+            searchable: false
+          },
+          {
+            data: 'class_level',
+            name: 'e.class_level',
+            className: 'text-center',
+            searchable: true
+          },
+          {
+            data: 'planned_date',
+            name: 'e.planned_date',
+            className: 'text-center',
+            searchable: true
+          },
+          {
+            data: '',
+            className: 'text-center',
+            width: '15%',
+            render (data, type, row, meta) {
+              // const number = Number(row.status)
+              // if (number === QuestionStatuses.NEED_REVISION) {
+              //   return '<button class="btn btn-xs btn-warning">Revize Et</button>'
+              // } else if (vm.$isInRole('admin') && (number === QuestionStatuses.REVISION_COMPLETED || number === QuestionStatuses.WAITING_FOR_ACTION)) {
+              //   return '<button class="btn btn-xs btn-primary">Değerlendirici Ata</button>'
+              // } else {
+              return '<button class="btn btn-xs btn-info">Göster</button>' +
+                  '<button class="btn btn-xs btn-warning">İndir</button>'
+              // }
+            },
+            searchable: false,
+            orderable: false
+          }
+        ],
+        retrieve: true,
+        searching: true,
+        paging: true
+      })
+
+    // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
+    table.on('click', '.btn-info', (e) => {
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
+      // console.log(data);
+      // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
+    })
+  }
 }
 </script>
 

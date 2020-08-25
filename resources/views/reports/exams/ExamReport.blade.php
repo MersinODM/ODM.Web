@@ -37,15 +37,28 @@
                 <tr>
                     <td class="bottomBorder" align="left">{{$loop->iteration}}.</td>
                     <td class="bottomBorder" align="center">{{$question->file_name}}</td>
-                    <td class="bottomBorder" align="center">{{$question->is_design_required}}</td>
+                    <td class="bottomBorder" align="center">{{$question->idr_text}}</td>
                     <td class="bottomBorder" align="center">{{$question->creator}}</td>
-                    <td class="bottomBorder" align="left">{{$question->learning_outcome}}</td>
+                    <td class="bottomBorder" align="left"
+                        style="text-align: justify">{{$question->learning_outcome}}</td>
                     <td class="bottomBorder" align="center">{{$question->difficulty}}</td>
                 </tr>
             @endforeach
             </tbody>
 
             <tfoot>
+            <tr>
+                <td colspan="5" align="right">Tasarım İhtiyacı Olan Soru Sayısı:</td>
+                <td align="center">{{$questions->filter(function ($item) { return $item->is_design_required;})->count()}}</td>
+            </tr>
+            <tr>
+                <td colspan="5" align="right">Tasarım İhtiyacı Olmayan Soru Sayısı:</td>
+                <td align="center">{{$questions->filter(function ($item) { return !$item->is_design_required; })->count()}}</td>
+            </tr>
+            <tr>
+                <td colspan="5" align="right">Toplam Soru Sayısı:</td>
+                <td align="center">{{count($questions)}}</td>
+            </tr>
             </tfoot>
         </table>
     </div>

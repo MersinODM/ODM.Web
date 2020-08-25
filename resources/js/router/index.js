@@ -34,6 +34,7 @@ import UnderConstruction from '../views/utils/UnderConstruction'
 import AppSettings from '../views/management/AppSettings'
 import InstitutionList from '../views/institution/InstitutionList'
 import EditInstitution from '../views/institution/EditInstitution'
+import examRoutes from './examRouter'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -61,6 +62,7 @@ const router = new Router({
       path: '/',
       component: MasterView,
       children: [
+        ...examRoutes,
         {
           path: '',
           name: 'stats',
