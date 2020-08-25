@@ -1,19 +1,37 @@
+<!--
+  - ODM.Web  https://github.com/electropsycho/ODM.Web
+  - Copyright (C) 2020 Hakan GÜLEN
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU General Public License as published by
+  - the Free Software Foundation, either version 3 of the License, or
+  - (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU General Public License for more details.
+  -
+  - You should have received a copy of the GNU General Public License
+  - along with this program.  If not, see http://www.gnu.org/licenses/
+  -->
+
 <template>
   <!--  <footer class="main-footer navbar-fixed-bottom">-->
   <footer class="main-footer">
     <a
       rel="license"
-      href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+      href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
     >
       <img
-        alt="Creative Commons Lisansı"
+        alt="GPLv3"
         style="border-width:0; width:81px; height:31px;"
-        src="https://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png"
+        src="https://www.gnu.org/graphics/gplv3-with-text-136x68.png"
       >
     </a> Bu eser <a
       rel="license"
-      href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-    > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
+      href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
+    > GNU Genel Kamu Lisansı yani GPLv3</a> ile lisanslanmıştır.
   </footer>
 </template>
 
