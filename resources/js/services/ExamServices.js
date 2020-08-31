@@ -1,4 +1,3 @@
-<?php
 /*
  * ODM.Web  https://github.com/electropsycho/ODM.Web
  * Copyright (C) 2020 Hakan GÜLEN
@@ -17,30 +16,23 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-namespace App\Models;
+import http from '../helpers/axios'
 
-use Illuminate\Database\Eloquent\Model;
-
-/**
- * Ders ya da branş bilgisini tutan sınıf
- * Class BranchService
- * @package App\Models
- */
-class Branch extends Model
-{
-    protected $table = 'branches';
-
-    protected $fillable = [
-        "name", "code", "class_levels"
-    ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class, "branch_id");
-    }
-
-    public function questions()
-    {
-        return $this->hasMany(Question::class, 'lesson_id');
-    }
+const ExamPurposeService = {
+  getPurposes () {
+    return new Promise((resolve, reject) => {
+      http.get('/exams/purposes')
+        .then(response => resolve(response.data))
+        .catch(error => reject(error))
+    })
+  }
 }
+
+const ExamServices = {
+
+}
+
+export {
+  ExamPurposeService
+}
+export default ExamServices

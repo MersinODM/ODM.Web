@@ -17,30 +17,15 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-namespace App\Models;
+namespace App\Http\Controllers\Api\Exam;
 
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * Ders ya da branş bilgisini tutan sınıf
- * Class BranchService
- * @package App\Models
- */
-class Branch extends Model
+use App\Http\Controllers\ApiController;
+use App\Models\ExamPurpose;
+
+class ExamPurposeController extends ApiController
 {
-    protected $table = 'branches';
-
-    protected $fillable = [
-        "name", "code", "class_levels"
-    ];
-
-    public function users()
-    {
-        return $this->hasMany(User::class, "branch_id");
-    }
-
-    public function questions()
-    {
-        return $this->hasMany(Question::class, 'lesson_id');
+    public function getPurposes() {
+        return response()->json(ExamPurpose::all());
     }
 }

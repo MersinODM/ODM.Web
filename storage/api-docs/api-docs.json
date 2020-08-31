@@ -1,0 +1,114 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ODM.Web yazılımı REST API dökümantasyonu",
+        "description": "Ölçme Değerlendirme Merkezleri soru havuzu otomasyonu yazılımı için OpenApi v3.0 formatında ve diğer yazılımlara entegrasyonu kolaylaştırmak amaçlı hazırlanmış REST api dökümanıdır.",
+        "termsOfService": "https://github.com/electropsycho/ODM.Web",
+        "contact": {
+            "email": "hgulen33@gmail.com"
+        },
+        "license": {
+            "name": "CC BY-NC-SA 4.0",
+            "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Sign in",
+                "description": "Login by email, password",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user1@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "PassWord12345"
+                                    },
+                                    "persistent": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/questions": {
+            "post": {
+                "tags": [
+                    "Questions"
+                ],
+                "summary": "Soru oluşturma api tanımlaması",
+                "operationId": "App\\Http\\Controllers\\Api\\Question\\QuestionController::create",
+                "responses": {
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "apiAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiAuth": {
+                "type": "http",
+                "description": "Oturum açma jetonu almak için lüfen kullanıcı adı ve şifrenizi giriniz",
+                "name": "JSON Web Token(JWT) tabanlı otorum açma",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Questions",
+            "description": "Sorularla ilgli tüm api tanımlamaları"
+        }
+    ]
+}

@@ -134,7 +134,6 @@
 import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
-import { MessengerConstants } from '../../helpers/constants'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import usersImg from '../../../images/users.png'
 import Question from '../../components/questions/Question'

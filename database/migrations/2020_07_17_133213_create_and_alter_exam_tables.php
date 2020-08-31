@@ -44,6 +44,10 @@ class CreateAndAlterExamTables extends Migration
 //		primary key (id)
 //);
 
+//        alter table branches
+//	add class_levels varchar(200) null after code;
+
+
         Schema::table('exams', function (Blueprint $table) {
             $table->integer('purpose_id')->after("status_id");
             $table->string('code',50)->after("purpose_id");

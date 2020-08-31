@@ -17,26 +17,28 @@
   -->
 
 <template>
-  <div class="alert alert-success text-justify">
-    <a
-      rel="license"
-      href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-    >
-      <img
-        alt="Creative Commons Lisansı"
-        style="border-width:0"
-        src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png"
+  <div class="card text-justify">
+    <div class="card-body">
+      <a
+        rel="license"
+        href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
       >
-    </a> Bu eser <a
-      rel="license"
-      href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.tr"
-    > Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası Lisansı</a> ile lisanslanmıştır.
-    <a
-      class="btn btn-block btn-secondary"
-      href="https://github.com/electropsycho/ODM.Web"
-    >
-      <i class="fab fa-github" /> GitHub (Kaynak Kodlar)
-    </a>
+        <img
+          alt="GPLv3"
+          style="border-width:0; height:1.25em"
+          src="https://www.gnu.org/graphics/gplv3-with-text-84x42.png"
+        >
+      </a> Bu eser özgür ve açık kaynak kod yazılım lisanslarıdan olan <a
+        rel="license"
+        href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
+      >GPLv3</a> ile lisanslanmıştır.
+      <a
+        class="btn btn-block btn-secondary"
+        href="https://github.com/electropsycho/ODM.Web"
+      >
+        <i class="fab fa-github" /> GitHub (Kaynak Kodlar)
+      </a>
+    </div>
   </div>
 </template>
 

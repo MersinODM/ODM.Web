@@ -16,16 +16,12 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
-<template>
-  
-</template>
+<template />
 
 <script>
-  export default {
-    name: "NewOnlineExam"
-  }
+export default {
+  name: 'NewOnlineExam'
+}
 </script>
 
 <style scoped>

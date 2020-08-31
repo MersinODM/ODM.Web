@@ -22,7 +22,7 @@ Ayrıca  sistemi kullanarak destek olan  tüm öğretmenlerimize değerli geri b
 
 ## Lisans
 
-Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar GNU Genel Kamu Lisansı v3 ile lisanslanmıştır. Ayrıntılı lisans bilgisi için [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) sayfasını ziyaret edebilirsiniz.2019
+Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar GNU Genel Kamu Lisansı v3 ile lisanslanmıştır. Ayrıntılı lisans bilgisi için [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ## Yararlanılan yazılım framework ya da kütüphaneleri
 
