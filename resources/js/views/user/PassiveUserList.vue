@@ -184,22 +184,17 @@ export default {
 
     table.on('click', '.btn-info', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
-      Messenger.showPrompt('Bu kullanıcı tekrar aktive etmek istediğinizden emin misiniz?', {
-        cancel: 'İptal',
-        ok: {
-          text: 'Evet',
-          value: true
-        }
-      }).then(value => {
-        if (value) {
-          UserService.reactivate(data.id)
-            .then(resp => {
-              Messenger.showInfo(resp.message)
-                .then(() => table.ajax.reload())
-            })
-            .catch(err => Messenger.showError(err.message))
-        }
-      })
+      Messenger.showPrompt('Bu kullanıcı tekrar aktive etmek istediğinizden emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            UserService.reactivate(data.id)
+              .then(resp => {
+                Messenger.showInfo(resp.message)
+                  .then(() => table.ajax.reload())
+              })
+              .catch(err => Messenger.showError(err.message))
+          }
+        })
     })
   }
 }

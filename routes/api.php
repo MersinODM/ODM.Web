@@ -104,6 +104,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     // Sınavlar ile ilgli api route tanımlamaları
     Route::post('exams/auto', 'Exam\ExamController@createFastExam');
     Route::get('exams/{id}/reports/detail', 'Exam\ExamController@getExamPDF');
+    Route::get('exams/{id}/file', 'Exam\ExamController@getExamFile');
     Route::post('exams/list', 'Exam\ExamQueryController@getExams');
     Route::get('exams/purposes', 'Exam\ExamPurposeController@getPurposes');
     Route::get('exams', 'Exam\ExamQueryController@get');

@@ -48,7 +48,10 @@ const dictionary = {
       instId: 'Okul/Kurum kodu',
       unit: 'Birim/Şube',
       evalPoint: 'Değerlendirme puanı',
-      evalComment: 'Değerlendirme yorumu'
+      evalComment: 'Değerlendirme yorumu',
+      examTitle: 'Sınav adı/başlığı',
+      examPurpose: 'Sınav genel amacı',
+      plannedDate: 'Planlan tarih'
     }
   }
 }

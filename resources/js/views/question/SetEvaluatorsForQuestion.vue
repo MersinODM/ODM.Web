@@ -215,11 +215,7 @@ export default {
         .length >= 2
       if (res) {
         const electors = this.selectedEvaluators.map(value => value.full_name).join(', ')
-        Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`,
-          {
-            cancelText: 'Hayır',
-            confirmText: 'Evet'
-          })
+        Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`)
           .then(value => {
             if (value.isConfirmed) {
               const loader = this.$loading.show()

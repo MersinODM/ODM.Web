@@ -29,24 +29,24 @@
               <div class="row justify-content-md-center">
                 <div class="col-md-6">
                   <div class="form-group mb-3">
-                    <label>Sınav Adı/Başlığı</label>
+                    <label>Sınav Adı/Başlığı *</label>
                     <input
                       v-model="title"
-                      v-validate="'required'"
-                      name="title"
+                      v-validate="'required|min:5'"
+                      name="examTitle"
                       class="form-control"
-                      :class="{'is-invalid': errors.has('title')}"
+                      :class="{'is-invalid': errors.has('examTitle')}"
                       type="text"
                       placeholder="Sınav adı/Başlığı"
                     >
                     <span
-                      v-if="errors.has('title')"
+                      v-if="errors.has('examTitle')"
                       class="error invalid-feedback"
-                    >{{ errors.first('title') }}</span>
+                    >{{ errors.first('examTitle') }}</span>
                   </div>
                   <div class="form-group mb-3">
                     <label>
-                      Sınavın Genel Amacı
+                      Sınavın Genel Amacı *
                     </label>
                     <v-select
                       v-model="selectedPurpose"
@@ -54,21 +54,47 @@
                       :options="purposes"
                       :reduce="b => b.id"
                       label="purpose"
-                      :class="{'is-invalid': errors.has('purpose')}"
-                      name="purpose"
-                      placeholder="Ders seçimi yapınız"
+                      :class="{'is-invalid': errors.has('examPurpose')}"
+                      name="examPurpose"
+                      placeholder="Sınav amacını seçiniz"
                     >
                       <div slot="no-options">
                         Burada bişey bulamadık :-(
                       </div>
                     </v-select>
                     <span
-                      v-if="errors.has('purpose')"
+                      v-if="errors.has('examPurpose')"
                       class="error invalid-feedback"
-                    >{{ errors.first('purpose') }}</span>
+                    >{{ errors.first('examPurpose') }}</span>
                   </div>
                   <div class="form-group mb-3">
-                    <label>Sınıf Seviyesi Seçimi</label>
+                    <label>Planlanan Tarih *</label>
+                    <date-picker
+                      v-model="plannedDate"
+                      v-validate="'required'"
+                      name="plannedDate"
+                      style="width:100%"
+                      :lang="lang"
+                      type="datetime"
+                      :time-picker-options="{
+                        start: '08:30',
+                        step: '00:15',
+                        end: '17:00',
+                      }"
+                      input-class="form-control"
+                      :popup-style="{ top: '100%', left: 0}"
+                      :append-to-body="false"
+                      placeholder="Tarih seçiniz"
+                      format="DD.MM.YYYY - HH:mm"
+                      :class="{'is-invalid': errors.has('plannedDate')}"
+                    />
+                    <span
+                      v-if="errors.has('plannedDate')"
+                      class="error invalid-feedback"
+                    >{{ errors.first('plannedDate') }}</span>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label>Sınıf Seviyesi Seçimi *</label>
                     <v-select
                       ref="classLevelDD"
                       v-model="selectedClassLevel"
@@ -91,7 +117,7 @@
                     <div class="col-md-12">
                       <div class="row">
                         <div class="col-md-12">
-                          <label>Ders ve soru sayısı seçimi</label>
+                          <label>Ders ve soru sayısı seçimi *</label>
                         </div>
                       </div>
                       <div class="row">
@@ -100,10 +126,8 @@
                             <v-select
                               ref="branchesRef"
                               v-model="selectedBranch"
-                              v-validate="'required'"
                               :options="branches"
                               label="name"
-                              :class="{'is-invalid': errors.has('branch')}"
                               name="branch"
                               placeholder="Ders seçimi yapınız"
                             >
@@ -111,19 +135,13 @@
                                 Burada bişey bulamadık :-(
                               </div>
                             </v-select>
-                            <span
-                              v-if="errors.has('branch')"
-                              class="error invalid-feedback"
-                            >{{ errors.first('branch') }}</span>
                           </div>
                         </div>
                         <div class="col-md-4 justify-content-center">
                           <div class="form-group">
                             <v-select
                               v-model="selectedQuestionCount"
-                              v-validate="'required'"
                               :options="questionCounts"
-                              :class="{'is-invalid': errors.has('questionCount')}"
                               name="questionCount"
                               placeholder="Soru sayısı giriniz/seçiniz"
                             >
@@ -131,16 +149,13 @@
                                 Burada bişey bulamadık :-(
                               </div>
                             </v-select>
-                            <span
-                              v-if="errors.has('questionCount')"
-                              class="error invalid-feedback"
-                            >{{ errors.first('questionCount') }}</span>
                           </div>
                         </div>
                         <div class="col-md-2 justify-content-center">
                           <button
                             type="button"
                             class="btn btn-primary btn-block btn-sm"
+                            :class="{'disabled': isSelectedClassAndQuestionCount}"
                             @click="addLesson"
                           >
                             Ekle
@@ -160,7 +175,7 @@
                                   :key="lesson.id"
                                   class="nav-item"
                                 >
-                                  {{ lesson.name }} - {{ lesson.question_count }}
+                                  {{ lesson.name }} - <b>{{ lesson.question_count }}</b> adet soru
                                   <button
                                     class="btn btn-danger btn-xs float-right"
                                     @click="removeLesson(lesson.id)"
@@ -179,13 +194,31 @@
                     <label>Açıklamalar</label>
                     <textarea
                       v-model="description"
-                      v-validate="'required|min:3|max:1000'"
                       name="description"
                       class="form-control"
                       rows="2"
                       style="max-width: 100%; min-width: 100%; min-height: 50px"
                       placeholder="Açıklama girebilirsiniz"
                     />
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <button
+                        class="btn btn-danger btn-block"
+                        @click="cancel"
+                      >
+                        İptal
+                      </button>
+                    </div>
+                    <div class="col-md-6">
+                      <button
+                        class="btn btn-primary btn-block"
+                        :class="{ disabled: isEnabledCreate }"
+                        @click="create"
+                      >
+                        Oluştur
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -201,29 +234,47 @@
 import Page from '../../components/Page'
 import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
-import { ExamPurposeService } from '../../services/ExamServices'
+import ExamService, { ExamPurposeService } from '../../services/ExamService'
+import Messenger from '../../helpers/messenger'
+import DatePicker from 'vue2-datepicker/index.min'
+import tr from 'vue2-datepicker/locale/tr'
+import FileSaver from '../../helpers/FileSaver'
+import { ResponseCodes } from '../../helpers/constants'
 
 export default {
   name: 'NewAutoExam',
-  components: { Page, vSelect },
+  components: { Page, vSelect, DatePicker },
   data: () => ({
     title: '',
     description: '',
     selectedPurpose: '',
     purposes: [],
     selectedClassLevel: '',
-    classLevels: [...Array(9).keys()].map(i => i + 4),
+    classLevels: [...Array(9).keys()].map(i => i + 4), // 4-12 arası sınıf array oluşturma
     selectedQuestionCount: 0,
-    questionCounts: [...Array(50).keys()].map(i => i + 1),
+    questionCounts: [...Array(50).keys()].map(i => i + 1), // 1-50 arası soru sayısı array oluşturma
     lessons: [],
     selectedBranch: '',
     branches: [],
     tempBranches: [],
-    tempBranchesClassLevels: []
+    tempBranchesClassLevels: [],
+    plannedDate: '',
+    lang: tr
+    // hours: [...Array(10).keys()].map(i => i + 8) // 8-17 arası sına saati
   }),
   computed: {
     hasLessons () {
       return this.lessons !== null && this.lessons.length > 0
+    },
+    isSelectedClassAndQuestionCount () {
+      return !(this.selectedQuestionCount && this.selectedBranch)
+    },
+    isEnabledCreate () {
+      return !(this.lessons &&
+          this.lessons.length > 0 &&
+          this.title &&
+          this.selectedClassLevel
+      )
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -232,10 +283,8 @@ export default {
       ExamPurposeService.getPurposes()])
       .then(([branches, purposes]) => {
         next(vm => {
-          vm.branches = branches
+          vm.branches = branches.sort((a, b) => a.name.localeCompare(b.name))
           vm.purposes = purposes
-          // vm.classLevels.splice(0, 3) // Sınıf seviyesi 4-12 arası olmalı
-          vm.branches.sort((a, b) => a.name.localeCompare(b.name))
           vm.tempBranchesClassLevels = vm.branches
         })
       })
@@ -244,18 +293,23 @@ export default {
   methods: {
     addLesson () {
       if (this.selectedBranch && this.selectedQuestionCount) {
-        this.lessons.push({ /**/
+        this.lessons.push({
           id: this.selectedBranch.id,
           name: this.selectedBranch.name,
           question_count: this.selectedQuestionCount
         })
+        // Sınava eklenen dersi ana listeden çıkarıp temp'e atıyoruz silinirse geri alıcaz
         this.tempBranches.push(this.branches.filter((value) => value.id === this.selectedBranch.id)[0])
         this.branches = this.branches.filter((value) => value.id !== this.selectedBranch.id)
-        this.$refs.branchesRef.clearSelection()
+        if (this.$refs.branchesRef) {
+          this.$refs.branchesRef.clearSelection()
+        }
       }
     },
     removeLesson (id) {
+      // Listeden ders silinirse geri ana listeye dersi ekleyelim
       this.branches.push(...this.tempBranches.filter((value) => value.id === id))
+      // Sınav için seçilen dersler içinden silelim
       this.lessons.splice(this.lessons.findIndex(value => value.id === id), 1)
       this.branches.sort((a, b) => a.name.localeCompare(b.name))
     },
@@ -266,7 +320,60 @@ export default {
             .map(Number)
             .includes(this.selectedClassLevel)
         })
-      this.$refs.branchesRef.clearSelection()
+      if (this.$refs.branchesRef) {
+        this.$refs.branchesRef.clearSelection()
+      }
+    },
+    cancel () {
+      Messenger.showPrompt('Soru olurmayı iptal etmek istiyor musunuz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            this.$router.go(-1)
+          }
+        })
+    },
+    async create () {
+      let loader = null
+      try {
+        const valRes = await this.$validator.validateAll()
+        if (valRes) {
+          const promptRes = await Messenger.showPrompt('Otomatik sınav oluşturmak istediğinizden emin misiniz?')
+          if (promptRes.isConfirmed) {
+            loader = this.$loading.show()
+            const data = {
+              title: this.title,
+              purpose_id: this.selectedPurpose,
+              class_level: this.selectedClassLevel,
+              planned_date: this.plannedDate,
+              description: this.description,
+              lessons: this.lessons.map(l => {
+                const lessonTmp = {
+                  id: l.id, question_count: l.question_count
+                }
+                return lessonTmp
+              })
+            }
+            const exam = await ExamService.createAutoExam(data)
+            if (exam?.code === ResponseCodes.CODE_WARNING) {
+              // eslint-disable-next-line no-unused-expressions
+              loader?.hide()
+              await Messenger.showWarning(exam.message)
+              return
+            }
+            loader.hide()
+            await Messenger.showInfo('Sınavınız başarıyla oluşturuldu şimdi dosyalar hazırlanıp indirilecek lütfen sabırlı olun bu işlem biraz uzun sürebilir.')
+            loader = this.$loading.show()
+            const fileInfo = await ExamService.getExamFile(exam?.id)
+            FileSaver.save(fileInfo.file, fileInfo.fileName)
+            loader.hide()
+            await this.$router.push({ name: 'examList' })
+          }
+        }
+      } catch (e) {
+        console.log(e)
+        // eslint-disable-next-line no-unused-expressions
+        loader?.hide()
+      }
     }
   }
 }

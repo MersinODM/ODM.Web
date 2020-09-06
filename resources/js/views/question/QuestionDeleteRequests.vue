@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <page>
     <template v-slot:header>
@@ -163,42 +161,37 @@ export default {
     table.on('click', '.btn-warning', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       console.log(data)
-      Messenger.showPrompt('Bu soru silme talebinin kendisini silerek talebi iptal etmek istediğinize emin misiniz?', {
-        cancelText: 'Hayır',
-        confirmText: 'Evet'
-      }).then(value => {
-        if (value.isConfirmed) {
-          QuestionDeleteService.delete(data.id, data.question_id)
-            .then(resp => {
-              Messenger.showSuccess(resp.message)
-            })
-            .catch(err => {
-              Messenger.showError(err)
-            })
-            .finally(() => table.ajax.reload())
-        }
-      })
+      Messenger.showPrompt('Bu soru silme talebinin kendisini silerek talebi iptal etmek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            QuestionDeleteService.delete(data.id, data.question_id)
+              .then(resp => {
+                Messenger.showSuccess(resp.message)
+              })
+              .catch(err => {
+                Messenger.showError(err)
+              })
+              .finally(() => table.ajax.reload())
+          }
+        })
     })
 
     table.on('click', '.btn-danger', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
-      Messenger.showPrompt('Bu soruya ait tüm veriler silinecek! Bu isteğe onay vermek istediğinize emin misiniz?',
-        {
-          cancelText: 'Hayır',
-          confirmText: 'Evet'
-        }).then(value => {
-        if (value.isConfirmed) {
-          QuestionDeleteService.approve(data.id)
-            .then(res => {
-              Messenger.showSuccess(res.message)
-            })
-            .catch(err => {
-              Messenger.showError(err)
-            })
-            .finally(() => table.ajax.reload())
-        }
-      })
+      Messenger.showPrompt('Bu soruya ait tüm veriler silinecek! Bu isteğe onay vermek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            QuestionDeleteService.approve(data.id)
+              .then(res => {
+                Messenger.showSuccess(res.message)
+              })
+              .catch(err => {
+                Messenger.showError(err)
+              })
+              .finally(() => table.ajax.reload())
+          }
+        })
     })
   }
 }

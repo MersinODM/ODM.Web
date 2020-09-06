@@ -71,6 +71,7 @@
                       :options="branches"
                       :reduce="b => b.id"
                       label="name"
+                      :clearable="false"
                       :class="{'is-invalid': errors.has('branch')}"
                       name="branch"
                       placeholder="Ders seçimi yapınız"
@@ -98,7 +99,11 @@
                       :class="{'is-invalid': errors.has('selectedClassLevel')}"
                       placeholder="Sınıf seviyesini seçiniz"
                       @input="clearLearningOutCome"
-                    />
+                    >
+                      <div slot="no-options">
+                        Burada bişey bulamadık :-(
+                      </div>
+                    </v-select>
                     <span
                       v-if="errors.has('selectedClassLevel')"
                       class="error invalid-feedback"
@@ -263,7 +268,6 @@
 <script>
 
 import debounce from 'lodash/debounce'
-import range from 'lodash/range'
 import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import BranchService from '../../services/BranchService'
@@ -300,7 +304,7 @@ export default {
       questionFileURL: null,
       selectedClassLevel: null,
 
-      classLevels: range(4, 13),
+      classLevels: [],
       selectedLearningOutCome: null,
       learningOutComes: [],
       isSending: false,
@@ -311,7 +315,7 @@ export default {
   computed: {
     checkBranches () {
       if (this.user) {
-        return this.$isInRole('admin') || this.user.branch.code === 'SB'
+        return this.$isInRole('admin') || this.user.branch.code === 'SB' || this.user.branch.code === 'TAR'
       }
       return false
     }
@@ -325,8 +329,12 @@ export default {
           // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
           if (!vm.$isInRole('admin') && user.branch.code === 'SB') {
             vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
-          } else {
+          } else if (!vm.$isInRole('admin') && user.branch.code === 'TAR') {
+            vm.branches = branches.filter(b => b.code === 'İTA' || b.code === 'TAR')
+          } else if (vm.$isInRole('admin')) {
             vm.branches = branches
+          } else {
+            vm.classLevels = branches.filter(b => b.id === user.branch_id)[0].class_levels.split(',').map(Number)
           }
         })
       })
@@ -336,6 +344,22 @@ export default {
   },
   methods: {
     clearClasses () {
+      // Kullanıcının durumuna göre sınıf listesini düzenleyelim
+      if (this.$isInRole('admin') ||
+          (!this.$isInRole('admin') &&
+          (this.user.branch.code === 'SB' || this.user.branch.code === 'TAR'))) {
+        this.classLevels = this.branches
+          .filter(branch => branch.id === this.selectedBranch)[0]
+          .class_levels
+          .split(',')
+          .map(Number)
+      } else {
+        this.classLevels = this.branches
+          .filter(branch => branch.id === this.user.branch_id)[0]
+          .class_levels
+          .split(',')
+          .map(Number)
+      }
       if (this.selectedClassLevel !== null) {
         this.selectedClassLevel = null
         this.$refs.classLevelDD.clearSelection()

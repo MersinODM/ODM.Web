@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <page>
     <template v-slot:header>
@@ -236,65 +234,47 @@ export default {
     resendForgetPassword () {
       // let data = { email: this.email, recaptcha: this.captchaToken }
       const data = { email: this.user.email }
-      Messenger.showPrompt('Kullanıcıya şifre yenileme e-postası göndermek istediğinize emin misiniz?',
-        {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
+      Messenger.showPrompt('Kullanıcıya şifre yenileme e-postası göndermek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            AuthService.forgetPassword(data)
+              .then(value => {
+                Messenger.showInfo(value.message)
+                  .then(() => { this.$router.push({ name: 'users' }) })
+              })
+              .catch(() => {
+                Messenger.showError(MessengerConstants.errorMessage)
+              })
           }
-        }).then(value => {
-        if (value) {
-          AuthService.forgetPassword(data)
-            .then(value => {
-              Messenger.showInfo(value.message)
-                .then(() => { this.$router.push({ name: 'users' }) })
-            })
-            .catch(() => {
-              Messenger.showError(MessengerConstants.errorMessage)
-            })
-        }
-      })
+        })
     },
     deleteUser () {
-      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
-        {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
+      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            UserService.delete(this.$route.params.id)
+              .then(res => { Messenger.showSuccess(res) })
+              .catch(err => { Messenger.showError(err) })
           }
-        }).then(value => {
-        if (value) {
-          UserService.delete(this.$route.params.id)
-            .then(res => { Messenger.showSuccess(res) })
-            .catch(err => { Messenger.showError(err) })
-        }
-      })
+        })
     },
     save () {
-      Messenger.showPrompt('Kullanıcı bilgilerini güncellemek istediğinize emin misiniz?',
-        {
-          cancel: 'İptal',
-          ok: {
-            text: 'Evet',
-            value: true
+      Messenger.showPrompt('Kullanıcı bilgilerini güncellemek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            const data = {
+              branch_id: this.selectedBranch.id,
+              inst_id: this.selectedInst.id,
+              full_name: this.user.full_name,
+              phone: this.user.phone,
+              email: this.user.email,
+              role: this.selectedRole
+            }
+            UserService.update(this.user.id, data)
+              .then((resp) => Messenger.showSuccess(resp.message))
+              .catch(() => Messenger.showError('Kayıt işlemi başarısız!'))
           }
-        }).then(value => {
-        if (value) {
-          const data = {
-            branch_id: this.selectedBranch.id,
-            inst_id: this.selectedInst.id,
-            full_name: this.user.full_name,
-            phone: this.user.phone,
-            email: this.user.email,
-            role: this.selectedRole
-          }
-          UserService.update(this.user.id, data)
-            .then((resp) => Messenger.showSuccess(resp.message))
-            .catch(() => Messenger.showError('Kayıt işlemi başarısız!'))
-        }
-      })
+        })
     }
   }
 }

@@ -99,6 +99,8 @@ import Constants, { MessengerConstants } from '../../helpers/constants'
 import Messenger from '../../helpers/messenger'
 import tr from '../../helpers/dataTablesTurkish'
 import Page from '../../components/Page'
+import ExamService from '../../services/ExamService'
+import FileSaver from '../../helpers/FileSaver'
 
 export default {
   name: 'ExamList',
@@ -207,9 +209,22 @@ export default {
       })
 
     // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
-    table.on('click', '.btn-info', (e) => {
+    table.on('click', '.btn-warning', async (e) => {
+      const promptRes = await Messenger.showPrompt('Sınav dosyasını indirmek istiyor musunuz?')
+      if (!promptRes.isConfirmed) return
+      const loader = vm.$loading.show()
       const data = table.row($(e.toElement).parents('tr')[0]).data()
+      const fileInfo = await ExamService.getExamFile(data?.id)
+      FileSaver.save(fileInfo.file, fileInfo.fileName)
+      loader.hide()
       // console.log(data);
+      // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
+    })
+
+    // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
+    table.on('click', '.btn-info', (e) => {
+      // const data = table.row($(e.toElement).parents('tr')[0]).data()
+      vm.$router.push({ name: 'underConstruction' })
       // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
     })
   }

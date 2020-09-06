@@ -17,6 +17,7 @@
  */
 
 import http from '../helpers/axios'
+import { integer } from 'vee-validate/dist/rules.esm'
 
 const ExamPurposeService = {
   getPurposes () {
@@ -28,11 +29,31 @@ const ExamPurposeService = {
   }
 }
 
-const ExamServices = {
-
+const ExamService = {
+  createAutoExam (data) {
+    return new Promise((resolve, reject) => {
+      http.post('/exams/auto', data)
+        .then(response => resolve(response.data))
+        .catch(error => reject(error))
+    })
+  },
+  getExamFile (examId) {
+    return new Promise((resolve, reject) => {
+      http.get(`exams/${examId}/file`, { responseType: 'blob' })
+        .then(response => resolve({
+          file: response.data,
+          fileName: response.headers['content-disposition']
+            .split(';')
+            .find(n => n.includes('filename='))
+            .replace('filename=', '')
+            .trim()
+        }))
+        .catch(error => reject(error))
+    })
+  }
 }
 
 export {
   ExamPurposeService
 }
-export default ExamServices
+export default ExamService

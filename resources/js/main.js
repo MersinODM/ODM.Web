@@ -43,7 +43,8 @@ Vue.use(Loading, {
   color: '#007bff',
   height: 128,
   width: 128,
-  opacity: 0.8
+  opacity: 0.8,
+  blur: '2px'
 })
 
 // eslint-disable-next-line no-unused-vars

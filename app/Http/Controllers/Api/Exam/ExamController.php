@@ -21,6 +21,8 @@ namespace App\Http\Controllers\Api\Exam;
 
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Utils\ResponseCodes;
+use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Exam;
 use App\Models\ExamQuestion;
 use App\Models\Question;
@@ -64,17 +66,65 @@ class ExamController extends ApiController
             $exam = $this->createExam($request, $code);
 
             // Sonra soruları derslere göre rastgele getirelim
-            $this->selectAndSaveQuestionsInExam($lessons, $exam);
-
-            $filePath= $this->createZipFile($code, $exam);
+            $questionSelectionRes = $this->selectAndSaveQuestionsInExam($lessons, $exam);
+            if (!$questionSelectionRes) {
+                DB::rollBack();
+                return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                    ResponseKeys::MESSAGE => 'Verilen kriterlere göre soru bulunamıyor!'
+                ]);
+            }
             DB::commit();
-
-            return response()->download($filePath);
+            return response()->json($exam);
         } catch (Exception $e) {
             DB::rollBack();
-//            Storage::move($exam->path, 'public/trash/'.$fileName);
             return $this->apiException($e);
         }
+    }
+
+    public function getExamFile($id) {
+        $exam = Exam::find($id);
+        if ($exam->path) {
+            return response()->download(Storage::disk('local')->path($exam->path));
+        }
+        //Zip dosyasını oluşturmaya başlayalım
+        $zipArchive = new ZipArchive();
+        $fileName = 'Exam-' . $exam->code . '.zip';
+        $filePath = 'public/exams/' . $fileName;
+        $fullPath = Storage::disk('local')->path($filePath);
+        $res = $zipArchive->open($fullPath, ZipArchive::CREATE) === true;
+
+        //Zip dosyası oluşturma başarılı ise dosyaları zip içine atalım
+        if ($res) {
+            $examQuestions = ExamQuestion::where('exam_id', $exam->id)
+                ->join('questions as q', 'q.id', '=', 'question_id')
+                ->join('branches as b', 'b.id', '=', 'q.lesson_id')
+                ->select('q.id', 'q.content_url', 'b.code as branchCode')
+                ->get();
+
+            foreach ($examQuestions as $question) {
+                $explodedPath = explode("/", $question->content_url);
+                $fileName = end($explodedPath);
+                $sp = Storage::disk('local')->path($question->content_url);
+                if (file_exists($sp)) {
+                    $zipArchive->addFile($sp, $question->branchCode.'/'.$fileName);
+                } else {
+                    throw new \RuntimeException("Zip dosyasını oluşturma başarısız oldu.");
+                }
+            }
+            // Son olarak raporu zip dosyasına atalım
+            $pathRes = $this->createExamReport($id);
+            $zipArchive->addFile(Storage::disk('local')->path($pathRes[0]), $pathRes[1]);
+            // Zip dosyasını kapatalım
+            $zipArchive->close();
+
+
+            //Sınavın yolunu kaydedelim
+            $exam->path = $filePath;
+            $exam->status = Exam::PLANNED;
+            $exam->save();
+        }
+        return response()->download($fullPath);
     }
 
     public function create(Request $request) {
@@ -91,7 +141,119 @@ class ExamController extends ApiController
         }
     }
 
-    public function getExamPDF(Request $request, $id)
+//    public function getExamPDF(Request $request, $id): string
+//    {
+//        return $this->createExamReport($id);
+//    }
+
+    /**
+     * @param Request $request
+     * @param string $code
+     * @return Exam
+     */
+    private function createExam(Request $request, string $code): Exam
+    {
+        $exam = new Exam([
+            'creator_id' => Auth::id(),
+            'purpose_id' => $request->input('purpose_id'),
+            'code' => $code,
+            'title' => $request->input('title'),
+            'class_level' => $request->input('class_level'),
+            'planned_date' => $request->input('planned_date'),
+            'description' => $request->input('description'),
+            'status' => Exam::CREATED
+        ]);
+        $exam->save();
+        return $exam;
+    }
+
+//    /**
+//     * @param string $code
+//     * @param Exam $exam
+//     * @return false|string[]
+//     */
+//    private function createZipFile(string $code, Exam $exam)
+//    {
+//        //Zip dosyasını oluşturmaya başlayalım
+//        $zipArchive = new ZipArchive();
+//        $fileName = 'Exam-' . $code . '.zip';
+//        $filePath = 'exams/' . $fileName;
+//        $fullPath = Storage::disk('local')->path('public/' . $filePath);
+//        $res = $zipArchive->open($fullPath, ZipArchive::CREATE) === true;
+//
+//        //Zip dosyası oluşturma başarılı ise dosyaları zip içine atalım
+//        if ($res) {
+//            $examQuestions = ExamQuestion::where('exam_id', $exam->id)
+//                ->join('questions as q', 'q.id', '=', 'question_id')
+//                ->select('q.id', 'q.content_url')
+//                ->get();
+//
+//            foreach ($examQuestions as $question) {
+//                $explodedPath = explode("/", $question->content_url);
+//                $fileName = end($explodedPath);
+//                $sp = Storage::disk('local')->path($question->content_url);
+//                if (file_exists($sp)) {
+//                    $zipArchive->addFile($sp, $fileName);
+//                } else {
+//                    throw new \RuntimeException("Zip dosyasını oluşturma başarısız oldu.");
+//                }
+//            }
+//            // Zip dosyasını kapatalım
+//            $zipArchive->close();
+//
+//            //Sınavın yolunu kaydedelim
+//            $exam->path = $filePath;
+//            $exam->status = Exam::PLANNED;
+//            $exam->save();
+//        }
+//        return $fullPath;
+//    }
+
+    /**
+     * Soruları otomatik olarak seçerek sınav içine kaydeder
+     * @param array|null $lessons
+     * @param Exam $exam
+     */
+    private function selectAndSaveQuestionsInExam(?array $lessons, Exam $exam): bool
+    {
+        $examQuestions = collect([]);
+        //Her bir dersi tek tek dönelim
+        foreach ($lessons as $lesson) {
+            //Her ders için belirtilen sayında soruyu seçelim
+            $questions = DB::table('questions as q')
+                ->join('learning_outcomes as lo', 'q.learning_outcome_id', '=', 'lo.id')
+                ->inRandomOrder()
+                ->where('lesson_id', $lesson['id'])
+                ->where('lo.class_level', $exam['class_level'])
+                ->where('status', Question::APPROVED)
+                ->select(
+                    'q.id',
+                    'q.content_url'
+                )
+                ->limit($lesson['question_count'])
+                ->get();
+
+            // Sorular geldikten sonra sınavla ilişkilendirelim
+            foreach ($questions as $question) {
+                $examQuestion = [
+                    'exam_id' => $exam->id,
+                    'question_id' => $question->id
+                ];
+                $examQuestions->push($examQuestion);
+            }
+        }
+        if ($examQuestions->count() <= 0) {
+            return false;
+        }
+        ExamQuestion::insert($examQuestions->toArray());
+        return true;
+    }
+
+    /**
+     * @param $id
+     * @return string[]
+     */
+    private function createExamReport($id): array
     {
         $settings = Setting::first();
         $exam = DB::table('exams as e')
@@ -102,10 +264,10 @@ class ExamController extends ApiController
                 'u.full_name as creator',
                 'ep.purpose', 'e.code',
                 DB::raw('(case status 
-                    when '.Exam::CREATED.' then "Oluşturulmuş"
-                    when '.Exam::PLANNED.' then "Planlanmış"
-                    when '.Exam::CANCELED.' then "İptal edilmiş"
-                    when '.Exam::COMPLETED.' then "Tamamlanmış"
+                    when ' . Exam::CREATED . ' then "Oluşturulmuş"
+                    when ' . Exam::PLANNED . ' then "Planlanmış"
+                    when ' . Exam::CANCELED . ' then "İptal edilmiş"
+                    when ' . Exam::COMPLETED . ' then "Tamamlanmış"
                     else "Belirsiz"
                     end) as status'),
                 'title', 'class_level',
@@ -142,106 +304,11 @@ class ExamController extends ApiController
             'exam' => $exam,
             'questions' => $questions
         ]);
-        return $pdf->download($exam->code . '-Exam-Report.pdf');
-    }
-
- 
-
-    /**
-     * @param Request $request
-     * @param string $code
-     * @return Exam
-     */
-    private function createExam(Request $request, string $code): Exam
-    {
-        $exam = new Exam([
-            'creator_id' => Auth::id(),
-            'purpose_id' => $request->input('purpose_id'),
-            'code' => $code,
-            'title' => $request->input('title'),
-            'class_level' => $request->input('class_level'),
-            'planned_date' => $request->input('planned_date'),
-            'description' => $request->input('description'),
-            'status' => Exam::CREATED
-        ]);
-        $exam->save();
-        return $exam;
-    }
-
-    /**
-     * @param string $code
-     * @param Exam $exam
-     * @return false|string[]
-     */
-    private function createZipFile(string $code, Exam $exam)
-    {
-        //Zip dosyasını oluşturmaya başlayalım
-        $zipArchive = new ZipArchive();
-        $fileName = 'Exam-' . $code . '.zip';
-        $filePath = 'exams/' . $fileName;
-        $fullPath = Storage::disk('local')->path('public/' . $filePath);
-        $res = $zipArchive->open($fullPath, ZipArchive::CREATE) === true;
-
-        //Zip dosyası oluşturma başarılı ise dosyaları zip içine atalım
-        if ($res) {
-            $examQuestions = ExamQuestion::where('exam_id', $exam->id)
-                ->join('questions as q', 'q.id', '=', 'question_id')
-                ->select('q.id', 'q.content_url')
-                ->get();
-
-            foreach ($examQuestions as $question) {
-                $explodedPath = explode("/", $question->content_url);
-                $fileName = end($explodedPath);
-                $sp = Storage::disk('local')->path($question->content_url);
-                if (file_exists($sp)) {
-                    $zipArchive->addFile($sp, $fileName);
-                } else {
-                    throw new \RuntimeException("Zip dosyasını oluşturma başarısız oldu.");
-                }
-            }
-            // Zip dosyasını kapatalım
-            $zipArchive->close();
-
-            //Sınavın yolunu kaydedelim
-            $exam->path = $filePath;
-            $exam->status = Exam::PLANNED;
-            $exam->save();
-        }
-        return $fullPath;
-    }
-
-    /**
-     * Soruları otomatik olarak seçerek sınav içine kaydeder
-     * @param array|null $lessons
-     * @param Exam $exam
-     */
-    private function selectAndSaveQuestionsInExam(?array $lessons, Exam $exam): void
-    {
-        //Her bir dersi tek tek dönelim
-        foreach ($lessons as $lesson) {
-            //Her ders için belirtilen sayında soruyu seçelim
-            $questions = DB::table('questions as q')
-                ->inRandomOrder()
-                ->where('lesson_id', $lesson['id'])
-                ->where('status', Question::APPROVED)
-                ->select(
-                    'q.id',
-                    'q.content_url'
-                )
-                ->limit($lesson['question_count'])
-                ->get();
-
-            // Sorular geldikten sonra sınavla ilişkilendirelim
-            $examQuestions = collect([]);
-            foreach ($questions as $question) {
-                $examQuestion = [
-                    'exam_id' => $exam->id,
-                    'question_id' => $question->id
-                ];
-                $examQuestions->push($examQuestion);
-            }
-            ExamQuestion::insert($examQuestions->toArray());
-        }
+//        return $pdf->download($exam->code . '-Exam-Report.pdf');
+        $reportFileName = 'Sınav Raporu-'.$exam->code.'.pdf';
+        $reportFilePath = 'public/trash/' . $reportFileName;
+        Storage::put($reportFilePath, $pdf->output());
+        return [$reportFilePath, $reportFileName];
     }
 
 

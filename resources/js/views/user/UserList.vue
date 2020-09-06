@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <page>
     <template v-slot:header>
@@ -178,20 +176,17 @@ export default {
     table.on('click', '.btn-danger', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
       // console.log(data);
-      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?',
-        {
-          confirmText: 'Evet',
-          cancelText: 'Hayır'
-        }).then(value => {
-        if (value) {
-          UserService.delete(data.id)
-            .then(res => { Messenger.showSuccess(res) })
-            .catch(err => { Messenger.showError(err) })
-            .finally(() => {
-              table.ajax.reload()
-            })
-        }
-      })
+      Messenger.showPrompt('Kullanıcıyı pasifleştirmek istediğinize emin misiniz?')
+        .then(value => {
+          if (value.isConfirmed) {
+            UserService.delete(data.id)
+              .then(res => { Messenger.showSuccess(res) })
+              .catch(err => { Messenger.showError(err) })
+              .finally(() => {
+                table.ajax.reload()
+              })
+          }
+        })
     })
 
     table.on('click', '.btn-warning', (e) => {

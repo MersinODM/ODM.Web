@@ -212,11 +212,7 @@ export default {
             const msg = 'Gözden geçrime metniniz ve yeni soru dosyanız kayıt edilecek.\n' +
                 'Eski soru dosyanıza ulaşamayacaksınız\n' +
                 'Kayıt işlemini onaylıyor musunuz?'
-            const promptButtons = {
-              cancelText: 'Hayır',
-              confirmText: 'Evet'
-            }
-            Messenger.showPrompt(msg, promptButtons)
+            Messenger.showPrompt(msg)
               .then(promptRes => {
                 if (promptRes.isConfirmed) {
                   const fd = new FormData()
