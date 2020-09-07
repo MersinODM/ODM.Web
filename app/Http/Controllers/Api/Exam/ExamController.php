@@ -84,7 +84,7 @@ class ExamController extends ApiController
 
     public function getExamFile($id) {
         $exam = Exam::find($id);
-        if ($exam->path) {
+        if ($exam->path && Storage::disk('local')->exists($exam->path)) {
             return response()->download(Storage::disk('local')->path($exam->path));
         }
         //Zip dosyasını oluşturmaya başlayalım

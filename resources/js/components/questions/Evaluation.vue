@@ -24,21 +24,22 @@
           <EvaluationCalculation :question="question" />
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <evaluation-stat :question="question" />
-        </div>
-      </div>
+      <!--      <div class="row">-->
+      <!--        <div class="col-md-12">-->
+      <!--          <evaluation-stat :question="question" />-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
 
 <script>
-import EvaluationStat from './EvaluationStat'
+// import EvaluationStat from './EvaluationStat'
 import EvaluationCalculation from './EvaluationCalculation'
 export default {
   name: 'Evaluation',
-  components: { EvaluationCalculation, EvaluationStat },
+  // components: { EvaluationCalculation, EvaluationStat },
+  components: { EvaluationCalculation },
   props: ['question'],
   data: () => ({
     isShowingStats: false,

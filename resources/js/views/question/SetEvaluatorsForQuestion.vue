@@ -40,17 +40,17 @@
                   </div>
                 </div>
               </div>
-              <div class="card">
+              <div
+                v-if="checkForEvaluationReq"
+                class="card"
+              >
                 <div class="card-header with-border">
                   <h4>Değerlendirici Ataması</h4>
                 </div>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-12">
-                      <div
-                        v-if="checkForEvaluationReq"
-                        class="row justify-content-md-center"
-                      >
+                      <div class="row justify-content-md-center">
                         <div class="col-md-5 col-xs-12">
                           <div
                             class="form-group has-feedback"
@@ -80,42 +80,46 @@
                           </div>
                         </div>
                       </div>
-                      <div
-                        v-if="savedEvaluators !== null && savedEvaluators.length>0"
-                        class="row"
-                      >
-                        <div class="col-md-12">
-                          <div class="dataTables_wrapper dt-bootstrap4">
-                            <table
-                              class="table"
-                              style="width: 100%"
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                v-if="hasSavedEvaluators"
+                class="card"
+              >
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="dataTables_wrapper dt-bootstrap4">
+                        <table
+                          class="table"
+                          style="width: 100%"
+                        >
+                          <thead>
+                            <tr>
+                              <th>Sıra</th>
+                              <th>Ad Soyad</th>
+                              <th>Kod</th>
+                              <th>Yorum</th>
+                              <th>Puan</th>
+                              <th>Tarih</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(elector, index) in savedEvaluators"
+                              :key="index"
                             >
-                              <thead>
-                                <tr>
-                                  <th>Sıra</th>
-                                  <th>Ad Soyad</th>
-                                  <th>Kod</th>
-                                  <th>Yorum</th>
-                                  <th>Puan</th>
-                                  <th>Tarih</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr
-                                  v-for="(elector, index) in savedEvaluators"
-                                  :key="index"
-                                >
-                                  <td>{{ index + 1 }}</td>
-                                  <td>{{ elector.full_name }}</td>
-                                  <td>{{ elector.code }}</td>
-                                  <td>{{ elector.comment }}</td>
-                                  <td>{{ elector.point }}</td>
-                                  <td>{{ elector.updated_at | trDate }}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+                              <td>{{ index + 1 }}</td>
+                              <td>{{ elector.full_name }}</td>
+                              <td>{{ elector.code }}</td>
+                              <td>{{ elector.comment }}</td>
+                              <td>{{ elector.point }}</td>
+                              <td>{{ elector.updated_at | trDate }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
@@ -123,7 +127,7 @@
               </div>
             </div>
           </div>
-          <timeline :question-id="$route.params.questionId" />
+          <timeline :question-id="Number($route.params.questionId)" />
         </div>
       </div>
     </template>
@@ -170,12 +174,16 @@ export default {
   computed: {
     checkForEvaluationReq () {
       if (this.question) {
-        return (this.$isInRole('admin') && this.question.status === QuestionStatuses.WAITING_FOR_ACTION) ||
-                (this.$isInRole('admin') && this.question.status === QuestionStatuses.REVISION_COMPLETED &&
-                (this.savedEvaluators !== null &&
-                this.savedEvaluators.filter(se => se.point !== null || se.point > 0).length > 0))
+        const res = (this.$isInRole('admin') && this.question.status === QuestionStatuses.WAITING_FOR_ACTION) ||
+                (this.$isInRole('admin') && this.question.status === QuestionStatuses.REVISION_COMPLETED) // &&
+                // (this.savedEvaluators !== null &&
+                // this.savedEvaluators.filter(se => se.point !== null || se.point > 0).length > 0))
+        return res
       }
       return false
+    },
+    hasSavedEvaluators () {
+      return this.savedEvaluators && this.savedEvaluators.length > 0
     }
   },
   created () {

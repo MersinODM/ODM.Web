@@ -17,13 +17,15 @@
   -->
 
 <template>
-  <div class="row">
+  <div
+    v-if="isShow"
+    class="row"
+  >
     <spinner
       v-if="isLoading"
       spin-style="double_bounce"
     />
     <div
-      v-if="questionId !== '' && Number(questionId) > 0"
       class="col-md-12"
     >
       <div class="card">
@@ -101,12 +103,23 @@ import Spinner from '../Spinner'
 export default {
   name: 'Timeline',
   components: { Spinner },
-  props: ['questionId'],
+  props: {
+    questionId: {
+      type: Number,
+      required: true,
+      default: 0
+    }
+  },
   data: () => ({
     userImage: userImage,
     questionEvents: [],
     isLoading: false
   }),
+  computed: {
+    isShow () {
+      return this.questionId > 0 && this.questionEvents.length > 0
+    }
+  },
   watch: {
     questionId () {
       this.getAllQuestionEvents()

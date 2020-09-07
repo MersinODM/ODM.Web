@@ -46,7 +46,7 @@
             v-if="canShowEvalMenus"
             :question="question"
           />
-          <timeline :question-id="questionId" />
+          <timeline :question-id="Number(questionId)" />
         </div>
       </div>
     </template>
@@ -77,7 +77,7 @@ export default {
   computed: {
     canShowEvalMenus () {
       return this.$isInRole('admin') &&
-        this.question.status === QuestionStatuses.IN_ELECTION
+        this.question?.status === QuestionStatuses.IN_ELECTION
     }
   },
   created () {
