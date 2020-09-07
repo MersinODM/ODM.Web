@@ -16,13 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-<!--
-  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
-  -  geliştirilen bütün kaynak kodlar
-  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
-  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
-  -->
-
 <template>
   <page>
     <template v-slot:header>
@@ -38,10 +31,7 @@
                   <form
                     @submit.prevent
                   >
-                    <div
-                      class="form-group has-feedback"
-                      :class="{'has-error': errors.has('branch')}"
-                    >
+                    <div class="form-group">
                       <label>Ders/Alan Seçimi</label>
                       <v-select
                         ref="branchRef"
@@ -49,6 +39,7 @@
                         v-validate="'required'"
                         :options="branches"
                         :reduce="branch => branch.id"
+                        :class="{'is-invalid': errors.has('branch')}"
                         label="name"
                         name="branch"
                         placeholder="Alan/Ders seçimini yapınız"
@@ -64,16 +55,14 @@
                       <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                       <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                     </div>
-                    <div
-                      class="form-group has-feedback"
-                      :class="{'has-error': errors.has('selectedClassLevel')}"
-                    >
+                    <div class="form-group has-feedback">
                       <label>Sınıf Seviyesi Seçimi</label>
                       <v-select
                         ref="classLevelRef"
                         v-model="selectedClassLevel"
                         v-validate="'required'"
                         :options="classLevels"
+                        :class="{'is-invalid': errors.has('selectedClassLevel')}"
                         name="selectedClassLevel"
                         placeholder="Sınıf seviyesini seçiniz"
                       >
@@ -88,46 +77,47 @@
                       <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
                       <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                     </div>
-                    <div
-                      :class="{'has-error': errors.has('code')}"
-                      class="form-group has-feedback"
-                    >
+                    <div class="form-group">
                       <label>Kazanım Kodu</label>
-                      <input
-                        v-model="code"
-                        v-validate="'required|min:3'"
-                        name="code"
-                        type="text"
-                        class="form-control"
-                        placeholder="Kazanım kodunu giriniz"
-                      >
-                      <span class="mdi mdi-barcode form-control-feedback" />
-                      <span
-                        v-if="errors.has('code')"
-                        class="error invalid-feedback"
-                      >{{ errors.first('code') }}</span>
+                      <div class="input-group mb-3">
+                        <input
+                          v-model="code"
+                          v-validate="'required|min:3'"
+                          name="code"
+                          type="text"
+                          class="form-control"
+                          :class="{'is-invalid': errors.has('code')}"
+                          placeholder="Kazanım kodunu giriniz"
+                        >
+                        <div class="input-group-append">
+                          <div class="input-group-text">
+                            <span class="mdi mdi-barcode form-control-feedback" />
+                          </div>
+                        </div>
+                        <span
+                          v-if="errors.has('code')"
+                          class="error invalid-feedback"
+                        >{{ errors.first('code') }}</span>
+                      </div>
                     </div>
-                    <div
-                      :class="{'has-error': errors.has('content')}"
-                      class="form-group has-feedback"
-                    >
+                    <div class="form-group mb-3">
                       <label>Kazanım</label>
                       <textarea
                         v-model="content"
                         v-validate="'required|min:3'"
                         name="content"
                         class="form-control"
+                        :class="{'is-invalid': errors.has('content')}"
                         rows="2"
                         style="max-width: 100%; min-width: 100%; min-height: 50px"
                         placeholder="Kazanım içeriğini giriniz"
                       />
-                      <span class="mdi mdi-flagform-control-feedback" />
                       <span
                         v-if="errors.has('content')"
                         class="error invalid-feedback"
                       >{{ errors.first('content') }}</span>
                     </div>
-                    <div class="form-group has-feedback">
+                    <div class="form-group mb-3">
                       <label>Açıklama</label>
                       <textarea
                         v-model="description"
@@ -135,10 +125,9 @@
                         style="max-width: 100%; min-width: 100%; min-height: 50px"
                         placeholder="İsteğe bağlı"
                       />
-                      <span class="mdi mdi-file-edit form-control-feedback" />
                     </div>
                     <div class="row">
-                      <div class="col-xs-offset-4 col-xs-4">
+                      <div class="col-md-12">
                         <button
                           :class="{ disabled : errors.any() || isSending }"
                           type="submit"

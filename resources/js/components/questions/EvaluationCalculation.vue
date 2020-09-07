@@ -132,15 +132,25 @@ export default {
     selectedEvaluators: [],
     allElectors: [],
     questionEvaluations: [],
-    code: null
+    code: ''
   }),
   computed: {
     hasPoint (currentElection) {
       return !!currentElection.point
     }
   },
+  watch: {
+    questionEvaluations () {
+      if (this.questionEvaluations.length <= 0) {
+        Messenger.showWarning('Mevcut gruptan tüm değerlendirciler silinmiş yeni değerlendirme grubu ataması yapmanız gerekiyor! Sizi bir önceki menüye yönlendiriyoruz')
+          .then(() => this.$router.push({ name: 'questionTableList' }))
+      }
+    }
+  },
   created () {
-    setTimeout(() => { this.loadData() }, 1000)
+    setTimeout(() => {
+      this.loadData()
+    }, 1000)
   },
   methods: {
     removeEvalRequest (id) {
@@ -191,7 +201,7 @@ export default {
       Messenger.showPrompt('Bu soruya ait değerlendirme puanını elle hesaplamak istediğinizden emin misiniz?')
         .then((result) => {
           if (result.isConfirmed) {
-            QuestionEvaluationService.manuallyCalculate(this.question.id, this.questionEvaluations[0].code)
+            QuestionEvaluationService.manuallyCalculate(this.question.id, this.questionEvaluations[0]?.code)
               .then((result) => {
                 switch (result.code) {
                   case ResponseCodes.CODE_SUCCESS: {
@@ -204,7 +214,9 @@ export default {
                   }
                 }
               })
-              .catch((e) => { Messenger.showError('Hesaplama sırasında bir hata meydana geldi!') })
+              .catch((e) => {
+                Messenger.showError('Hesaplama sırasında bir hata meydana geldi!')
+              })
           }
         })
     },
@@ -216,9 +228,12 @@ export default {
         .then(([questionEvaluations, electors]) => {
           this.questionEvaluations = questionEvaluations
           this.allElectors = electors.filter(elector => !questionEvaluations.find(e => e.elector_id === elector.id))
-          this.code = questionEvaluations[0].code
+          this.code = questionEvaluations[0]?.code
         })
-        .catch(reason => Messenger.showError('Üzgünüz bu soruyla ilgili gerekli yüklememleri yapamadık!'))
+        .catch(reason => {
+          console.log(reason)
+          Messenger.showError('Üzgünüz bu soruyla ilgili gerekli yüklememleri yapamadık!')
+        })
     }
   }
 }

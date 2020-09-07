@@ -14,6 +14,13 @@ alter table exams
 alter table exams
     add code varchar(50) null after purpose_id;
 
+alter table settings modify captcha_enabled varchar(500) null after captcha_public_key ;
+
+alter table settings
+    add will_the_electors_be_emailed bool default false null after captcha_enabled;
+
+UPDATE settings SET will_the_electors_be_emailed = false;
+
 create table exam_purposes
 (
     id         int          not null,
@@ -49,3 +56,5 @@ WHERE id IN (6, 7, 8, 9, 10, 11, 13, 14);
 UPDATE branches
 SET class_levels = "8,12"
 WHERE id = 15;
+
+

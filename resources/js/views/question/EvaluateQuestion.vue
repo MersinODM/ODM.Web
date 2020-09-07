@@ -51,14 +51,9 @@
                 </div>
                 <div class="card-body">
                   <div class="col-md-12">
-                    <div
-                      class="row"
-                    >
-                      <div class="col-md-offset-4 col-md-4">
-                        <div
-                          class="form-group has-feedback"
-                          :class="{'has-error': errors.has('evalPoint')}"
-                        >
+                    <div class="row justify-content-md-center">
+                      <div class="col-md-4">
+                        <div class="form-group">
                           <label>Değerlendirme Puanı</label>
                           <v-select
                             v-model="point"
@@ -66,6 +61,7 @@
                             :options="points"
                             :reduce="p => p.key"
                             label="title"
+                            :class="{'is-invalid': errors.has('evalPoint')}"
                             name="evalPoint"
                             placeholder="Puanınızı seçiniz"
                           >
@@ -86,31 +82,25 @@
                             v-if="errors.has('evalPoint')"
                             class="error invalid-feedback"
                           >{{ errors.first('evalPoint') }}</span>
-                          <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                          <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
                         </div>
-                        <div
-                          v-if="point <= 3"
-                          class="form-group has-feedback"
-                          :class="{'has-error': errors.has('evalComment')}"
-                        >
+                        <div class="form-group">
                           <textarea
                             v-model="comment"
                             v-validate="'required'"
                             name="evalComment"
                             class="form-control"
                             style="max-width: 100%; min-width: 100%; min-height: 60px"
+                            :class="{'is-invalid': errors.has('evalComment')}"
                             placeholder="Değerlendirmenizi kısaca açıklayınız."
                           />
-                          <span class="glyphicon glyphicon-magnet form-control-feedback" />
                           <span
                             v-if="errors.has('evalComment')"
                             class="error invalid-feedback"
                           >{{ errors.first('evalComment') }}</span>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-md-offset-5 col-md-2">
+                      <div class="row justify-content-md-center">
+                        <div class="col-md-4">
                           <div class="text-center">
                             <button
                               class="btn btn-success"

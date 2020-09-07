@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <page>
     <template v-slot:header>
@@ -271,6 +269,16 @@
                       {{ settings.captcha_enabled ? 'Açık' : 'Kapalı' }}
                     </p-check>
                   </div>
+                  <div class="form-group has-feedback">
+                    <label>Kom. üyelerine değerlendirme atamada e-posta atılsın mı? </label>
+                    <p-check
+                      v-model="settings.will_the_electors_be_emailed"
+                      class="p-switch p-fill"
+                      color="success"
+                    >
+                      {{ settings.will_the_electors_be_emailed ? 'Evet' : 'Hayır' }}
+                    </p-check>
+                  </div>
                 </div>
               </div>
               <div class="row justify-content-md-center">
@@ -297,10 +305,11 @@
 import { SettingService } from '../../services/SettingService'
 import Messenger from '../../helpers/messenger'
 import Page from '../../components/Page'
+import PCheck from 'pretty-checkbox-vue/check'
 
 export default {
   name: 'AppSettings',
-  components: { Page },
+  components: { Page, PCheck },
   data: () => ({
     isSending: false,
     settings: {}

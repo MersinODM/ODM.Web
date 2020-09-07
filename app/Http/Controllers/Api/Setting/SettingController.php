@@ -88,7 +88,8 @@ class SettingController extends ApiController
             'captcha_private_key',
             'email',
             'address',
-            'captcha_enabled'
+            'captcha_enabled',
+            'will_the_electors_be_emailed'
             ]));
     }
 
@@ -107,6 +108,7 @@ class SettingController extends ApiController
             'email',
             'address',
             'captcha_enabled',
+            'will_the_electors_be_emailed'
         ]);
 
         if ($validationResult) {
@@ -130,7 +132,8 @@ class SettingController extends ApiController
                 'captcha_private_key' => $request->get('captcha_private_key'),
                 'email' => $request->get('email'),
                 'address' => $request->get('address'),
-                'captcha_enabled' => $request->get('captcha_enabled')
+                'captcha_enabled' => $request->get('captcha_enabled'),
+                'will_the_electors_be_emailed' => $request->get('will_the_electors_be_emailed')
             ]);
             DB::commit();
             return response()->json([

@@ -35,6 +35,7 @@ class Setting extends Model
         'captcha_private_key',
         'email',
         'address',
-        'captcha_enabled'
+        'captcha_enabled',
+        'will_the_electors_be_emailed'
     ];
 }

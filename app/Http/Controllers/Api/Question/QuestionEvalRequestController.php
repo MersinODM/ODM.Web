@@ -27,6 +27,7 @@ use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
 use App\Models\Question;
 use App\Models\QuestionEvalRequest;
+use App\Models\Setting;
 use App\Rules\CheckElectorCount;
 use App\Traits\QuestionEvalTraits;
 use Carbon\Carbon;
@@ -66,6 +67,7 @@ class QuestionEvalRequestController extends ApiController
         $code = strtoupper(Str::random(6));
         try {
             DB::beginTransaction();
+            $isSendEmailToElectors = Setting::first()->will_the_electors_be_emailed;
             $lessonId = Question::find($questionId)->lesson_id;
             foreach ($electors as $elector) {
                 $qevalReq = new QuestionEvalRequest([
@@ -81,10 +83,13 @@ class QuestionEvalRequestController extends ApiController
                 ->orWhere('status', Question::REVISION_COMPLETED)
                 ->update(['status' => Question::IN_ELECTION]);
             DB::commit();
-            //Değerlendiriciye mail atılıyor
-//            foreach ($electors as $elector) {
-//                event(new NewEvalReqEvent($lessonId, $elector['id']));
-//            }
+            //Değerlendiricilere mail atılsın mı?
+            if ($isSendEmailToElectors) {
+                //Değerlendiriciye mail atılıyor
+                foreach ($electors as $elector) {
+                    event(new NewEvalReqEvent($lessonId, $elector['id']));
+                }
+            }
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
@@ -117,6 +122,7 @@ class QuestionEvalRequestController extends ApiController
 //        $questionId = $request->input('question_id');
         try {
             DB::beginTransaction();
+            $isSendEmailToElectors = Setting::first()->will_the_electors_be_emailed;
             foreach ($electors as $elector) {
                 $qevalReq = new QuestionEvalRequest([
                     'elector_id' => $elector,
@@ -127,11 +133,13 @@ class QuestionEvalRequestController extends ApiController
                 $qevalReq->save();
             }
             DB::commit();
-            // TODO Ayarlara bir alan daha eklenip paramaterik hale getirilebilir.
-            $lessonId = Question::find($questionId)->lesson_id;
-//            foreach ($electors as $elector) {
-//                event(new NewEvalReqEvent($lessonId, $elector));
-//            }
+            // Değerlendiricilere mail atılsın mı?
+            if ($isSendEmailToElectors) {
+                $lessonId = Question::find($questionId)->lesson_id;
+                foreach ($electors as $elector) {
+                    event(new NewEvalReqEvent($lessonId, $elector));
+                }
+            }
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => 'Gruba yeni değerlendirici(lerin) kaydı başarıyla yapıldı.'
@@ -146,9 +154,15 @@ class QuestionEvalRequestController extends ApiController
     {
         try {
             $qer = QuestionEvalRequest::findOrFail($id);
+            $questionId = $qer->question_id;
             if (isset($qer->point)|| $qer->point <= 0) {
                 DB::beginTransaction();
                 $qer->delete();
+                $qerCount = QuestionEvalRequest::where('code', $qer->code)->count();
+                if ($qerCount === 0) {
+                    Question::where('id', $questionId)
+                        ->update(['status' => Question::WAITING_FOR_ACTION]);
+                }
                 DB::commit();
                 // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
                 // event(new QuestionEvalCalculateRequired($qer));

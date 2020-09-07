@@ -54,15 +54,13 @@
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <div
-                      class="form-group has-feedback"
-                      :class="{'has-error': errors.has('searchedContent')}"
-                    >
+                    <div class="form-group has-feedback">
                       <input
                         v-model="searchedContent"
                         v-validate="'required|min:3'"
                         name="searchedContent"
                         class="form-control"
+                        :class="{'is-invalid': errors.has('searchedContent')}"
                         type="text"
                         placeholder="Aranacak içerik"
                       >
