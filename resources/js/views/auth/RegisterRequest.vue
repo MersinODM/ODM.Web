@@ -16,13 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-<!--
-  -  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
-  -  geliştirilen bütün kaynak kodlar
-  -  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
-  -   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
-  -->
-
 <template>
   <div class="register-box mt-4">
     <div class="register-logo">
@@ -181,7 +174,7 @@
         </router-link>
       </div>
     </div>
-    <licence-login />
+    <licence-info />
   </div>
 </template>
 
@@ -195,12 +188,12 @@ import BranchService from '../../services/BranchService'
 import InstitutionService from '../../services/InstitutionService'
 import AuthService from '../../services/AuthService'
 import { sanitizeUrl } from '@braintree/sanitize-url'
-import LicenceLogin from '../../components/LicenceLogin'
+import LicenceInfo from '../../components/LicenceInfo'
 import SkinHelper from '../../helpers/SkinHelper'
 
 export default {
   name: 'RegisterRequest',
-  components: { LicenceLogin, vSelect, vueRecaptcha },
+  components: { LicenceInfo, vSelect, vueRecaptcha },
   data () {
     return {
       full_name: '',

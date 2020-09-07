@@ -44,7 +44,7 @@
 
 <script>
 export default {
-  name: 'LicenceLogin'
+  name: 'LicenceInfo'
 }
 </script>
 

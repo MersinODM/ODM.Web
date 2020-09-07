@@ -100,7 +100,7 @@
           </div>
         </div>
       </div>
-      <licence-login />
+      <licence-info />
       <spinner
         v-if="isSending"
         spin-style="wave"
@@ -116,12 +116,12 @@ import vueRecaptcha from 'vue-recaptcha/dist/vue-recaptcha.min'
 import AuthService from '../../services/AuthService'
 import Constants, { MessengerConstants } from '../../helpers/constants'
 import { sanitizeUrl } from '@braintree/sanitize-url'
-import LicenceLogin from '../../components/LicenceLogin'
+import LicenceInfo from '../../components/LicenceInfo'
 import SkinHelper from '../../helpers/SkinHelper'
 
 export default {
   name: 'ResetPassword',
-  components: { LicenceLogin, Spinner, vueRecaptcha },
+  components: { LicenceInfo, Spinner, vueRecaptcha },
   data () {
     return {
       email: '',

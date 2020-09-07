@@ -190,8 +190,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.name === 'login' ||
         to.name === 'register' ||
-        to.name === 'forgotMyPassword' ||
-        to.name === 'passwordReset'
+        to.name === 'forgotMyPassword'
   ) {
     next()
   } else {

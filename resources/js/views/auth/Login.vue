@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <div class="login-box mt-4">
     <div class="login-logo">
@@ -127,7 +125,7 @@
         </router-link>
       </div>
     </div>
-    <licence-login />
+    <licence-info />
   </div>
 </template>
 
@@ -136,7 +134,7 @@ import Messenger from '../../helpers/messenger'
 import vueRecaptcha from 'vue-recaptcha'
 import { sanitizeUrl } from '@braintree/sanitize-url'
 import { ResponseCodes } from '../../helpers/constants'
-import LicenceLogin from '../../components/LicenceLogin'
+import LicenceInfo from '../../components/LicenceInfo'
 import SkinHelper from '../../helpers/SkinHelper'
 import Auth from '../../services/AuthService'
 import { mapActions } from 'vuex'
@@ -144,7 +142,7 @@ import store from '../../store'
 
 export default {
   name: 'Login',
-  components: { LicenceLogin, vueRecaptcha },
+  components: { LicenceInfo, vueRecaptcha },
   data: () => ({
     recaptchaVerified: false,
     captchaToken: '',
