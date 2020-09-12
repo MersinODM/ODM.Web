@@ -1,8 +1,19 @@
 /*!
- *  Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup
- *  geliştirilen bütün kaynak kodlar
- *  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) ile lisanslanmıştır.
- *   Ayrıntılı lisans bilgisi için https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.tr sayfasını ziyaret edebilirsiniz.2019
+ * ODM.Web  https://github.com/electropsycho/ODM.Web
+ * Copyright (C) 2020 Hakan GÜLEN
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
 
@@ -19,7 +30,7 @@
 @import '~admin-lte/plugins/sweetalert2/sweetalert2.min.css';
 //@import '~font-awesome/css/font-awesome.min.css';
 //@import '~ionicons/dist/css/ionicons.min.css';
-//@import '~@mdi/font/css/materialdesignicons.min.css';
+@import '~@mdi/font/scss/materialdesignicons';
 @import '~pretty-checkbox/dist/pretty-checkbox.min.css';
 //@import '~pace-js/themes/orange/pace-theme-minimal.css';
 @import "~animate.css/animate.min.css";
@@ -28,6 +39,19 @@
 @import '~pace-progressbar/themes/red/pace-theme-minimal.css';
 @import '~vue2-datepicker/index.css';
 
+
+//@font-face {
+//  font-family:Material Design Icons;
+//  src:url(../public/fonts/materialdesignicons-webfont.eot?v=5.5.55);
+//  src:url(../public/fonts/materialdesignicons-webfont.eot?#iefix&v=5.5.55)
+//  format("embedded-opentype"),
+//  url(../public/fonts/materialdesignicons-webfont.woff2?v=5.5.55)
+//  format("woff2"),
+//  url(../public/fonts/materialdesignicons-webfont.woff?v=5.5.55) format("woff"),
+//  url(../public/fonts/materialdesignicons-webfont.ttf?v=5.5.55) format("truetype");
+//  font-weight:400;
+//  font-style:normal
+//}
 
 .disabled {
   pointer-events: none;

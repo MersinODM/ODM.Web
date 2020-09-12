@@ -23,6 +23,7 @@
         "compression-webpack-plugin": "^4.0.0",
         "cross-env": "^7.0.2",
         "css-loader": "^3.5.3",
+        "dotenv": "^8.2.0",
         "eslint": "^6.8.0",
         "eslint-config-standard": "^14.1.1",
         "eslint-plugin-babel": "^5.3.1",

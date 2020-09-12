@@ -4,6 +4,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
+require('dotenv').config()
 
 // mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
@@ -44,12 +45,13 @@ mix.webpackConfig({
 // })
 
 mix.copyDirectory('resources/images', 'public/images')
-mix.copy('node_modules/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css')
-// mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
-// mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
+// mix.copy('node_modules/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css')
+mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 
 mix.js('resources/js/main.js', 'public/js')
-  .sass('resources/sass/app.scss', 'public/css')
+  .sass('resources/sass/app.scss', 'public/css', {
+    prependData: '$env:\'' + process.env.NODE_ENV + '\';'
+  })
   .options({
     processCssUrls: false
   })
@@ -65,6 +67,7 @@ mix.js('resources/js/main.js', 'public/js')
 
 if (!mix.inProduction()) {
   mix.sourceMaps()
+  mix.webpackConfig({ devtool: 'inline-source-map' })
 }
 
 if (mix.inProduction()) {
