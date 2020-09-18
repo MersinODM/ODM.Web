@@ -99,17 +99,15 @@
                           >{{ errors.first('evalComment') }}</span>
                         </div>
                       </div>
-                      <div class="row justify-content-md-center">
-                        <div class="col-md-4">
-                          <div class="text-center">
-                            <button
-                              class="btn btn-success"
-                              @click="saveEval"
-                            >
-                              KAYDET
-                            </button>
-                          </div>
-                        </div>
+                    </div>
+                    <div class="row justify-content-md-center">
+                      <div class="col-md-4">
+                        <button
+                          class="btn btn-success btn-block"
+                          @click="saveEval"
+                        >
+                          KAYDET
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -169,7 +167,7 @@ export default {
           vm.question = res
           vm.getFile()
           vm.questionId = questionId
-          // vm.getEvals()
+          vm.getEvals()
         })
       })
   },
@@ -202,14 +200,14 @@ export default {
         .then(value => { this.question = value })
         .catch(reason => Messenger.showError(reason))
     },
-    // getEvals () {
-    //   QuestionEvaluationService.findByQuestionId(this.question.id)
-    //     .then(qeList => {
-    //       this.evaluationList = qeList
-    //       this.filteredEvalList = qeList.filter(q => q.point !== null && q.point > 0)
-    //     })
-    //     .catch(() => Messenger.showError('Değerlendirme listesi yüklenemedi!'))
-    // },
+    getEvals () {
+      QuestionEvaluationService.findByQuestionId(this.question.id)
+        .then(qeList => {
+          this.evaluationList = qeList
+          this.filteredEvalList = qeList.filter(q => q.point !== null && q.point > 0)
+        })
+        .catch(() => Messenger.showError('Değerlendirme listesi yüklenemedi!'))
+    },
     // getRevisions () {
     //   RevisionService.getRevisions(this.$route.params.questionId)
     //     .then((revisions) => {
@@ -217,22 +215,22 @@ export default {
     //     })
     //     .catch(() => Messenger.showError('Revizyonlar yüklenemedi!'))
     // },
-    saveEval () {
-      this.$validator.validateAll()
-        .then(value => {
-          if (!value) return
-          const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
-          if (this.point >= 4) data.comment = this.points.filter(p => p.key === this.point)[0].title
-          QuestionEvaluationService.save(this.question.id, data)
-            .then(res => {
-              Messenger.showInfo(res.message)
-              this.getEvals()
-              this.getQuestion()
-            })
-            .catch(() => {
-              Messenger.showError(Messenger.showError(MessengerConstants.errorMessage))
-            })
-        })
+    async saveEval () {
+      const validationResult = await this.$validator.validateAll()
+      if (!validationResult) return
+      const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
+      // if (this.point >= 4) data.comment = this.points.filter(p => p.key === this.point)[0].title
+      const promptRes = await Messenger.showPrompt('Değerlendirmenizi kaydetmek istediğinizden emin misiniz?')
+      if (promptRes.isConfirmed()) {
+        try {
+          const result = await QuestionEvaluationService.save(this.question.id, data)
+          await Messenger.showInfo(result.message)
+          this.getEvals()
+          this.getQuestion()
+        } catch (err) {
+          await Messenger.showError(err.message)
+        }
+      }
     }
   }
 }

@@ -260,7 +260,6 @@ export default {
     tempBranchesClassLevels: [],
     plannedDate: '',
     lang: tr
-    // hours: [...Array(10).keys()].map(i => i + 8) // 8-17 arası sına saati
   }),
   computed: {
     hasLessons () {
@@ -347,10 +346,9 @@ export default {
               planned_date: this.plannedDate,
               description: this.description,
               lessons: this.lessons.map(l => {
-                const lessonTmp = {
+                return {
                   id: l.id, question_count: l.question_count
                 }
-                return lessonTmp
               })
             }
             const exam = await ExamService.createAutoExam(data)

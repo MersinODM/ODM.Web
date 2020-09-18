@@ -33,16 +33,8 @@ mix.webpackConfig({
     'jquery.dataTables': 'jquery.dataTables',
     moment: 'moment',
     bootstrap: 'bootstrap'
-  }//,
-  // output: {
-  //   chunkFilename: '[name].js'
-  // }
+  }
 })
-
-// mix.babelConfig({
-//   presets: ['@babel/preset-env'],
-//   plugins: ['@babel/plugin-syntax-dynamic-import']
-// })
 
 mix.copyDirectory('resources/images', 'public/images')
 // mix.copy('node_modules/bootstrap/dist/css/bootstrap.min.css', 'public/css/bootstrap.min.css')
@@ -64,11 +56,12 @@ mix.js('resources/js/main.js', 'public/js')
     'vuex',
     'fastclick'
   ])
+  .sourceMaps(true, 'source-map')
 
-if (!mix.inProduction()) {
-  mix.sourceMaps()
-  mix.webpackConfig({ devtool: 'inline-source-map' })
-}
+// if (!mix.inProduction()) {
+//   mix.sourceMaps(false)
+//   // mix.webpackConfig({ devtool: 'inline-source-map' })
+// }
 
 if (mix.inProduction()) {
   mix.setResourceRoot('/otomasyon')

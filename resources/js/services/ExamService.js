@@ -17,39 +17,35 @@
  */
 
 import http from '../helpers/axios'
-import { integer } from 'vee-validate/dist/rules.esm'
 
 const ExamPurposeService = {
-  getPurposes () {
-    return new Promise((resolve, reject) => {
-      http.get('/exams/purposes')
-        .then(response => resolve(response.data))
-        .catch(error => reject(error))
-    })
+  async getPurposes () {
+    try {
+      const response = await http.get('/exams/purposes')
+      return response.data
+    } catch (error) {}
   }
 }
 
 const ExamService = {
-  createAutoExam (data) {
-    return new Promise((resolve, reject) => {
-      http.post('/exams/auto', data)
-        .then(response => resolve(response.data))
-        .catch(error => reject(error))
-    })
+  async createAutoExam (data) {
+    try {
+      const response = await http.post('/exams/auto', data)
+      return response.data
+    } catch (error) {}
   },
-  getExamFile (examId) {
-    return new Promise((resolve, reject) => {
-      http.get(`exams/${examId}/file`, { responseType: 'blob' })
-        .then(response => resolve({
-          file: response.data,
-          fileName: response.headers['content-disposition']
-            .split(';')
-            .find(n => n.includes('filename='))
-            .replace('filename=', '')
-            .trim()
-        }))
-        .catch(error => reject(error))
-    })
+  async getExamFile (examId) {
+    try {
+      const response = await http.get(`exams/${examId}/file`, { responseType: 'blob', errorHandler: true })
+      return {
+        file: response.data,
+        fileName: response.headers['content-disposition']
+          .split(';')
+          .find(n => n.includes('filename='))
+          .replace('filename=', '')
+          .trim()
+      }
+    } catch (error) {}
   }
 }
 

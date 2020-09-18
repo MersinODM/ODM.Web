@@ -45,7 +45,9 @@ class CustomPasswordResetController extends Controller
 
         $user = $this->broker()->getUser($credentials);
         if ($user === null) {
-            return response([ResponseKeys::MESSAGE =>  "Kullanıcı e-posta adresi bulunamadı!"], 404);
+            return response([
+                ResponseKeys::MESSAGE =>  "Kullanıcı e-posta adresi bulunamadı!"
+            ], 404);
         }
 
         $isExist =  $this->broker()->tokenExists($user, $credentials["token"]);
@@ -55,7 +57,8 @@ class CustomPasswordResetController extends Controller
                 $this->resetPassword($user, $pass);
             });
             if ($result === PasswordBroker::PASSWORD_RESET) {
-                return view("app");
+                $settings = Setting::first();
+                return view('app', ['city' => $settings->city]);
             }
             return redirect()
                 ->back()
@@ -68,7 +71,8 @@ class CustomPasswordResetController extends Controller
             ->withErrors([ResponseKeys::MESSAGE =>  "Şifre değiştirme bağlantısının süresi geçmiş olabilir.\nŞifremi unuttum diyerek tekrar bağlantı alabilirsiniz!"]);
     }
 
-    protected function resetPassword($user, $password) {
+    protected function resetPassword($user, $password): void
+    {
         $user->password = Hash::make($password);
         $user->activation_date = Carbon::now();
         $user->setRememberToken(Str::random(60));

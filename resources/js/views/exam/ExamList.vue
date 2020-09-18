@@ -214,11 +214,14 @@ export default {
       if (!promptRes.isConfirmed) return
       const loader = vm.$loading.show()
       const data = table.row($(e.toElement).parents('tr')[0]).data()
-      const fileInfo = await ExamService.getExamFile(data?.id)
-      FileSaver.save(fileInfo.file, fileInfo.fileName)
-      loader.hide()
-      // console.log(data);
-      // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
+      try {
+        const fileInfo = await ExamService.getExamFile(data?.id)
+        FileSaver.save(fileInfo.file, fileInfo.fileName)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        loader.hide()
+      }
     })
 
     // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event

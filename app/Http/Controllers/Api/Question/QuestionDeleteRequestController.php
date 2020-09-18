@@ -76,6 +76,8 @@ class QuestionDeleteRequestController extends ApiController
     }
 
     public function approveDeleteRequest($id) {
+        $fileName='';
+        $question=null;
         try {
             $qdr = QuestionDeleteRequest::findOrFail($id);
             $question = Question::findOrFail($qdr->question_id);
@@ -88,9 +90,9 @@ class QuestionDeleteRequestController extends ApiController
                 "comment" => $qdr->comment . " Soru Dosyası:" . $fileName
             ]);
             // Soru silinmeden önce tüm artıklar temizlenmeli
-            QuestionEvalRequest::where('question_id', $id)
+            QuestionEvalRequest::where('question_id', $question->id)
                 ->delete();
-            QuestionRevisions::where('question_id', $id)
+            QuestionRevisions::where('question_id', $question->id)
                 ->delete();
             $question->delete();
             // Soru dosyasını silmek yerine çöpe atıyoruz
@@ -103,6 +105,9 @@ class QuestionDeleteRequestController extends ApiController
         }
         catch (\Exception $exception) {
             DB::rollBack();
+            if (Storage::exists('public/trash/'.$fileName)) {
+                Storage::move('public/trash/'.$fileName, $question->content_url);
+            }
             return response()->json($this->apiException($exception), 500);
         }
     }

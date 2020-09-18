@@ -1,6 +1,8 @@
 @extends('reports.ReportTemplate')
 
 @section('title', $exam->code.' Kodlu Sınav')
+{{--@section('memLogo', $memLogo)--}}
+{{--@section('odmLogo', $odmLogo)--}}
 @section('city', mb_strtoupper(str_replace("i", "İ", $settings->city)))
 {{--@section('reportHeader', $exam->code.' Kodlu Sınav Ayrıntıları Raporu')--}}
 

@@ -81,7 +81,8 @@
     <table width="100%">
         <tr>
             <td align="left" style="width: 20%;">
-                <img src="{{public_path('images/MEM-Logo.png')}}" alt="Logo" width="64" class="logo"/>
+{{--                <img src="@yield('memLogo')" alt="Logo" width="64" class="logo"/>--}}
+                <img src="./images/MEM-Logo.jpg" alt="Logo" width="64" class="logo"/>
             <td align="center">
                 <h3 style="margin:0;">T.C.</h3>
                 <h3 style="margin:0;">@yield('city') VALİLİĞİ</h3>
@@ -89,7 +90,7 @@
                 <h4 style="margin:0;">Ölçme Değerlendirme Merkezi</h4>
             </td>
             <td align="right" style="width: 20%;">
-                <img src="{{public_path('images/Logo.png')}}" alt="Logo" width="64" class="logo"/>
+                <img src="./images/Logo.jpg" alt="Logo" width="64" class="logo"/>
             </td>
         </tr>
     </table>

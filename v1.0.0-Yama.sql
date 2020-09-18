@@ -1,3 +1,6 @@
+alter table questions
+	add is_design_required bool null after status;
+
 alter table exams
     change status_id status int unsigned not null;
 

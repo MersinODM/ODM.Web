@@ -33,6 +33,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -298,12 +299,27 @@ class ExamController extends ApiController
             ->get();
 
 //        return view('reports.exams.ExamReport', ['settings' => $settings, 'exam' => $exam]);
-        PDF::setOptions(['isRemoteEnabled' => true]);
+        PDF::setOptions([
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled', true,
+            'tempDir' => Storage::disk('local')->path('public/trash/')
+        ]);
+//        $memLogo = 'data:image/png;base64,'.base64_encode(File::get(public_path('images/MEM-Logo.png')));
+//        $odmLogo = 'data:image/png;base64,'.base64_encode(File::get(public_path('images/Logo.png')));
+
         $pdf = PDF::loadView('reports.exams.ExamReport', [
             'settings' => $settings,
             'exam' => $exam,
             'questions' => $questions
         ]);
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer' => FALSE,
+                'verify_peer_name' => FALSE,
+                'allow_self_signed'=> TRUE
+            ]
+        ]);
+        $pdf->getDomPDF()->setHttpContext($context);
 //        return $pdf->download($exam->code . '-Exam-Report.pdf');
         $reportFileName = 'Sınav Raporu-'.$exam->code.'.pdf';
         $reportFilePath = 'public/trash/' . $reportFileName;

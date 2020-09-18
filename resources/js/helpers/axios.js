@@ -16,7 +16,6 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-// import ProgressBar from 'progressbar.js/dist/progressbar.min'
 import Swal from 'admin-lte/plugins/sweetalert2/sweetalert2.all.min'
 import router from '../router'
 import Constants from './constants'
@@ -24,7 +23,21 @@ import pace from 'pace-progressbar'
 
 const axios = require('axios').default
 
-// var line = new ProgressBar.Line('#loading-bar')
+const isHandlerEnabled = (config = {}) => {
+  return !(!config?.errorHandler)
+}
+
+const handleError = (error) => {
+  if (isHandlerEnabled(error.config)) {
+    // VanillaToasts.create({
+    //   title: `Request failed: ${error.response.status}`,
+    //   text: `Unfortunately error happened during request: ${error.config.url}`,
+    //   type: 'warning',
+    //   timeout: TIMEOUT
+    // })
+  }
+  return Promise.reject({ ...error })
+}
 
 const domain = document.querySelector('meta[name="base-url"]').getAttribute('content')
 const http = axios.create({
@@ -49,6 +62,9 @@ http.interceptors.response.use((response) => {
   // pace.stop()
   return response
 }, (error) => {
+  if (error.config?.errorHandle === false) {
+    return Promise.reject(error)
+  }
   if (error.response.status === 401) {
     Swal.fire({
       title: 'Oturum süreniz dolmuştur',
@@ -68,20 +84,28 @@ http.interceptors.response.use((response) => {
 http.interceptors.response.use((response) => {
   // pace.stop()
   return response
-}, (error) => {
+}, async (error) => {
   if (error.response.status === 422) {
     const validationMessages = Object.entries(error.response.data)
       .map(entry => entry[1])
       .join('<br>')
     const msg = `Aşağıdaki veri doğrulama hataları giderilmelidir.<br><b>${validationMessages}</b>`
-    Swal.fire({
+    await Swal.fire({
       title: 'Veri doğrulama hatası!',
       html: msg,
       icon: 'warning',
       confirmButtonText: 'Tamam'
-    }).then(() => {
-      pace.stop()
     })
+    pace.stop()
+  } else if (error.response.status === 500) {
+    const msg = 'Maalesef sunucu taraflı bir hata meydana geldi. Lütfen sistem yöneticinize başvurunuz.'
+    await Swal.fire({
+      title: 'Sistem hatası!',
+      html: msg,
+      icon: 'error',
+      confirmButtonText: 'Tamam'
+    })
+    pace.stop()
   }
   return Promise.reject(error)
 })
