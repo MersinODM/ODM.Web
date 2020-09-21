@@ -56,6 +56,21 @@ const Mutations = {
   SET_GENERAL_INFO: 'setGeneralInfo'
 }
 
-export { MessengerConstants, ResponseCodes, Mutations, MessageKeys }
+const MutationsLO = {
+  CURRENT_PAGE: 'currentPage',
+  TOTAL_PAGES: 'totalPages',
+  PER_PAGE: 'perPage',
+  FROM: 'from',
+  TO: 'to',
+  LAST_PAGE: 'lastPage'
+}
+
+export {
+  MessengerConstants,
+  ResponseCodes,
+  Mutations,
+  MutationsLO,
+  MessageKeys
+}
 
 export default Constants

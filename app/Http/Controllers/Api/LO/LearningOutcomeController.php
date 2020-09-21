@@ -24,6 +24,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\LearningOutcome;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +38,7 @@ class LearningOutcomeController extends ApiController
 {
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function create(Request $request)
     {
@@ -69,7 +70,7 @@ class LearningOutcomeController extends ApiController
     /**
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(Request $request, $id)
     {
@@ -98,7 +99,7 @@ class LearningOutcomeController extends ApiController
 
     /**
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function delete($id)
     {
@@ -120,7 +121,7 @@ class LearningOutcomeController extends ApiController
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function findByContentAndLessonIdAndClassLevel(Request $request)
     {
@@ -146,38 +147,47 @@ class LearningOutcomeController extends ApiController
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function findByContentWithPaging(Request $request)
+    public function searchWithPaging(Request $request): JsonResponse
     {
-        $validationResult = $this->apiValidator($request, [
-            "searched_content" => "required",
-        ]);
-
-        if ($validationResult) {
-            return response()->json($validationResult, 422);
-        }
-
         $content = $request->query("searched_content");
+        $branchId = $request->query("branch_id");
+        $classLevel = $request->query("class_level");
+        $perPage = $request->query("per_page");
+        if (!$perPage) { $perPage = 18; }
 
-        $result = DB::table("learning_outcomes as lo")
+        $query = DB::table("learning_outcomes as lo")
             ->join("branches as b", "lo.branch_id", "=", "b.id")
-            ->where("lo.code", "like", "%" . $content . "%")
-            ->orWhere("lo.content", "like", "%" . $content . "%")
+            ->orderBy('b.name')
+            ->orderBy('lo.class_level')
+            ->orderBy('lo.code')
             ->select("lo.id",
                 DB::raw("b.name as branch_name"),
                 "lo.class_level",
                 "lo.code",
                 "lo.content",
-                "lo.description")
-            ->get();
+                "lo.description");
+        if ($content) {
+            $query->where(static function ($wq) use ($content) {
+                $wq->where("lo.code", "like", "%" . $content . "%")
+                    ->orWhere("lo.content", "like", "%" . $content . "%");
+            });
+        }
+        if ($branchId) {
+            $query->where("b.id", $branchId);
+        }
+        if ($classLevel) {
+            $query->where("lo.class_level", $classLevel);
+        }
+        $result = $query->paginate($perPage);
 
         return response()->json($result);
     }
 
     /**
      * @param $size
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getLastSavedRecords($size) {
         !isset($size) ? $size = 18 : null;
@@ -198,7 +208,7 @@ class LearningOutcomeController extends ApiController
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function findBy(Request $request)
     {

@@ -16,22 +16,26 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-import Vue from 'vue'
-import Vuex from 'vuex'
-// import createPersistedState from 'store-persistedstate';
-// import authModule from './auth.store'
-// import questionModule from './question.store'
-// import { abilityPlugin } from './ability.store';
-import app from './modules/app'
-import learningOutcome from './modules/learningOutcome'
+import NewInstitution from '../views/institution/NewInstitution'
+import EditInstitution from '../views/institution/EditInstitution'
+import InstitutionList from '../views/institution/InstitutionList'
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store({
-  modules: {
-    app,
-    learningOutcome
+const questionRoutes = [
+  {
+    path: 'institutions/new',
+    name: 'newInst',
+    component: NewInstitution
+  },
+  {
+    path: 'institutions/:instId/edit',
+    name: 'editInst',
+    component: EditInstitution
+  },
+  {
+    path: 'institutions',
+    name: 'institutions',
+    component: InstitutionList
   }
-})
+]
 
-export default store
+export default questionRoutes

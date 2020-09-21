@@ -1,24 +1,7 @@
 <?php
 
 
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
 
 Route::group([
   'prefix' => 'auth'
@@ -34,7 +17,6 @@ Route::group([
     Route::get('general_info', 'Setting\SettingController@getGeneralInfo');
     
 });
-//Route::get('settings/migrate_up', "Setting\SettingController@migrateUp");
 
 //Bütün doğrulanması gereken api istekleri bu grup altına yazılacak
 //İstekler yapılırken http://tam_url/otomasyon/api/ nin arkasına ilgili istekler eklenecek
@@ -69,6 +51,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('learning_outcomes', "LO\LearningOutcomeController@create");
     Route::put('learning_outcomes/{id}', "LO\LearningOutcomeController@update");
     Route::delete('learning_outcomes/{id}', "LO\LearningOutcomeController@delete");
+    Route::get('learning_outcomes/search/with_paging', "LO\LearningOutcomeController@searchWithPaging");
     Route::get('learning_outcomes/findByClassLevelAndLessonId', "LO\LearningOutcomeController@findByClassLevelAndLessonId");
     Route::post('learning_outcomes/find_by/content_lesson_id_class_level', "LO\LearningOutcomeController@findByContentAndLessonIdAndClassLevel");
     Route::get('learning_outcomes/find_by/content', "LO\LearningOutcomeController@findByContentWithPaging");

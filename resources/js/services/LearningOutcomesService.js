@@ -65,12 +65,11 @@ const LearningOutcomesService = {
         .catch(error => reject(error))
     })
   },
-  findByCodeOrContentWithPaging (search) {
-    return new Promise((resolve, reject) => {
-      http.get('learning_outcomes/find_by/content', { params: search })
-        .then(res => resolve(res.data))
-        .catch(error => reject(error))
-    })
+  async findByCodeOrContentWithPaging (search) {
+    try {
+      const response = await http.get('learning_outcomes/search/with_paging', { params: search })
+      return response.data
+    } catch (error) {}
   },
   getLastSavedLOs (size) {
     return new Promise((resolve, reject) => {

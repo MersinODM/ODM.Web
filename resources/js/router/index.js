@@ -30,23 +30,14 @@ import User from '../views/user/User'
 import NewBranch from '../views/branch/NewBranch'
 import BranchList from '../views/branch/BranchList'
 import NewLearningOutcome from '../views/learningOutcome/NewLearningOutcome'
-import ShowQuestion from '../views/question/ShowQuestion'
-import SimpleNewQuestion from '../views/question/SimpleNewQuestion'
 import Stats from '../views/info/Stats'
 import LearningOutcomeList from '../views/learningOutcome/LearningOutcomeList'
-import NewInstitution from '../views/institution/NewInstitution'
 import PassiveUserList from '../views/user/PassiveUserList'
-import QuestionDeleteRequests from '../views/question/QuestionDeleteRequests'
-import QuestionTableList from '../views/question/QuestionTableList'
-import QuestionEvaluationRequestList from '../views/question/QuestionEvaluationRequestList'
-import EvaluateQuestion from '../views/question/EvaluateQuestion'
-import ReviseQuestion from '../views/question/ReviseQuestion'
-import SetEvaluatorsForQuestion from '../views/question/SetEvaluatorsForQuestion'
 import UnderConstruction from '../views/utils/UnderConstruction'
 import AppSettings from '../views/management/AppSettings'
-import InstitutionList from '../views/institution/InstitutionList'
-import EditInstitution from '../views/institution/EditInstitution'
-import examRoutes from './examRouter'
+import examRoutes from './examRoutes'
+import questionRoutes from './questionRoutes'
+import institutionRoutes from './institutionRoutes'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -75,51 +66,14 @@ const router = new Router({
       component: MasterView,
       children: [
         ...examRoutes,
+        ...questionRoutes,
+        ...institutionRoutes,
         {
           path: '',
           name: 'stats',
           component: Stats
         },
-        {
-          path: '/questions/new',
-          name: 'newQuestion',
-          component: SimpleNewQuestion
-        },
-        {
-          path: '/questions/list',
-          name: 'questionTableList',
-          component: QuestionTableList
-        },
-        {
-          path: '/questions/delete_requests',
-          name: 'questionDeleteRequests',
-          component: QuestionDeleteRequests
-        },
-        {
-          path: '/questions/eval_requests',
-          name: 'questionEvaluationRequests',
-          component: QuestionEvaluationRequestList
-        },
-        {
-          path: '/questions/:questionId',
-          name: 'showQuestion',
-          component: ShowQuestion
-        },
-        {
-          path: '/questions/:questionId/revise',
-          name: 'reviseQuestion',
-          component: ReviseQuestion
-        },
-        {
-          path: '/questions/:questionId/set_evaluators',
-          name: 'setEvaluators',
-          component: SetEvaluatorsForQuestion
-        },
-        {
-          path: '/questions/:questionId/evaluate/:qerId',
-          name: 'questionEvaluation',
-          component: EvaluateQuestion
-        },
+
         {
           path: '/learning_outcomes/new',
           name: 'newLO',
@@ -154,21 +108,6 @@ const router = new Router({
           path: '/branches/list',
           name: 'branchList',
           component: BranchList
-        },
-        {
-          path: 'institutions/new',
-          name: 'newInst',
-          component: NewInstitution
-        },
-        {
-          path: 'institutions/:instId/edit',
-          name: 'editInst',
-          component: EditInstitution
-        },
-        {
-          path: 'institutions',
-          name: 'institutions',
-          component: InstitutionList
         },
         {
           path: 'under_construction',

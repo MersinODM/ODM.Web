@@ -19,7 +19,9 @@
 <template>
   <page>
     <template v-slot:header>
-      <h4>Kazanım Listesi</h4>
+      <h4 class="mb-0">
+        Kazanım Listesi
+      </h4>
     </template>
     <template v-slot:content>
       <div class="col-12">
@@ -28,9 +30,8 @@
             <div class="card">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                     <div class="form-group has-feedback">
-                      <!--                    <label>Ders/Alan Seçiniz</label>-->
                       <v-select
                         v-model="branch"
                         v-validate="'required'"
@@ -39,18 +40,46 @@
                         :class="{'is-invalid': errors.has('branch')}"
                         label="name"
                         name="branch"
-                        placeholder="Alan/Ders Seçiniz"
+                        placeholder="Alan/Ders seçebilirsiniz"
                       >
                         <div slot="no-options">
                           Burada bişey bulamadık :-(
                         </div>
                       </v-select>
-                      <span
-                        v-if="errors.has('branch')"
-                        class="error invalid-feedback"
-                      >{{ errors.first('branch') }}</span>
-                      <!--          <input v-model="branch_id" type="text" class="form-control" placeholder="Branş Seçimi">-->
-                      <!--          <span class="glyphicon glyphicon-barcode form-control-feedback"></span>-->
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <div class="form-group has-feedback">
+                      <v-select
+                        v-model="branch"
+                        v-validate="'required'"
+                        :options="branches"
+                        :reduce="branch => branch.id"
+                        :class="{'is-invalid': errors.has('branch')}"
+                        label="name"
+                        name="branch"
+                        placeholder="Sınıf seçebilirsiniz"
+                      >
+                        <div slot="no-options">
+                          Burada bişey bulamadık :-(
+                        </div>
+                      </v-select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group has-feedback">
+                      <v-select
+                        v-model="branch"
+                        v-validate="'required'"
+                        :options="branches"
+                        label="name"
+                        name="branch"
+                        placeholder="Göst. kayıt sayısı"
+                      >
+                        <div slot="no-options">
+                          Burada bişey bulamadık :-(
+                        </div>
+                      </v-select>
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -64,13 +93,9 @@
                         type="text"
                         placeholder="Aranacak içerik"
                       >
-                      <span
-                        v-if="errors.has('searchedContent')"
-                        class="error invalid-feedback"
-                      >{{ errors.first('searchedContent') }}</span>
                     </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-2">
                     <button
                       class="btn btn-block btn-primary"
                       @click="searchLOs"
@@ -83,6 +108,7 @@
             </div>
           </div>
         </div>
+        <paginator />
         <div class="row">
           <div class="col-12">
             <div
@@ -131,10 +157,12 @@ import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
 import chunk from 'lodash/chunk'
 import Page from '../../components/Page'
+import Paginator from '../../components/Paginator'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'LearningOutcomeList',
-  components: { Page, vSelect },
+  components: { Page, vSelect, Paginator },
   data: () => ({
     branch: '',
     branches: [],
@@ -143,27 +171,37 @@ export default {
     loGroup: []
   }),
   beforeRouteEnter (to, from, next) {
-    Promise.all([BranchService.getBranches(), LearningOutcomesService.getLastSavedLOs(18)])
+    Promise.all([BranchService.getBranches(), LearningOutcomesService.findByCodeOrContentWithPaging({
+      per_page: 30,
+      page: 1
+    })])
       .then(([branches, los]) => {
         next(vm => {
           branches.splice(0, 0, { id: 0, name: 'Hepsi', code: 'ALL' })
           vm.branches = branches
-          vm.loGroup = chunk(los, 3)
+          vm.loGroup = chunk(los.data, 3)
+          vm.setTotalPages(los.last_page)
         })
       })
   },
   methods: {
+    ...mapActions('learningOutcome', {
+      setCurrentPage: 'setCurrentPage',
+      setTotalPages: 'setTotalPages',
+      setPerPage: 'setPerPage',
+      setFrom: 'setFrom',
+      setTo: 'setTo'
+    }),
     searchLOs () {
-      this.$validator.validateAll()
-        .then(valRes => {
-          if (valRes) {
-            // const loader = this.$loading.show()
-            LearningOutcomesService.findByCodeOrContentWithPaging({ searched_content: this.searchedContent })
-              .then(value => { this.loGroup = chunk(value, 3) })
-              .catch(reason => Messenger.showError(reason.message))
-              // .finally(() => loader.hide())
-          }
-        })
+      // const loader = this.$loading.show()
+      LearningOutcomesService.findByCodeOrContentWithPaging({
+        per_page: this.perPage,
+        currentPage: this.currentPage,
+        branch_id: this.branch_id,
+        searched_content: this.searchedContent
+      })
+        .then(value => { this.loGroup = chunk(value, 3) })
+        .catch(reason => Messenger.showError(reason.message))
     }
   }
 }
