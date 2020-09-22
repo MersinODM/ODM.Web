@@ -85,13 +85,11 @@ const LearningOutcomesService = {
         .catch(error => reject(error))
     })
   },
-  update (id, lo, callback) {
-    http.put(`/learning_outcomes/${id}`, lo)
-      .then(response => { callback(response.data) })
-      .catch(error => {
-        Messenger.showError(MessengerConstants.errorMessage)
-        console.log(error)
-      })
+  async update (id, lo) {
+    try {
+      const response = await http.put(`/learning_outcomes/${id}`, lo)
+      return response.data
+    } catch (error) {}
   },
   delete (id, callback) {
     http.delete(`/learning_outcomes/${id}`)

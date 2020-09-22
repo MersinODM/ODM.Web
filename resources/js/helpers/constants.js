@@ -62,7 +62,10 @@ const MutationsLO = {
   PER_PAGE: 'perPage',
   FROM: 'from',
   TO: 'to',
-  LAST_PAGE: 'lastPage'
+  LAST_PAGE: 'lastPage',
+  CURRENT_BRANCH: 'currentBranch',
+  CURRENT_CLASS_LEVEL: 'currentClassLevel',
+  SEARCH_TERM: 'searchTerm'
 }
 
 export {

@@ -20,28 +20,29 @@ import { MutationsLO } from '../../helpers/constants'
 
 const state = () => ({
   currentPage: 1,
-  totalPages: 0,
-  perPage: 0,
+  perPage: 18,
   lastPage: 0,
   from: 0,
-  to: 0
+  to: 0,
+  currentBranch: '',
+  currentClassLevel: '',
+  searchTerm: ''
 })
 
 const getters = {
   currentPage: (state) => state.currentPage,
-  totalPages: (state) => state.totalPages,
   perPage: (state) => state.perPage,
   lastPage: (state) => state.lastPage,
   from: (state) => state.from,
-  to: (state) => state.to
+  to: (state) => state.to,
+  currentBranch: (state) => state.currentBranch,
+  currentClassLevel: (state) => state.currentClassLevel,
+  searchTerm: (state) => state.searchTerm
 }
 
 const mutations = {
   [MutationsLO.CURRENT_PAGE] (state, currentPage) {
     state.currentPage = currentPage
-  },
-  [MutationsLO.TOTAL_PAGES] (state, totalPages) {
-    state.totalPages = totalPages
   },
   [MutationsLO.PER_PAGE] (state, perPage) {
     state.perPage = perPage
@@ -54,15 +55,21 @@ const mutations = {
   },
   [MutationsLO.TO] (state, to) {
     state.to = to
+  },
+  [MutationsLO.CURRENT_BRANCH] (state, branch) {
+    state.currentBranch = branch
+  },
+  [MutationsLO.CURRENT_CLASS_LEVEL] (state, level) {
+    state.currentClassLevel = level
+  },
+  [MutationsLO.SEARCH_TERM] (state, term) {
+    state.searchTerm = term
   }
 }
 
 const actions = {
   setCurrentPage ({ commit }, currentPage) {
     commit(MutationsLO.CURRENT_PAGE, currentPage)
-  },
-  setTotalPages ({ commit }, totalPages) {
-    commit(MutationsLO.TOTAL_PAGES, totalPages)
   },
   setPerPage ({ commit }, perPage) {
     commit(MutationsLO.PER_PAGE, perPage)
@@ -75,6 +82,15 @@ const actions = {
   },
   setTo ({ commit }, to) {
     commit(MutationsLO.TO, to)
+  },
+  setCurrentBranch ({ commit }, branch) {
+    commit(MutationsLO.CURRENT_BRANCH, branch)
+  },
+  setCurrentClassLevel ({ commit }, level) {
+    commit(MutationsLO.CURRENT_CLASS_LEVEL, level)
+  },
+  setSearchTerm ({ commit }, searchTerm) {
+    commit(MutationsLO.SEARCH_TERM, searchTerm)
   }
 }
 

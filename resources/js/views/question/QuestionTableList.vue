@@ -16,8 +16,6 @@
   - along with this program.  If not, see http://www.gnu.org/licenses/
   -->
 
-
-
 <template>
   <page>
     <template v-slot:header>
@@ -354,10 +352,11 @@ export default {
         qTable.ajax.reload()
       }
     },
-    showLearningOutcome (loId) {
-      LearningOutcomesService.findById(loId)
-        .then(value => Messenger.showInfo(value.learning_outcome))
-        .catch(reason => Messenger.showError(reason.message))
+    async showLearningOutcome (loId) {
+      try {
+        const result = await LearningOutcomesService.findById(loId)
+        await Messenger.showInfo(`<b>${result.branch_name}</b>: ${result.code} ${result.content}`)
+      } catch (err) { await Messenger.showError(err.message) }
     }
   }
 }

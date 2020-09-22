@@ -221,7 +221,7 @@ export default {
       const data = { qer_id: this.$route.params.qerId, point: this.point, comment: this.comment }
       // if (this.point >= 4) data.comment = this.points.filter(p => p.key === this.point)[0].title
       const promptRes = await Messenger.showPrompt('Değerlendirmenizi kaydetmek istediğinizden emin misiniz?')
-      if (promptRes.isConfirmed()) {
+      if (promptRes.isConfirmed) {
         try {
           const result = await QuestionEvaluationService.save(this.question.id, data)
           await Messenger.showInfo(result.message)

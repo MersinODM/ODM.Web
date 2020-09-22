@@ -35,7 +35,7 @@ const Messenger = {
     return new Promise((resolve, reject) => {
       Swal.fire({
         title: 'Bilgi mesajı!',
-        text: message,
+        html: message,
         icon: 'info',
         confirmButtonText: 'Tamam'
       })

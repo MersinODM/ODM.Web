@@ -21,6 +21,7 @@ namespace App\Http\Controllers\Api\LO;
 
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\LearningOutcome;
 use Exception;
@@ -75,7 +76,8 @@ class LearningOutcomeController extends ApiController
     public function update(Request $request, $id)
     {
         $validationResult = $this->apiValidator($request, [
-            'branch_id' => 'required',
+            'code' => 'required',
+            'class_level' => 'required',
             "content" => "required"
         ]);
 
@@ -84,17 +86,22 @@ class LearningOutcomeController extends ApiController
         }
 
         try {
-
+            DB::beginTransaction();
             $lo = LearningOutcome::findOrFail($id);
-            $lo->branch_id = $request->input("branch_id");
+            $lo->code = $request->input("code");
+            $lo->class_level = $request->input("class_level");
             $lo->content = $request->input("content");
             $lo->description = $request->input("description");
             $lo->save();
-
+            DB::commit();
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Kazanım güncelleme işlemi başarılı."
+            ], 201);
         } catch (Exception $exception) {
+            DB::rollBack();
             return response()->json($this->apiException($exception), 500);
         }
-        return response()->json([ResponseKeys::MESSAGE => "Kazanım güncelleme işlemi başarılı."], 201);
     }
 
     /**
@@ -112,9 +119,17 @@ class LearningOutcomeController extends ApiController
 
     public function findById($id)
     {
-        $lo = LearningOutcome::where('id', $id)
-            ->select(DB::raw("CONCAT(code, ' ', content) as learning_outcome"))
+        $lo = LearningOutcome::where('learning_outcomes.id', $id)
+            ->join("branches as b", "learning_outcomes.branch_id", "=", "b.id")
+            ->select("learning_outcomes.id",
+                DB::raw("b.name as branch_name"),
+                "class_level",
+                "learning_outcomes.code",
+                "content",
+                "learning_outcomes.description")
             ->first();
+
+
         return response()->json($lo);
     }
 

@@ -38,6 +38,7 @@ import AppSettings from '../views/management/AppSettings'
 import examRoutes from './examRoutes'
 import questionRoutes from './questionRoutes'
 import institutionRoutes from './institutionRoutes'
+import loRoutes from './loRoutes'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -68,21 +69,11 @@ const router = new Router({
         ...examRoutes,
         ...questionRoutes,
         ...institutionRoutes,
+        ...loRoutes,
         {
           path: '',
           name: 'stats',
           component: Stats
-        },
-
-        {
-          path: '/learning_outcomes/new',
-          name: 'newLO',
-          component: NewLearningOutcome
-        },
-        {
-          path: '/learning_outcomes/list',
-          name: 'loList',
-          component: LearningOutcomeList
         },
         {
           path: '/users/list',

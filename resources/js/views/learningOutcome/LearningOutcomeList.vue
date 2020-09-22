@@ -32,33 +32,13 @@
                 <div class="row">
                   <div class="col-md-3">
                     <div class="form-group has-feedback">
+                      <label class="mb-1">Ders</label>
                       <v-select
-                        v-model="branch"
-                        v-validate="'required'"
+                        v-model="selectedBranch"
                         :options="branches"
-                        :reduce="branch => branch.id"
-                        :class="{'is-invalid': errors.has('branch')}"
                         label="name"
-                        name="branch"
                         placeholder="Alan/Ders seçebilirsiniz"
-                      >
-                        <div slot="no-options">
-                          Burada bişey bulamadık :-(
-                        </div>
-                      </v-select>
-                    </div>
-                  </div>
-                  <div class="col-md-1">
-                    <div class="form-group has-feedback">
-                      <v-select
-                        v-model="branch"
-                        v-validate="'required'"
-                        :options="branches"
-                        :reduce="branch => branch.id"
-                        :class="{'is-invalid': errors.has('branch')}"
-                        label="name"
-                        name="branch"
-                        placeholder="Sınıf seçebilirsiniz"
+                        @input="setClasses"
                       >
                         <div slot="no-options">
                           Burada bişey bulamadık :-(
@@ -68,13 +48,11 @@
                   </div>
                   <div class="col-md-2">
                     <div class="form-group has-feedback">
+                      <label class="mb-1">Sınıf Seviyesi</label>
                       <v-select
-                        v-model="branch"
-                        v-validate="'required'"
-                        :options="branches"
-                        label="name"
-                        name="branch"
-                        placeholder="Göst. kayıt sayısı"
+                        v-model="selectedClassLevel"
+                        :options="classLevels"
+                        placeholder="Seçebilirsiniz"
                       >
                         <div slot="no-options">
                           Burada bişey bulamadık :-(
@@ -82,20 +60,35 @@
                       </v-select>
                     </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-2">
                     <div class="form-group has-feedback">
+                      <label class="mb-1">Sayfadaki kayıt sayısı</label>
+                      <v-select
+                        v-model="selectedPerPage"
+                        :options="[12, 18, 24, 30, 45]"
+                        label="name"
+                        placeholder="Kayıt sayısı"
+                      >
+                        <div slot="no-options">
+                          Burası boş
+                        </div>
+                      </v-select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-feedback">
+                      <label class="mb-1">Arama metni</label>
                       <input
-                        v-model="searchedContent"
-                        v-validate="'required|min:3'"
+                        v-model="searchTerm"
                         name="searchedContent"
                         class="form-control"
-                        :class="{'is-invalid': errors.has('searchedContent')}"
                         type="text"
                         placeholder="Aranacak içerik"
                       >
                     </div>
                   </div>
                   <div class="col-md-2">
+                    <label />
                     <button
                       class="btn btn-block btn-primary"
                       @click="searchLOs"
@@ -108,7 +101,26 @@
             </div>
           </div>
         </div>
-        <paginator />
+        <div
+          v-if="!paginationIsEnabled"
+          class="row"
+        >
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="text-center">
+                  Üzgünüz ardağınız kriterlere göre bir kazanım bulmadık.😥
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <paginator
+          v-if="paginationIsEnabled"
+          :last-page="lastPage"
+          :current-page="currentPage"
+          @page-changed="pageChanged"
+        />
         <div class="row">
           <div class="col-12">
             <div
@@ -140,11 +152,28 @@
                       <li />
                     </ul>
                   </div>
+                  <div
+                    v-if="isPermitted"
+                    class="card-footer"
+                  >
+                    <button
+                      class="btn btn-outline-primary float-right"
+                      @click="editLO(l.id)"
+                    >
+                      Düzenle
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <paginator
+          v-if="paginationIsEnabled"
+          :last-page="lastPage"
+          :current-page="currentPage"
+          @page-changed="pageChanged"
+        />
       </div>
     </template>
   </page>
@@ -158,50 +187,119 @@ import BranchService from '../../services/BranchService'
 import chunk from 'lodash/chunk'
 import Page from '../../components/Page'
 import Paginator from '../../components/Paginator'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import store from '../../store'
 
 export default {
   name: 'LearningOutcomeList',
   components: { Page, vSelect, Paginator },
   data: () => ({
-    branch: '',
     branches: [],
-    searchedContent: '',
-    // learningOutComes: []
-    loGroup: []
+    loGroup: [],
+    classLevels: []
   }),
-  beforeRouteEnter (to, from, next) {
-    Promise.all([BranchService.getBranches(), LearningOutcomesService.findByCodeOrContentWithPaging({
-      per_page: 30,
-      page: 1
-    })])
-      .then(([branches, los]) => {
-        next(vm => {
-          branches.splice(0, 0, { id: 0, name: 'Hepsi', code: 'ALL' })
-          vm.branches = branches
-          vm.loGroup = chunk(los.data, 3)
-          vm.setTotalPages(los.last_page)
-        })
+  computed: {
+    ...mapGetters('learningOutcome', {
+      lastPage: 'lastPage',
+      currentPage: 'currentPage'
+    }),
+    selectedPerPage: {
+      get () {
+        return this.$store.getters['learningOutcome/perPage']
+      },
+      set (value) {
+        this.setPerPage(Number(value))
+      }
+    },
+    selectedClassLevel: {
+      get () {
+        return this.$store.getters['learningOutcome/currentClassLevel']
+      },
+      set (value) {
+        this.setCurrentClassLevel(Number(value))
+      }
+    },
+    selectedBranch: {
+      get () {
+        return this.$store.getters['learningOutcome/currentBranch']
+      },
+      set (value) {
+        this.setCurrentBranch(value)
+      }
+    },
+    searchTerm: {
+      get () {
+        return this.$store.getters['learningOutcome/searchTerm']
+      },
+      set (value) {
+        this.setSearchTerm(value)
+      }
+    },
+    paginationIsEnabled () {
+      return this.loGroup.length > 0
+    },
+    isPermitted () {
+      return this.$isInRole('admin')
+    }
+  },
+  async beforeRouteEnter (to, from, next) {
+    const [branches, los] = await Promise.all([
+      BranchService.getBranches(),
+      LearningOutcomesService.findByCodeOrContentWithPaging({
+        per_page: store.getters['learningOutcome/perPage'],
+        page: store.getters['learningOutcome/currentPage'],
+        branch_id: store.getters['learningOutcome/currentBranch']?.id,
+        searched_content: store.getters['learningOutcome/searchTerm']
       })
+    ])
+    next(vm => {
+      vm.branches = branches
+      vm.loGroup = chunk(los.data, 3)
+      vm.setLastPage(los.last_page)
+      vm.classLevels = store.getters['learningOutcome/currentBranch']
+          ?.class_levels
+          ?.split(',')
+          ?.map(Number)
+    })
   },
   methods: {
     ...mapActions('learningOutcome', {
       setCurrentPage: 'setCurrentPage',
-      setTotalPages: 'setTotalPages',
+      setLastPage: 'setLastPage',
       setPerPage: 'setPerPage',
       setFrom: 'setFrom',
-      setTo: 'setTo'
+      setTo: 'setTo',
+      setCurrentBranch: 'setCurrentBranch',
+      setCurrentClassLevel: 'setCurrentClassLevel',
+      setSearchTerm: 'setSearchTerm'
     }),
-    searchLOs () {
+    pageChanged (value) {
+      this.setCurrentPage(value)
+      this.searchLOs()
+    },
+    setClasses () {
+      this.classLevels = this.selectedBranch
+        ?.class_levels
+        ?.split(',')
+        ?.map(Number)
+    },
+    async searchLOs () {
       // const loader = this.$loading.show()
-      LearningOutcomesService.findByCodeOrContentWithPaging({
-        per_page: this.perPage,
-        currentPage: this.currentPage,
-        branch_id: this.branch_id,
-        searched_content: this.searchedContent
-      })
-        .then(value => { this.loGroup = chunk(value, 3) })
-        .catch(reason => Messenger.showError(reason.message))
+      try {
+        const response = await LearningOutcomesService.findByCodeOrContentWithPaging({
+          per_page: this.selectedPerPage,
+          page: this.currentPage,
+          branch_id: this.selectedBranch?.id,
+          searched_content: this.searchTerm
+        })
+        this.loGroup = chunk(response.data, 3)
+        this.setLastPage(response.last_page)
+      } catch (reason) {
+        await Messenger.showError(reason.message)
+      }
+    },
+    editLO (loId) {
+      this.$router.push({ name: 'editLO', params: { id: loId } })
     }
   }
 }

@@ -217,7 +217,7 @@ export default {
     })
   },
   methods: {
-    searchInstitutions: debounce(function (search, loading) {
+    searchInstitutions: debounce((search, loading) => {
       if (search) {
         loading(true)
         InstitutionService.findByName(search)
