@@ -303,7 +303,6 @@
 // import QuestionService from '../../services/QuestionService'
 // import Messenger from '../../helpers/messenger'
 // import { MessengerConstants } from '../../helpers/constants'
-import range from 'lodash/range'
 
 export default {
   name: 'NewQuestion',
@@ -328,7 +327,7 @@ export default {
       choices: [],
 
       selectedClassLevel: null,
-      classLevels: range(4, 13),
+      classLevels: [...Array(9).keys()].map(i => i + 4),
 
       learningOutCome: null,
       learningOutComes: [],

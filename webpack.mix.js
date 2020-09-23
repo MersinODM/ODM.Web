@@ -56,12 +56,11 @@ mix.js('resources/js/main.js', 'public/js')
     'vuex',
     'fastclick'
   ])
-  .sourceMaps(true, 'source-map')
 
-// if (!mix.inProduction()) {
-//   mix.sourceMaps(false)
-//   // mix.webpackConfig({ devtool: 'inline-source-map' })
-// }
+if (!mix.inProduction()) {
+  mix.sourceMaps(true, 'source-map')
+  // mix.webpackConfig({ devtool: 'inline-source-map' })
+}
 
 if (mix.inProduction()) {
   mix.setResourceRoot('/otomasyon')

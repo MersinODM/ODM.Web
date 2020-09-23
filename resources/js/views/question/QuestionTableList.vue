@@ -127,7 +127,6 @@ import Auth from '../../services/AuthService'
 import Constants, { MessengerConstants } from '../../helpers/constants'
 import tr from '../../helpers/dataTablesTurkish'
 import Messenger from '../../helpers/messenger'
-import range from 'lodash/range'
 import LearningOutcomesService from '../../services/LearningOutcomesService'
 import vSelect from 'vue-select'
 import BranchService from '../../services/BranchService'
@@ -203,7 +202,7 @@ export default {
       this.statuses = this.statuses.filter(value => value.statusCode !== QuestionStatuses.NOT_MUST_ASKED)
     }
     this.classLevels.push('Hepsi')
-    this.classLevels = this.classLevels.concat(range(5, 13))
+    this.classLevels = this.classLevels.concat([...Array(9).keys()].map(i => i + 4))
     // console.log(this.classLevels.length)
   },
   mounted () {

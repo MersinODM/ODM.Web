@@ -35,14 +35,14 @@
                       <label>Ders/Alan Seçimi</label>
                       <v-select
                         ref="branchRef"
-                        v-model="branch"
+                        v-model="selectedBranch"
                         v-validate="'required'"
                         :options="branches"
-                        :reduce="branch => branch.id"
                         :class="{'is-invalid': errors.has('branch')}"
                         label="name"
                         name="branch"
                         placeholder="Alan/Ders seçimini yapınız"
+                        @input="setClassLevels"
                       >
                         <div slot="no-options">
                           Burada bişey bulamadık
@@ -154,7 +154,6 @@
 import vSelect from 'vue-select'
 import LearningOutcomesService from '../../services/LearningOutcomesService'
 import Messenger from '../../helpers/messenger'
-import range from 'lodash/range'
 import BranchService from '../../services/BranchService'
 import Page from '../../components/Page'
 
@@ -168,9 +167,9 @@ export default {
       content: '',
       description: '',
       branches: [],
-      branch: '',
+      selectedBranch: '',
       selectedClassLevel: '',
-      classLevels: range(4, 13)
+      classLevels: []
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -188,7 +187,7 @@ export default {
           if (valRes) {
             this.isSending = true
             LearningOutcomesService.save({
-              branch_id: this.branch,
+              branch_id: this.selectedBranch?.id,
               code: this.code,
               class_level: this.selectedClassLevel,
               content: this.content,
@@ -201,11 +200,17 @@ export default {
           }
         })
     },
+    setClassLevels () {
+      this.classLevels = this.selectedBranch
+          ?.class_levels
+      ?.split(',')
+      ?.map(Number)
+    },
     clear () {
       this.$refs.branchRef.clearSelection()
       this.$refs.classLevelRef.clearSelection()
       this.selectedClassLevel = ''
-      this.branch = this.code = this.content = this.description = ''
+      this.selectedBranch = this.code = this.content = this.description = ''
     }
   }
 }

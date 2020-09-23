@@ -228,7 +228,7 @@ class QuestionEvalRequestController extends ApiController
             DB::beginTransaction();
             $qer->point = $point;
             $qer->comment = $comment;
-            // $qer->is_open = false;
+            $qer->is_open = false;
             $qer->save();
             DB::commit();
             // Event fırlatarak soru puanlama ve hesaplamaları yaptırılıyor
@@ -274,7 +274,7 @@ class QuestionEvalRequestController extends ApiController
             ->join('users as u', 'u.id', '=', 'qer.elector_id')
             ->join('branches as b', 'b.id', '=', 'u.branch_id')
             ->where('qer.question_id', $questionId)
-            ->where('qer.is_open', '=', 1)
+//            ->where('qer.is_open', '=', 1)
             ->select('qer.id', 'qer.elector_id',
                 DB::raw('CONCAT(u.full_name, " - ", b.name) as full_name'),
                 'qer.code',
