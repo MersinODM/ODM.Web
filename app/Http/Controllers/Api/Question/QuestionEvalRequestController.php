@@ -268,22 +268,25 @@ class QuestionEvalRequestController extends ApiController
         }
     }
 
-    public function findByQuestionId($questionId)
+    public function findByQuestionId($questionId, Request $request)
     {
-        $res = DB::table('question_eval_requests as qer')
+        $isOpen = $request->query('is_open');
+        $query = DB::table('question_eval_requests as qer')
             ->join('users as u', 'u.id', '=', 'qer.elector_id')
             ->join('branches as b', 'b.id', '=', 'u.branch_id')
             ->where('qer.question_id', $questionId)
-//            ->where('qer.is_open', '=', 1)
             ->select('qer.id', 'qer.elector_id',
                 DB::raw('CONCAT(u.full_name, " - ", b.name) as full_name'),
                 'qer.code',
                 'qer.comment',
                 'qer.point',
                 'qer.is_open',
-                'qer.updated_at as date')
-            ->get();
-        return response()->json($res);
+                'qer.updated_at as date');
+        if($isOpen) {
+            $query->where('qer.is_open', '=', $isOpen);
+        }
+
+        return response()->json($query->get());
     }
 
     public function getQuestionRequestsList(Request $request)

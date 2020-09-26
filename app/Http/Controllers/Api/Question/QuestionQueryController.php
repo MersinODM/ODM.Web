@@ -79,10 +79,10 @@ class QuestionQueryController extends Controller
                 'q.created_at');
 
         $this->checkClassLevel($classLevel, $table);
-        // Kullanıcı admin değilse çöp sorular saklansın ve sadece kendi soruları listelensin ;-)
+        // Kullanıcı admin değilse sadece kendi soruları listelensin ;-)
         if (!$user->isAn('admin')) {
-            $table->where('u.id', Auth::id())
-                ->where('q.status', '!=', Question::NOT_MUST_ASKED);
+            $table->where('u.id', Auth::id());
+//                ->where('q.status', '!=', Question::NOT_MUST_ASKED);
             // Shortcut kuralı ve aynı zamanda and operatörü true & true = true olacağı için
             // status != 3 and status = 3 false döndürecek ve sonuç vermeyecektir
             $this->checkStatus($status, $table);

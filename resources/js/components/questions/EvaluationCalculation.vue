@@ -222,7 +222,7 @@ export default {
     },
     loadData () {
       Promise.all([
-        QuestionEvaluationService.findByQuestionId(this.question.id),
+        QuestionEvaluationService.findByQuestionId(this.question.id, 1),
         UserService.findElectorsByBranchId(this.question.branch_id)
       ])
         .then(([questionEvaluations, electors]) => {

@@ -281,12 +281,12 @@ export default {
             searchable: false,
             render (data, type, row, meta) {
               switch (Number(data)) {
-                case QuestionStatuses.WAITING_FOR_ACTION: return '<span class="label label-default">İşleme alınmamış</span>'
-                case QuestionStatuses.NOT_MUST_ASKED: return '<span class="label label-danger">Sorulamaz</span>'
-                case QuestionStatuses.NEED_REVISION: return '<span class="label label-warning">Revizyon Gerekiyor</span>'
-                case QuestionStatuses.IN_ELECTION: return '<span class="label label-info">Değerlendirme Aşamasında</span>'
-                case QuestionStatuses.REVISION_COMPLETED: return '<span class="label label-primary">Revizyon Tamamlanmış</span>'
-                case QuestionStatuses.APPROVED: return '<span class="label label-success">Havuza Girmiş</span>'
+                case QuestionStatuses.WAITING_FOR_ACTION: return '<span class="badge bg-gradient-secondary">İşleme alınmamış</span>'
+                case QuestionStatuses.NOT_MUST_ASKED: return '<span class="badge bg-danger">Sorulamaz</span>'
+                case QuestionStatuses.NEED_REVISION: return '<span class="badge bg-warning">Revizyon Gerekiyor</span>'
+                case QuestionStatuses.IN_ELECTION: return '<span class="badge bg-info">Değerlendirme Aşamasında</span>'
+                case QuestionStatuses.REVISION_COMPLETED: return '<span class="badge bg-primary">Revizyon Tamamlanmış</span>'
+                case QuestionStatuses.APPROVED: return '<span class="badge bg-success">Havuza Girmiş</span>'
               }
             }
           },

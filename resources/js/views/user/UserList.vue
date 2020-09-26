@@ -26,6 +26,35 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 col-xs-12">
+                  <div class="form-group has-feedback">
+                    <label>Ders/Alan Seçimi</label>
+                    <v-select
+                      v-model="selectedBranch"
+                      :options="branches"
+                      :reduce="b => b.id"
+                      label="name"
+                      placeholder="Alan/Ders seçebilirsiniz"
+                      @input="onSelectionChanged"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                  <div class="form-group has-feedback">
+                    <label>Rol Seçimi</label>
+                    <v-select
+                      ref="refRole"
+                      v-model="selectedRole"
+                      :options="roles"
+                      :reduce="r => r.id"
+                      label="title"
+                      placeholder="Rol seçebilirsiniz"
+                      @input="onSelectionChanged"
+                    />
+                  </div>
+                </div>
+              </div>
               <div
                 class="dataTables_wrapper dt-bootstrap4"
                 :class="{ disabled : isApproving }"
@@ -70,19 +99,41 @@ import UserService from '../../services/UserService'
 import Messenger from '../../helpers/messenger'
 import tr from '../../helpers/dataTablesTurkish'
 import Page from '../../components/Page'
+import vSelect from 'vue-select'
+import RoleService from '../../services/RoleService'
+import BranchService from '../../services/BranchService'
 
 export default {
   name: 'UserList',
-  components: { Page },
-  data () {
-    return {
-      isApproving: false,
-      userList: []
-    }
+  components: { Page, vSelect },
+  data: () => ({
+    isApproving: false,
+    userList: [],
+    selectedBranch: '',
+    branches: [],
+    selectedRole: '',
+    roles: [],
+    userTable: null
+  }),
+  async beforeRouteEnter (to, from, next) {
+    const [branches, roles] = await Promise.all([
+      BranchService.getBranches(),
+      RoleService.getRoles()
+    ])
+    next(vm => {
+      vm.branches = branches
+      vm.roles = roles
+    })
   },
   mounted () {
     const vm = this
     const table = $('#userList')
+      .on('preXhr.dt', (e, settings, data) => {
+        // Bu event sunucuya datatable üzerinden veri gitmeden önce
+        // yeni parametre eklemek için ateşleniyor
+        data.branch_id = vm.selectedBranch
+        data.role_id = vm.selectedRole
+      })
       .DataTable({
         processing: true,
         serverSide: true,
@@ -105,12 +156,12 @@ export default {
         columns: [
           {
             data: 'id',
-            name: 'users.id',
+            name: 'u.id',
             visible: false
           },
           {
             data: 'full_name',
-            name: 'users.full_name',
+            name: 'u.full_name',
             searchable: true
           },
           {
@@ -119,12 +170,12 @@ export default {
           },
           {
             data: 'branch_name',
-            name: 'branches.name',
+            name: 'b.name',
             searchable: true
           },
           {
             data: 'inst_name',
-            name: 'institutions.name',
+            name: 'i.name',
             searchable: true
           },
           {
@@ -134,7 +185,7 @@ export default {
           },
           {
             data: 'created_at',
-            name: 'users.created_at',
+            name: 'u.created_at',
             searchable: true
           },
           {
@@ -162,10 +213,6 @@ export default {
         searching: true,
         paging: true
       })
-
-    // $('.btn, .btn-info').click(() => {
-    //   console.log($(this).attr('id'));
-    // });
 
     table.on('click', '.btn-default', (e) => {
       const data = table.row($(e.toElement).parents('tr')[0]).data()
@@ -200,6 +247,14 @@ export default {
         })
         .finally(() => { vm.isApproving = false })
     })
+
+    this.userTable = table
+  },
+  methods: {
+    onSelectionChanged () {
+      // eslint-disable-next-line no-unused-expressions
+      this.userTable?.ajax.reload()
+    }
   }
 }
 </script>

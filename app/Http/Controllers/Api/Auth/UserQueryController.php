@@ -32,6 +32,7 @@ use App\Http\Controllers\ApiController;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
@@ -40,26 +41,37 @@ class UserQueryController extends ApiController
 
     /**
      * Bütün kulanıcıları Jquery.Datatables() formatında gösteren api fonk.
+     * @param Request $request
      * @return mixed
      * @throws \Exception
      */
-    public function getUsers()
+    public function getUsers(Request $request)
     {
-        $res = DB::table('users')
-            ->leftJoin('branches', 'users.branch_id', '=', 'branches.id')
-            ->leftJoin('institutions', 'institutions.id', '=', 'users.inst_id')
-            ->leftJoin(DB::raw('users as um'), 'users.activator_id', '=', 'um.id')
-            ->where("users.deleted_at", "=", null)
-            ->select(
-                'users.id',
-                DB::raw('institutions.name as inst_name'),
-                DB::raw('branches.name as branch_name'),
-                'users.full_name',
-                DB::raw('um.full_name as activator_name'),
-                'users.created_at',
-                'users.phone');
+        $roleId = $request->input('role_id');
+        $branchId = $request->input('branch_id');
 
-        return Datatables::of($res)
+        $query = DB::table('users as u')
+            ->leftJoin('branches as b', 'u.branch_id', '=', 'b.id')
+            ->leftJoin('institutions as i', 'i.id', '=', 'u.inst_id')
+            ->leftJoin(DB::raw('users as um'), 'u.activator_id', '=', 'um.id')
+            ->where("u.deleted_at", "=", null)
+            ->select(
+                'u.id',
+                DB::raw('i.name as inst_name'),
+                DB::raw('b.name as branch_name'),
+                'u.full_name',
+                DB::raw('um.full_name as activator_name'),
+                'u.created_at',
+                'u.phone');
+        if ($branchId) {
+            $query->where('u.branch_id', $branchId);
+        }
+        if($roleId) {
+            $query->join('assigned_roles as as', 'as.entity_id', '=', 'u.id')
+                ->where('as.role_id', $roleId);
+        }
+
+        return Datatables::of($query)
             ->orderColumn(
                 "full_name",
                 "branch_name",

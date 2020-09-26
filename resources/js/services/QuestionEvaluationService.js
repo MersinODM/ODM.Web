@@ -1,5 +1,5 @@
 /*
- * ODM.Web  https://github.com/electropsycho/ODM.Web 
+ * ODM.Web  https://github.com/electropsycho/ODM.Web
  * Copyright (C) 2020 Hakan GÜLEN
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,9 +47,9 @@ const QuestionEvaluationService = {
         .catch(reason => reject(reason.data))
     })
   },
-  findByQuestionId (id) {
+  findByQuestionId (id, isOpen = '') {
     return new Promise((resolve, reject) => {
-      http.get(`/questions/${id}/evaluations`)
+      http.get(`/questions/${id}/evaluations`, { params: { is_open: isOpen } })
         .then(response => { resolve(response.data) })
         .catch(error => reject(error))
     })
