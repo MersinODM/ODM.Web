@@ -22,6 +22,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Events\NewUserReqReceived;
 use App\Events\ResetPasswordEvent;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseContents;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Rules\Recaptcha;
@@ -60,11 +61,20 @@ class UserManagementController extends ApiController
             return response()->json($validationResult, 422);
         }
 
-        $req = User::where("email", $request->input("email"))->first();
+        // Kullanıcı için hem pasiflerde hemde aktiflerde arama yapılacaktır
+        // aramaya telefonda eklenmiştir.
+        $req = User::withTrashed()
+            ->where("email", $request->input("email"))
+            ->orWhere("phone", $request->input("phone"))
+            ->first();
 
         if ($req) {
-            return response()->json([ResponseKeys::MESSAGE => "Bu mail adresiyle daha önce bir istek yapılmış."], 409);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => "Bu mail adresiyle ve telefonla halihazırda bir hesabınız veya daha önce bir istek yapılmış veya varolan kaydınız pasif hale getirilmiş olabilir lütfen yöneticilerden yardım isteyiniz."
+            ], 409);
         }
+
 
         $requestedUser = $request->only("full_name", "inst_id", "branch_id", "email", "phone");
         try {
@@ -76,11 +86,17 @@ class UserManagementController extends ApiController
             //Burada kullanıca şifre oluşturma maili atılıyor
             event(new NewUserReqReceived($model));
             DB::commit();
-            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı oluşturma isteğiniz alındı."], 201);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Kullanıcı oluşturma isteğiniz tarafımıza ulaştı ve size bir e-posta attık lütfen e-postaadresinizi kontrol etmeyi unutmayınız."
+            ], 201);
         } catch (Exception $exception) {
             DB::rollback();
-            return response()->json([ResponseKeys::MESSAGE => "Kullanıcı oluşturma işlmei alınamadı!",
-                "exception" => $exception->getMessage()], 500);
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
+                ResponseKeys::MESSAGE => "Kullanıcı oluşturma işlmei alınamadı!",
+                "exception" => $exception->getMessage()
+            ], 500);
         }
     }
 
