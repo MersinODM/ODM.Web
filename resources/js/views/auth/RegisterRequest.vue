@@ -232,7 +232,7 @@ export default {
       })
   },
   methods: {
-    searchInstitutions: debounce(function (search, loading) {
+    searchInstitutions: debounce((search, loading) => {
       if (search) {
         loading(true)
         InstitutionService.findByName(search)
@@ -246,34 +246,32 @@ export default {
           })
       }
     }, 1000),
-    sendRegisterRequest () {
-      this.$validator.validateAll()
-        .then(res => {
-          if (res) {
-            this.isSending = true
-            const data = {
-              email: this.email,
-              full_name: this.full_name,
-              inst_id: this.inst,
-              branch_id: this.branch,
-              phone: this.phone.replace(/[^0-9]/gi, ''),
-              recaptcha: this.captchaToken
-            }
-            AuthService.createRegisterRequest(data)
-              .then(value => {
-                this.isSending = false
-                Messenger.showSuccess(value.message)
-              })
-              .catch(error => {
-                this.isSending = false
-                if (error.response.status === 409) {
-                  Messenger.showWarning(error.response.data.message)
-                  return
-                }
-                Messenger.showError(MessengerConstants.errorMessage)
-              })
+    async sendRegisterRequest () {
+      const validationResult = await this.$validator.validateAll()
+      if (validationResult) {
+        this.isSending = true
+        const data = {
+          email: this.email,
+          full_name: this.full_name,
+          inst_id: this.inst,
+          branch_id: this.branch,
+          phone: this.phone.replace(/[^0-9]/gi, ''),
+          recaptcha: this.captchaToken
+        }
+        try {
+          const response = await AuthService.createRegisterRequest(data)
+          this.isSending = false
+          await Messenger.showSuccess(response.message)
+          await this.$router.push({ name: 'login' })
+        } catch (error) {
+          this.isSending = false
+          if (error.response.status === 409) {
+            await Messenger.showWarning(error.response.data.message)
+            return
           }
-        })
+          await Messenger.showError(MessengerConstants.errorMessage)
+        }
+      }
     },
     markRecaptchaAsVerified (response) {
     // console.log(response)
