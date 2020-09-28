@@ -82,7 +82,7 @@ class QuestionController extends ApiController
             $lo = LearningOutcome::find($qReq["learning_outcome_id"])->code;
             $loCode = str_replace(".", "-", $lo);
             if ($isSaved) {
-                $code = Branch::find($qReq["lesson_id"])->code;
+                $code = Branch::find($question->lesson_id)->code;
                 if ($question_file !== null) {
                     // İlginç bir şekile aşağıdaki kod parçası çift satırda yazılmaz ise çalışmıyor
                     $expl = explode(".", $question_file->getClientOriginalName());

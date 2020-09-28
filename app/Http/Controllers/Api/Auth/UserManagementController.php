@@ -102,10 +102,10 @@ class UserManagementController extends ApiController
 
     /**
      * Yeni kayıt isteği yapan sistem kullanıcısına onay verecek fonksiyon
-     * @param Request $request
+     * @param $id
      * @return JsonResponse
      */
-    public function confirmNewUserReq(Request $request, $id)
+    public function confirmNewUserReq($id)
     {
         try {
             DB::beginTransaction();

@@ -20,7 +20,11 @@
 // Fonts
 // @import url('https://fonts.googleapis.com/css?family=Nunito');
 
-// Variables
+//@if($env=='production')
+//{
+//  $mdi-font-path: "../public/fonts" !default;
+//}
+
 @import 'variables';
 
 @import '~admin-lte/dist/css/adminlte.min.css';
@@ -37,6 +41,11 @@
 @import '~vue-loading-overlay/dist/vue-loading.css';
 @import '~pace-progressbar/themes/red/pace-theme-minimal.css';
 @import '~vue2-datepicker/index.css';
+
+@if($env=='production')
+{
+  $mdi-font-path: "../public/fonts" !default;
+}
 
 
 .disabled {
