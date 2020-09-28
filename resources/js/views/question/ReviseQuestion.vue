@@ -132,7 +132,6 @@ import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import RevisionService from '../../services/CommentService'
-import usersImg from '../../../images/users.png'
 import moment from 'moment'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
@@ -151,7 +150,6 @@ export default {
     questionFileURL: null,
     comment: null,
     changeCount: 0,
-    userImage: usersImg,
     questionId: null
   }),
   computed: {

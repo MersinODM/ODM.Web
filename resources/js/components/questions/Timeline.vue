@@ -93,7 +93,6 @@
 </template>
 
 <script>
-import userImage from '../../../images/users.png'
 import moment from 'moment'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import Messenger from '../../helpers/messenger'
@@ -111,7 +110,6 @@ export default {
     }
   },
   data: () => ({
-    userImage: userImage,
     questionEvents: [],
     isLoading: false
   }),

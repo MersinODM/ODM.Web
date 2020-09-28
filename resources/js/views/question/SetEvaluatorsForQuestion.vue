@@ -139,7 +139,6 @@ import vSelect from 'vue-select'
 import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-import usersImg from '../../../images/users.png'
 import Question from '../../components/questions/Question'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import UserService from '../../services/UserService'
@@ -156,8 +155,7 @@ export default {
     evaluators: [],
     selectedEvaluator: '',
     selectedEvaluators: [],
-    savedEvaluators: [],
-    userImage: usersImg
+    savedEvaluators: []
   }),
   beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId

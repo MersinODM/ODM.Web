@@ -128,7 +128,6 @@ import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
-import usersImg from '../../../images/users.png'
 import AuthService from '../../services/AuthService'
 import Question from '../../components/questions/Question'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
@@ -155,7 +154,6 @@ export default {
       revisions: [],
       evaluationList: [],
       filteredEvalList: [],
-      userImage: usersImg,
       questionId: 0
     }
   },
