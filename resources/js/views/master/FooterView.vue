@@ -31,7 +31,7 @@
     </a> Bu eser <a
       rel="license"
       href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
-    > GNU Genel Kamu Lisansı yani GPLv3</a> ile lisanslanmıştır. v1.0.0
+    > GNU Genel Kamu Lisansı yani GPLv3</a> ile lisanslanmıştır. v1.0.1
   </footer>
 </template>
 
