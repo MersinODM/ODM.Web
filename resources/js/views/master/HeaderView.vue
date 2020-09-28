@@ -50,13 +50,11 @@ import Messenger from '../../helpers/messenger'
 
 export default {
   name: 'NHeader',
-  data () {
-    return {
-      image: img,
-      user: null,
-      name: ''
-    }
-  },
+  data: () => ({
+    image: img,
+    user: null,
+    name: ''
+  }),
   mounted () {
     $('[data-widget="pushmenu"]').PushMenu()
   },

@@ -37,7 +37,7 @@
           <a
             href="javascript:0;"
             class="d-block"
-          >{{ user.full_name }}</a>
+          >{{ user.full_name }} - {{ user.branch.code }}</a>
         </div>
       </div>
       <nav class="mt-2">
@@ -330,6 +330,7 @@
           </li>
         </ul>
       </nav>
+    </div>
     </div>
   </aside>
 </template>
