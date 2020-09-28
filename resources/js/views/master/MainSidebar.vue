@@ -85,7 +85,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-account-question" />
-              <p>Soru Yönetimi
+              <p>Soru Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -140,7 +140,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-book-open-variant" />
-              <p>Sınav Yönetimi
+              <p>Sınav Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -174,7 +174,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-account-settings" />
-              <p>Branş/Ders Yönetimi
+              <p>Branş/Ders Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -208,7 +208,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-matrix" />
-              <p>Kazanım Yönetimi
+              <p>Kazanım Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -242,7 +242,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-school" />
-              <p>Kurum Yönetimi
+              <p>Kurum Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -276,7 +276,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-account-settings" />
-              <p>Kullanıcı Yönetimi
+              <p>Kullanıcı Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
@@ -311,7 +311,7 @@
               class="nav-link"
             >
               <i class="mdi mdi-cogs" />
-              <p>Uygulama Yönetimi
+              <p>Uygulama Modülü
                 <i class="right fas fa-angle-left" />
               </p>
             </a>
