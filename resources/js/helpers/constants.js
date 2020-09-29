@@ -68,12 +68,20 @@ const MutationsLO = {
   SEARCH_TERM: 'searchTerm'
 }
 
+const MutationsQT = {
+  QUESTION_STATE: 'questionState',
+  BRANCH: 'branch',
+  CLASS_LEVEL: 'classLevel',
+  SEARCH_TERM: 'searchTerm'
+}
+
 export {
   MessengerConstants,
   ResponseCodes,
   Mutations,
   MutationsLO,
-  MessageKeys
+  MessageKeys,
+  MutationsQT
 }
 
 export default Constants
