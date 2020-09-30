@@ -15,34 +15,60 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
-import { MutationsLO, MutationsQT } from '../../helpers/constants'
+import { MutationsQT } from '../../helpers/constants'
 
 const state = () => ({
   questionState: '',
   branch: '',
   classLevel: '',
-  searchTerm: ''
+  searchTerm: '',
+  isDesignRequired: '',
+  currentPage: 0
 })
 
 const getters = {
-  questionState: (state) => state.questionState,
-  branch: (state) => state.branch,
-  classLevel: (state) => state.classLevel,
-  searchTerm: (state) => state.searchTerm
+  questionState: (state) => {
+    if (!state.questionState) {
+      state.questionState = JSON.parse(sessionStorage.getItem(MutationsQT.QUESTION_STATE))
+    }
+    return state.questionState
+  },
+  branch: (state) => {
+    if (!state.branch) {
+      state.branch = JSON.parse(sessionStorage.getItem(MutationsQT.BRANCH))
+    }
+    return state.branch
+  },
+  classLevel: (state) => {
+    if (!state.classLevel) {
+      state.classLevel = JSON.parse(sessionStorage.getItem(MutationsQT.CLASS_LEVEL))
+    }
+    return state.classLevel
+  },
+  isDesignRequired: (state) => {
+    if (!state.isDesignRequired) {
+      state.isDesignRequired = JSON.parse(sessionStorage.getItem(MutationsQT.IS_DESIGN_REQUIRED))
+    }
+    return state.isDesignRequired
+  }
 }
 
 const mutations = {
   [MutationsQT.QUESTION_STATE] (state, questionState) {
     state.questionState = questionState
+    sessionStorage.setItem(MutationsQT.QUESTION_STATE, JSON.stringify(questionState))
   },
   [MutationsQT.BRANCH] (state, branch) {
     state.branch = branch
+    sessionStorage.setItem(MutationsQT.BRANCH, JSON.stringify(branch))
   },
   [MutationsQT.CLASS_LEVEL] (state, classLevel) {
     state.classLevel = classLevel
+    sessionStorage.setItem(MutationsQT.CLASS_LEVEL, JSON.stringify(classLevel))
   },
-  [MutationsQT.SEARCH_TERM] (state, searchTerm) {
-    state.searchTerm = searchTerm
+  [MutationsQT.IS_DESIGN_REQUIRED] (state, isDesignRequired) {
+    state.isDesignRequired = isDesignRequired
+    sessionStorage.setItem(MutationsQT.IS_DESIGN_REQUIRED, JSON.stringify(isDesignRequired))
   }
 }
 
@@ -56,8 +82,8 @@ const actions = {
   setSelectedBranch ({ commit }, branch) {
     commit(MutationsQT.BRANCH, branch)
   },
-  setSearchTerm ({ commit }, searchTerm) {
-    commit(MutationsQT.SEARCH_TERM, searchTerm)
+  setIsDesignRequired ({ commit }, isDesignRequired) {
+    commit(MutationsQT.IS_DESIGN_REQUIRED, isDesignRequired)
   }
 }
 

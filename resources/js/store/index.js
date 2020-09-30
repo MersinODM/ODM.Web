@@ -24,13 +24,15 @@ import Vuex from 'vuex'
 // import { abilityPlugin } from './ability.store';
 import app from './modules/app'
 import learningOutcome from './modules/learningOutcome'
+import questionList from './modules/questionList'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
     app,
-    learningOutcome
+    learningOutcome,
+    questionList
   }
 })
 

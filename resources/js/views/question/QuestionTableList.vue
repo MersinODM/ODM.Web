@@ -82,7 +82,7 @@
                     <label>Tasarım İhtiyacı</label>
                     <v-select
                       ref="qIsDesignReq"
-                      v-model="isDesignRequired"
+                      v-model="selectedDesignOption"
                       :options="designOptions"
                       :reduce="b => b.key"
                       label="value"
@@ -133,64 +133,74 @@ import BranchService from '../../services/BranchService'
 import UserService from '../../services/UserService'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Page from '../../components/Page'
-
-let qTable = null
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'QuestionTableList',
   components: { Page, vSelect },
-  data () {
-    return {
-      statuses: [
-        { statusCode: '', title: 'Hepsi' },
-        { statusCode: QuestionStatuses.WAITING_FOR_ACTION, title: 'İşleme alınmamışlar' },
-        { statusCode: QuestionStatuses.IN_ELECTION, title: 'Değerlendirme aşamasında' },
-        { statusCode: QuestionStatuses.NEED_REVISION, title: 'Revizyon alması gerekenler' },
-        { statusCode: QuestionStatuses.NOT_MUST_ASKED, title: 'Sorulamayacak sorular' },
-        { statusCode: QuestionStatuses.REVISION_COMPLETED, title: 'Revizyonu tamamlananlar' },
-        { statusCode: QuestionStatuses.APPROVED, title: 'Havuza girenler' }
-      ],
-      selectedStatus: '',
+  data: () => ({
+    statuses: [
+      { statusCode: '', title: 'Hepsi' },
+      { statusCode: QuestionStatuses.WAITING_FOR_ACTION, title: 'İşleme alınmamışlar' },
+      { statusCode: QuestionStatuses.IN_ELECTION, title: 'Değerlendirme aşamasında' },
+      { statusCode: QuestionStatuses.NEED_REVISION, title: 'Revizyon alması gerekenler' },
+      { statusCode: QuestionStatuses.NOT_MUST_ASKED, title: 'Sorulamayacak sorular' },
+      { statusCode: QuestionStatuses.REVISION_COMPLETED, title: 'Revizyonu tamamlananlar' },
+      { statusCode: QuestionStatuses.APPROVED, title: 'Havuza girenler' }
+    ],
+    selectedStatus: '',
 
-      branches: [],
-      selectedBranch: '',
+    branches: [],
+    selectedBranch: '',
 
-      classLevels: [],
-      selectedClassLevel: '',
+    classLevels: [],
+    selectedClassLevel: '',
 
-      designOptions: [
-        { key: '', value: 'Belirsiz' },
-        { key: true, value: 'İhtiyaç Var' },
-        { key: false, value: 'İhtiyaç Yok' }
-      ],
-      isDesignRequired: '',
+    designOptions: [
+      { key: '', value: 'Belirsiz' },
+      { key: true, value: 'İhtiyaç Var' },
+      { key: false, value: 'İhtiyaç Yok' }
+    ],
+    selectedDesignOption: '',
 
-      user: ''
+    user: '',
+    table: null
+  }),
+  async beforeRouteEnter (to, from, next) {
+    try {
+      const [branches, user] = await Promise.all([
+        BranchService.getBranches(),
+        UserService.findById(Auth.getUserId())
+      ])
+      next(vm => {
+        vm.user = user
+        // Burada kullanıcı sosyal bilgiler öğretmeni ise
+        // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
+        if (!vm.$isInRole('admin') && (user.branch.code === 'SB')) {
+          vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
+        } else if (!vm.$isInRole('admin') && (user.branch.code === 'TAR')) {
+          vm.branches = branches.filter(b => b.code === 'TAR' || b.code === 'İTA')
+        } else {
+          vm.branches = branches
+        }
+      })
+    } catch (error) {
+      await Messenger.showError(error.message)
+      next(from.path)
     }
   },
-  beforeRouteEnter (to, from, next) {
-    Promise.all([BranchService.getBranches(), UserService.findById(Auth.getUserId())])
-      .then(([branches, user]) => {
-        next(vm => {
-          vm.user = user
-          // Burada kullanıcı sosyal bilgiler öğretmeni ise
-          // hem sosyal bilgilere hem de inklap tarihi dersine soru yazabilmeli
-          if (!vm.$isInRole('admin') && user.branch.code === 'SB') {
-            vm.branches = branches.filter(b => b.code === 'SB' || b.code === 'İTA')
-          } else {
-            vm.branches = branches
-          }
-        })
-      })
-      .catch(() => {
-        Messenger.showError(MessengerConstants.errorMessage)
-        next(from.path)
-      })
-  },
   computed: {
+    ...mapGetters('questionList', [
+      'branch',
+      'classLevel',
+      'questionState',
+      'isDesignRequired'
+    ]),
     checkPermission () {
       if (this.user) {
-        return this.$isInRole('admin') || this.user.branch.code === 'SB'
+        return this.$isInRole('admin') ||
+            this.user.branch.code === 'SB' ||
+            this.user.branch.code === 'TAR'
       }
       return false
     }
@@ -203,7 +213,11 @@ export default {
     }
     this.classLevels.push('Hepsi')
     this.classLevels = this.classLevels.concat([...Array(9).keys()].map(i => i + 4))
-    // console.log(this.classLevels.length)
+
+    this.selectedClassLevel = this.$store.getters['questionList/classLevel']
+    this.selectedBranch = this.$store.getters['questionList/branch']
+    this.selectedStatus = this.$store.getters['questionList/questionState']
+    this.selectedDesignOption = this.$store.getters['questionList/isDesignRequired']
   },
   mounted () {
     const vm = this
@@ -213,10 +227,12 @@ export default {
         // yeni parametre eklemek için ateşleniyor
         data.question_status = vm.selectedStatus
         data.branch_id = vm.selectedBranch
-        data.is_design_required = vm.isDesignRequired
+        data.is_design_required = vm.selectedDesignOption
         if (vm.selectedClassLevel !== 'Hepsi') { data.class_level = vm.selectedClassLevel }
       })
       .DataTable({
+        stateSave: true,
+        stateDuration: -1,
         processing: true,
         serverSide: true,
         responsive: true,
@@ -318,7 +334,7 @@ export default {
         searching: true,
         paging: true
       })
-    qTable = table
+    vm.table = table
 
     // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
     table.on('click', '.btn-info', (e) => {
@@ -344,11 +360,26 @@ export default {
       // console.log(data);
       vm.showLearningOutcome(data.lo_id)
     })
+    // this.$nextTick(() => {
+    //   this.table?.page(vm.$store.getters['questionList/currentPage']).draw(false)
+    // })
+    //
+    // this.table?.page(vm.$store.getters['questionList/currentPage'])
   },
   methods: {
+    ...mapActions('questionList', [
+      'setSelectedBranch',
+      'setSelectedClassLevel',
+      'setSelectedQuestionState',
+      'setIsDesignRequired'
+    ]),
     onSelectionChanged () {
-      if (qTable) {
-        qTable.ajax.reload()
+      this.setSelectedQuestionState(this.selectedStatus)
+      this.setSelectedClassLevel(this.selectedClassLevel)
+      this.setSelectedBranch(this.selectedBranch)
+      this.setIsDesignRequired(this.selectedDesignOption)
+      if (this.table) {
+        this.table.ajax.reload()
       }
     },
     async showLearningOutcome (loId) {

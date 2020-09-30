@@ -72,7 +72,9 @@ const MutationsQT = {
   QUESTION_STATE: 'questionState',
   BRANCH: 'branch',
   CLASS_LEVEL: 'classLevel',
-  SEARCH_TERM: 'searchTerm'
+  SEARCH_TERM: 'searchTerm',
+  IS_DESIGN_REQUIRED: 'isDesignRequired',
+  CURRENT_PAGE: 'currentPage'
 }
 
 export {
