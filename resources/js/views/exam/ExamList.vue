@@ -260,6 +260,8 @@ export default {
     onSelectionChanged () {
       this.setExamPurpose(this.selectedExamPurpose)
       this.setClassLevel(this.selectedClassLevel)
+      // eslint-disable-next-line no-unused-expressions
+      this.table?.ajax.reload()
     }
   }
 }

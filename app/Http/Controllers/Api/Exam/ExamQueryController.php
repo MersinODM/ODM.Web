@@ -30,7 +30,10 @@ use Yajra\DataTables\DataTables;
 class ExamQueryController extends ApiController
 {
     public function getExams(Request $request) {
-        $exams = DB::table('exams as e')
+        $classLevel = $request->input('class_level');
+        $epId = $request->input('ep_id');
+
+        $query = DB::table('exams as e')
             ->join('users as u', 'e.creator_id', '=', 'u.id')
             ->join('exam_purposes as p', 'e.purpose_id', '=', 'p.id')
             ->select(
@@ -51,7 +54,14 @@ class ExamQueryController extends ApiController
                 'e.planned_date',
                 'u.full_name'
             );
-        return Datatables::of($exams)
+        if($classLevel) {
+            $query->where('e.class_level', $classLevel);
+        }
+        if($epId) {
+            $query->where('e.purpose_id', $epId);
+        }
+
+        return Datatables::of($query)
             ->orderColumn('e.created_at', 'e.title')
             ->editColumn('created_at', static function ($a) {
                 Carbon::setLocale("tr-TR");
