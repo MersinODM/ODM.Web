@@ -77,13 +77,19 @@ const MutationsQT = {
   CURRENT_PAGE: 'currentPage'
 }
 
+const MutationsEL = {
+  EXAM_PURPOSE: 'examPurpose',
+  CLASS_LEVEL: 'classLevel'
+}
+
 export {
   MessengerConstants,
   ResponseCodes,
   Mutations,
   MutationsLO,
   MessageKeys,
-  MutationsQT
+  MutationsQT,
+  MutationsEL
 }
 
 export default Constants

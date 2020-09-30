@@ -25,6 +25,7 @@ import Vuex from 'vuex'
 import app from './modules/app'
 import learningOutcome from './modules/learningOutcome'
 import questionList from './modules/questionList'
+import examList from './modules/examList'
 
 Vue.use(Vuex)
 
@@ -32,7 +33,8 @@ const store = new Vuex.Store({
   modules: {
     app,
     learningOutcome,
-    questionList
+    questionList,
+    examList
   }
 })
 

@@ -26,42 +26,36 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-body">
-              <!--              <div class="row">-->
-              <!--                <div-->
-              <!--                  v-if="checkPermission"-->
-              <!--                  class="col-md-3 col-xs-12"-->
-              <!--                />-->
-              <!--                <div class="col-md-3 col-xs-12">-->
-              <!--                  <div-->
-              <!--                    class="form-group has-feedback"-->
-              <!--                  >-->
-              <!--                    <label>Sınıf Seviyesi Seçimi</label>-->
-              <!--                    <v-select-->
-              <!--                      ref="classLevelDD"-->
-              <!--                      v-model="selectedClassLevel"-->
-              <!--                      :options="classLevels"-->
-              <!--                      placeholder="Sınıf seviyesini seçebilirsiniz"-->
-              <!--                      @input="onSelectionChanged"-->
-              <!--                    />-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--                <div class="col-md-3 col-xs-12">-->
-              <!--                  <div-->
-              <!--                    class="form-group has-feedback"-->
-              <!--                  >-->
-              <!--                    <label>Sınav Durumu</label>-->
-              <!--                    <v-select-->
-              <!--                      ref="qStatusDD"-->
-              <!--                      v-model="selectedStatus"-->
-              <!--                      :options="statuses"-->
-              <!--                      :reduce="b => b.statusCode"-->
-              <!--                      label="title"-->
-              <!--                      placeholder="Sınıf seviyesini seçebilirsiniz"-->
-              <!--                      @input="onSelectionChanged"-->
-              <!--                    />-->
-              <!--                  </div>-->
-              <!--                </div>-->
-              <!--              </div>-->
+              <div class="row">
+                <div class="col-md-3 col-xs-12">
+                  <div
+                    class="form-group has-feedback"
+                  >
+                    <label>Sınıf Seviyesi Seçimi</label>
+                    <v-select
+                      v-model="selectedClassLevel"
+                      :options="classLevels"
+                      placeholder="Sınıf seviyesini seçebilirsiniz"
+                      @input="onSelectionChanged"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                  <div
+                    class="form-group has-feedback"
+                  >
+                    <label>Sınav amacı</label>
+                    <v-select
+                      v-model="selectedExamPurpose"
+                      :options="examPurposes"
+                      :reduce="b => b.id"
+                      label="purpose"
+                      placeholder="Sınav amacını seçebilirsiniz"
+                      @input="onSelectionChanged"
+                    />
+                  </div>
+                </div>
+              </div>
               <div class="dataTables_wrapper dt-bootstrap4">
                 <table
                   id="examList"
@@ -99,24 +93,49 @@ import Constants, { MessengerConstants } from '../../helpers/constants'
 import Messenger from '../../helpers/messenger'
 import tr from '../../helpers/dataTablesTurkish'
 import Page from '../../components/Page'
-import ExamService from '../../services/ExamService'
+import ExamService, { ExamPurposeService } from '../../services/ExamService'
 import FileSaver from '../../helpers/FileSaver'
+import vSelect from 'vue-select'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'ExamList',
-  components: { Page },
+  components: { Page, vSelect },
+  data: () => ({
+    examPurposes: [],
+    selectedExamPurpose: '',
+    classLevels: [...Array(9).keys()].map(i => i + 4),
+    selectedClassLevel: '',
+    table: null
+  }),
+  async beforeRouteEnter (to, from, next) {
+    const purposes = await ExamPurposeService.getPurposes()
+    next(vm => {
+      vm.examPurposes = purposes
+    })
+  },
+  computed: {
+    ...mapGetters('examList', [
+      'classLevel',
+      'examPurpose'
+    ])
+  },
+  created () {
+    this.selectedClassLevel = this.classLevel
+    this.selectedExamPurpose = this.examPurpose
+  },
   mounted () {
     const vm = this
     const table = $('#examList')
       .on('preXhr.dt', (e, settings, data) => {
         // Bu event sunucuya datatable üzerinden veri gitmeden önce
         // yeni parametre eklemek için ateşleniyor
-        // data.question_status = vm.selectedStatus
-        // data.branch_id = vm.selectedBranch
-        // data.is_design_required = vm.isDesignRequired
-        // if (vm.selectedClassLevel !== 'Hepsi') { data.class_level = vm.selectedClassLevel }
+        data.class_level = vm.selectedClassLevel
+        data.ep_id = vm.selectedExamPurpose
       })
       .DataTable({
+        stateSave: true,
+        stateDuration: -1, // session storage kullanıulıyor böyle yapınca
         processing: true,
         serverSide: true,
         responsive: true,
@@ -159,7 +178,7 @@ export default {
             name: 'e.title'
           },
           {
-            data: 'creator',
+            data: 'full_name',
             name: 'u.full_name'
           },
           {
@@ -208,6 +227,8 @@ export default {
         paging: true
       })
 
+    vm.table = table
+
     // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
     table.on('click', '.btn-warning', async (e) => {
       const promptRes = await Messenger.showPrompt('Sınav dosyasını indirmek istiyor musunuz?')
@@ -230,6 +251,16 @@ export default {
       vm.$router.push({ name: 'underConstruction' })
       // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
     })
+  },
+  methods: {
+    ...mapActions('examList', [
+      'setClassLevel',
+      'setExamPurpose'
+    ]),
+    onSelectionChanged () {
+      this.setExamPurpose(this.selectedExamPurpose)
+      this.setClassLevel(this.selectedClassLevel)
+    }
   }
 }
 </script>
