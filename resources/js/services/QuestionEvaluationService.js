@@ -19,9 +19,9 @@
 import http from '../helpers/axios'
 
 const QuestionEvaluationService = {
-  saveElectors (id, electors) {
+  saveElectors (id, data) {
     return new Promise((resolve, reject) => {
-      http.post(`questions/${id}/evaluations`, { electors: electors })
+      http.post(`questions/${id}/evaluations`, data)
         .then(value => { resolve(value.data) })
         .catch(reason => reject(reason.data))
     })

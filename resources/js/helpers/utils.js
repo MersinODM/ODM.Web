@@ -1,4 +1,3 @@
-<?php
 /*
  * ODM.Web  https://github.com/electropsycho/ODM.Web
  * Copyright (C) 2020 Hakan GÜLEN
@@ -17,27 +16,11 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-namespace App\Models;
+const range = (start, end) => Array.from(
+  Array(Math.abs(end - start) + 1),
+  (_, i) => start + i
+)
 
-use Illuminate\Database\Eloquent\Model;
-
-class Setting extends Model
-{
-    protected $fillable = [
-        'city',
-        'governor',
-        'directorate',
-        'twitter_address',
-        'web_address',
-        'inst_name',
-        'phone',
-        'captcha_public_key',
-        'captcha_private_key',
-        'email',
-        'address',
-        'captcha_enabled',
-        'will_the_electors_be_emailed',
-        'min_elector_count',
-        'max_elector_count'
-    ];
+export {
+  range
 }

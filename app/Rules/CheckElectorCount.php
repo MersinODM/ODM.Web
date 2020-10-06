@@ -20,11 +20,13 @@
 namespace App\Rules;
 
 use App\Models\QuestionEvalRequest;
+use App\Models\Setting;
 use Illuminate\Contracts\Validation\Rule;
 
 class CheckElectorCount implements Rule
 {
     private $count = 0;
+    private $max = 0;
 
     /**
      * Create a new rule instance.
@@ -49,7 +51,8 @@ class CheckElectorCount implements Rule
     {
         // TODO Toplam değerlendirici sayısı Settings tablosu içine atılıp parametrik hale getirilebilir.
         // Toplam değerlendirici sayısı 5 i geçemez
-        return 5 >= $this->count + count($value);
+        $max = Setting::select('max_elector_count')->first()->max_elector_count;
+        return $max >= $this->count + count($value);
     }
 
     /**
@@ -59,6 +62,6 @@ class CheckElectorCount implements Rule
      */
     public function message()
     {
-        return 'Toplam değerlendirici sayısı 5(beş)\'i geçemez';
+        return 'Toplam değerlendirici sayısı azami '.$this->max.' olmalıdır';
     }
 }

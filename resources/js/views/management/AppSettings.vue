@@ -281,10 +281,46 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group has-feedback">
+                    <label>Min/Asgari puanlayıcı sayısı</label>
+                    <v-select
+                      v-model="minElectorCount"
+                      :options="minRange"
+                      :class="{'is-invalid': checkElectorCounts}"
+                      placeholder="Asgari puanlayıcı sayısını seçiniz"
+                      @input="onSelectionChanged"
+                    >
+                      <div slot="no-options">
+                        Burada bişey bulamadık
+                      </div>
+                    </v-select>
+                    <span
+                      v-if="checkElectorCounts"
+                      class="error invalid-feedback"
+                    >Maksimum değerden küçük ya da eşit olmalı</span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group has-feedback">
+                    <label>Max/Azami puanlayıcı sayısı</label>
+                    <v-select
+                      v-model="maxElectorCount"
+                      :options="maxRange"
+                      placeholder="Azami puanlayıcı sayısını seçiniz"
+                    >
+                      <div slot="no-options">
+                        Burada bişey bulamadık
+                      </div>
+                    </v-select>
+                  </div>
+                </div>
+              </div>
               <div class="row justify-content-md-center">
                 <div class="col-md-6">
                   <button
-                    :class="{ disabled : isSending }"
+                    :class="{ disabled : isSending || checkElectorCounts || errors.any() }"
                     type="submit"
                     class="btn btn-primary btn-block"
                     @click="save"
@@ -306,60 +342,70 @@ import { SettingService } from '../../services/SettingService'
 import Messenger from '../../helpers/messenger'
 import Page from '../../components/Page'
 import PCheck from 'pretty-checkbox-vue/check'
+import vSelect from 'vue-select'
 
 export default {
   name: 'AppSettings',
-  components: { Page, PCheck },
+  components: { Page, PCheck, vSelect },
   data: () => ({
     isSending: false,
-    settings: {}
+    settings: {},
+    minElectorCount: '',
+    minRange: [],
+    maxElectorCount: '',
+    maxRange: []
   }),
-  beforeRouteEnter (from, to, next) {
-    SettingService.getSettings()
-      .then((settings) => {
-        next(vm => {
-          vm.settings = settings
-        })
+  async beforeRouteEnter (from, to, next) {
+    try {
+      const settings = await SettingService.getSettings()
+      next(vm => {
+        vm.settings = settings
+        vm.minRange = [...Array(5).keys()].map(i => i + 2)
+        vm.minElectorCount = settings.min_elector_count
+        vm.maxElectorCount = settings.max_elector_count
       })
-      .catch((err) => {
-        Messenger.showError('İstediğiniz sayfayı açamıyoruz sistem lütfen yöneticinize başvurunuz!')
-        console.log(err)
-      })
+    } catch (err) {
+      await Messenger.showError('İstediğiniz sayfayı açamıyoruz sistem lütfen yöneticinize başvurunuz!')
+    }
+  },
+  computed: {
+    checkElectorCounts () {
+      return !this.minElectorCount || !this.maxElectorCount || this.minElectorCount > this.maxElectorCount
+    }
   },
   methods: {
-    save () {
-      this.$validator.validateAll()
-        .then(valRes => {
-          if (valRes) {
-            this.isSending = true
-            const loader = this.$loading.show()
-            SettingService.update(this.settings)
-              .then((res) => { Messenger.showInfo(res.message) })
-              .catch((err) => {
-                Messenger.showError('Ayarlarınız güncelleyemedik lütfen sistem yöneticinize başvurunuz!')
-                console.log(err)
-              })
-              .finally(() => {
-                this.isSending = false
-                loader.hide()
-              })
-          }
-        })
+    async save () {
+      const validationResult = this.$validator.validateAll()
+      if (validationResult) {
+        this.isSending = true
+        const loader = this.$loading.show()
+        try {
+          this.settings.min_elector_count = this.minElectorCount
+          this.settings.max_elector_count = this.maxElectorCount
+          const response = await SettingService.update(this.settings)
+          await loader.hide()
+          await Messenger.showInfo(response.message)
+        } catch (err) {
+          await Messenger.showError('Ayarlarınız güncelleyemedik lütfen sistem yöneticinize başvurunuz!')
+        } finally {
+          this.isSending = false
+        }
+      }
     },
-    refreshSettings () {
+    async refreshSettings () {
       const loader = this.$loading.show()
-      SettingService.getSettings()
-        .then((settings) => {
-          this.settings = settings
-        })
-        .catch((err) => {
-          Messenger.showError('Ayarlarınız sunucudan getiremedik lütfen yöneticinize başvurunuz!')
-          console.log(err)
-        })
-        .finally(() => {
-          this.$validator.reset()
-          loader.hide()
-        })
+      try {
+        this.settings = await SettingService.getSettings()
+        await loader.hide()
+      } catch (err) {
+        await loader.hide()
+        await Messenger.showError('Ayarlarınız sunucudan getiremedik lütfen yöneticinize başvurunuz!')
+      } finally {
+        await this.$validator.reset()
+      }
+    },
+    onSelectionChanged () {
+      this.maxRange = this.minRange.filter(value => value >= this.minElectorCount)
     }
   }
 }

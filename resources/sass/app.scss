@@ -42,10 +42,10 @@
 @import '~pace-progressbar/themes/red/pace-theme-minimal.css';
 @import '~vue2-datepicker/index.css';
 
-@if($env=='production')
-{
-  $mdi-font-path: "../public/fonts" !default;
-}
+//@if($env=='production')
+//{
+//  $mdi-font-path: "../public/fonts" !default;
+//}
 
 
 .disabled {

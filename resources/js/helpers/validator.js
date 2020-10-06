@@ -51,7 +51,9 @@ const dictionary = {
       evalComment: 'Değerlendirme yorumu',
       examTitle: 'Sınav adı/başlığı',
       examPurpose: 'Sınav genel amacı',
-      plannedDate: 'Planlan tarih'
+      plannedDate: 'Planlan tarih',
+      minElectorCount: 'Min. puanlayıcı',
+      maxElectorCount: 'Maks. puanlayıcı'
     }
   }
 }
@@ -78,3 +80,21 @@ Validator.extend('verify_password', {
     return strongRegex.test(value)
   }
 })
+
+// Validator.extend('is_bigger', {
+//   validate: (value, [otherValue]) => {
+//     return Number(value) > Number(otherValue)
+//   },
+//   getMessage: field => field + ' değeri asgari/min. değerden büyük ya da eşit olmalıdır'
+// }, {
+//   hasTarget: true
+// })
+//
+// Validator.extend('is_small', {
+//   validate: (value, [otherValue]) => {
+//     return Number(value) < Number(otherValue)
+//   },
+//   getMessage: field => field + ' değeri azami/maks. değerden küçük ya da eşit olmalıdır'
+// }, {
+//   hasTarget: true
+// })

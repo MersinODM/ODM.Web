@@ -51,14 +51,18 @@ class QuestionEvalRequestController extends ApiController
      */
     public function create($questionId, Request $request)
     {
+        $setting = Setting::select('max_elector_count', 'min_elector_count')->first();
+
         $validationResult = $this->apiValidator($request, [
-            'electors' => 'required|array|min:2|max:5'
+            'electors' => "required|array|min:$setting->min_elector_count|max:$setting->max_elector_count",
+            'minRequiredElection' => "required|numeric|min:$setting->min_elector_count|max:$setting->max_elector_count"
         ]);
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
 
         $electors = $request->input('electors');
+        $minRequiredElection = $request->input('minRequiredElection');
         // Değerlendirmeler bir kod vererek gruplamaya çalışıyoruz
         // Yani bir değerlendirme isteğinde bir grup değerlendiriciye değerlendirme yaptırıyoruz
         // Bu değerlendirmeleri de grup kodu vasıtasıyla ayrıştırıyoruz.
@@ -79,9 +83,12 @@ class QuestionEvalRequestController extends ApiController
                 $qevalReq->save();
             }
             Question::where('id', $questionId)
-                ->where('status', Question::WAITING_FOR_ACTION)
-                ->orWhere('status', Question::REVISION_COMPLETED)
-                ->update(['status' => Question::IN_ELECTION]);
+//                ->where('status', Question::WAITING_FOR_ACTION)
+//                ->orWhere('status', Question::REVISION_COMPLETED)
+                ->update([
+                    'status' => Question::IN_ELECTION,
+                    'min_required_election' => $minRequiredElection
+                ]);
             DB::commit();
             //Değerlendiricilere mail atılsın mı?
             if ($isSendEmailToElectors) {
@@ -228,7 +235,6 @@ class QuestionEvalRequestController extends ApiController
             DB::beginTransaction();
             $qer->point = $point;
             $qer->comment = $comment;
-            $qer->is_open = false;
             $qer->save();
             DB::commit();
             // Event fırlatarak soru puanlama ve hesaplamaları yaptırılıyor

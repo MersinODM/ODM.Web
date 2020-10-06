@@ -89,7 +89,9 @@ class SettingController extends ApiController
             'email',
             'address',
             'captcha_enabled',
-            'will_the_electors_be_emailed'
+            'will_the_electors_be_emailed',
+            'min_elector_count',
+            'max_elector_count'
             ]));
     }
 
@@ -108,7 +110,9 @@ class SettingController extends ApiController
             'email',
             'address',
             'captcha_enabled',
-            'will_the_electors_be_emailed'
+            'will_the_electors_be_emailed',
+            'min_elector_count',
+            'max_elector_count'
         ]);
 
         if ($validationResult) {
@@ -133,7 +137,9 @@ class SettingController extends ApiController
                 'email' => $request->get('email'),
                 'address' => $request->get('address'),
                 'captcha_enabled' => $request->get('captcha_enabled'),
-                'will_the_electors_be_emailed' => $request->get('will_the_electors_be_emailed')
+                'will_the_electors_be_emailed' => $request->get('will_the_electors_be_emailed'),
+                'min_elector_count' => $request->get('min_elector_count'),
+                'max_elector_count' => $request->get('max_elector_count')
             ]);
             DB::commit();
             return response()->json([

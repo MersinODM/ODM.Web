@@ -5,6 +5,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
 require('dotenv').config()
+const path = require('path')
 
 // mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
@@ -41,9 +42,7 @@ mix.copyDirectory('resources/images', 'public/images')
 mix.copyDirectory('node_modules/@mdi/font/fonts', 'public/fonts')
 
 mix.js('resources/js/main.js', 'public/js')
-  .sass('resources/sass/app.scss', 'public/css', {
-    prependData: '$env:\'' + process.env.NODE_ENV + '\';'
-  })
+  .sass('resources/sass/app.scss', 'public/css')
   .options({
     processCssUrls: false
   })

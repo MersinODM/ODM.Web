@@ -68,7 +68,7 @@ class QuestionQueryController extends Controller
         $table = DB::table('questions as q')
             ->join('learning_outcomes as l', 'l.id', '=', 'q.learning_outcome_id')
             ->join('branches as b', 'b.id', '=', 'q.lesson_id')
-            ->leftjoin('users as u', 'u.id', '=', 'q.creator_id') //TODO: Öksüz soruların durumu tartşılacak
+            ->leftJoin('users as u', 'u.id', '=', 'q.creator_id') //TODO: Öksüz soruların durumu tartşılacak
             ->select('q.id',
                 'q.creator_id',
                 DB::raw('l.id as lo_id'),

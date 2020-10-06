@@ -20,6 +20,7 @@ import Swal from 'admin-lte/plugins/sweetalert2/sweetalert2.all.min'
 import router from '../router'
 import Constants from './constants'
 import pace from 'pace-progressbar'
+import OverlayHelper from './OverlayHelper'
 
 const axios = require('axios').default
 
@@ -89,12 +90,15 @@ http.interceptors.response.use((response) => {
     const validationMessages = Object.entries(error.response.data)
       .map(entry => entry[1])
       .join('<br>')
+    // eslint-disable-next-line no-unused-expressions
+    OverlayHelper.close()
     const msg = `Aşağıdaki veri doğrulama hataları giderilmelidir.<br><b>${validationMessages}</b>`
     await Swal.fire({
       title: 'Veri doğrulama hatası!',
       html: msg,
       icon: 'warning',
       confirmButtonText: 'Tamam'
+      // timer: 3000
     })
     pace.stop()
   } else if (error.response.status === 500) {

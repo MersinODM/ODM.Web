@@ -26,6 +26,7 @@ use App\Models\Branch;
 use App\Models\LearningOutcome;
 use App\Models\Question;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +46,7 @@ class QuestionController extends ApiController
      *     ),
      *  )
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function create(Request $request)
     {
@@ -113,7 +114,7 @@ class QuestionController extends ApiController
     {
 //      $question = Question::findOrFail($id);
         $question = DB::table("questions as q")
-            ->join("users as u", "u.id", "=", "q.creator_id")
+            ->leftJoin("users as u", "u.id", "=", "q.creator_id")
             ->join("branches as b", "b.id", "=", "q.lesson_id")
             ->join("learning_outcomes as lo", "lo.id", "=", "q.learning_outcome_id")
             ->where("q.id", $id)

@@ -38,9 +38,9 @@ class Question extends Model
     public const APPROVED = 5;          // Onaylanmış soru
 
     protected $fillable = [
-        "creator_id", "lesson_id", "learning_outcome_id",
-        "keywords", "difficulty", "status",
-        "content_url"
+        'creator_id', 'lesson_id', 'learning_outcome_id',
+        'keywords', 'difficulty', 'status',
+        'content_url', 'min_required_election'
     ];
 
     public function evaluations()

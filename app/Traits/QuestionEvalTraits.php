@@ -45,7 +45,7 @@ trait QuestionEvalTraits
     {
         //Kayıtlı değerlendirme sayısı puanlanmış değerlendirme sayısına eşit mi?
         $savedEvalCount = $this->getSavedEvalCount($questionId, $code);
-        if($savedEvalCount >= 3) {
+        if($savedEvalCount >= 2) {
             return QuestionEvalRequest::where('question_id', $questionId)
                     ->where('code', $code)
                     ->whereNotNull('point')
@@ -125,5 +125,15 @@ trait QuestionEvalTraits
         return QuestionEvalRequest::where('question_id', $questionId)
             ->where('code', $code)
             ->count();
+    }
+
+    public function calculateAutomatic(): void
+    {
+
+    }
+
+    public function calculateManual(): void
+    {
+
     }
 }

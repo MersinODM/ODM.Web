@@ -36,6 +36,8 @@ trait ValidationTrait
         'full_name' => 'Ad soyad',
         'phone' => 'Telefon numarası',
         'inst_id' => 'Okul/Kurum kodu',
-        'branch_id' => 'Alan/Branş'
+        'branch_id' => 'Alan/Branş',
+        'minRequiredElection'=> 'Manuel hesaplama için gerekli en az puanlama sayısı',
+        'electors' => 'Değerlendiriciler'
     ];
 }

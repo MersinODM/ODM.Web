@@ -45,13 +45,44 @@
                 class="card"
               >
                 <div class="card-header with-border">
-                  <h4>Değerlendirici Ataması</h4>
+                  <h4>
+                    Değerlendirici Ataması
+                    <span v-if="selectedEvaluators.length>0">- Değerlendirici sayısı:
+                      <b>{{ selectedEvaluators.length }}</b>
+                    </span>
+                  </h4>
                 </div>
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-12">
                       <div class="row justify-content-md-center">
-                        <div class="col-md-5 col-xs-12">
+                        <div class="col-md-6 col-xs-12">
+                          <div
+                            class="form-group has-feedback"
+                          >
+                            <label>Manuel hesaplama için gereken asgari değerlendirme sayısı</label>
+                            <v-select
+                              ref="evaluatorsRef"
+                              v-model="minRequiredElection"
+                              v-validate="'required'"
+                              :options="electionRanges"
+                              name="mre"
+                              :class="{'is-invalid': errors.has('mre')}"
+                              placeholder="Seçim yapınız"
+                            >
+                              <div slot="no-options">
+                                Maalesef bişey bulamadık
+                              </div>
+                            </v-select>
+                            <span
+                              v-if="errors.has('mre')"
+                              class="error invalid-feedback"
+                            >{{ errors.first('mre') }}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row justify-content-md-center">
+                        <div class="col-md-6 col-xs-12">
                           <div
                             class="form-group has-feedback"
                           >
@@ -72,7 +103,7 @@
                           <div class="col-md-12 col-xs-12">
                             <button
                               class="btn btn-primary btn-block"
-                              style="margin-bottom: 10px"
+                              style="margin-bottom: 5em"
                               @click="setElectors"
                             >
                               Değerlendiricileri Kaydet
@@ -80,6 +111,8 @@
                           </div>
                         </div>
                       </div>
+                      <div class="row" />
+                      <div class="row" />
                     </div>
                   </div>
                 </div>
@@ -145,6 +178,9 @@ import UserService from '../../services/UserService'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
 import Timeline from '../../components/questions/Timeline'
 import Page from '../../components/Page'
+import OverlayHelper from '../../helpers/OverlayHelper'
+import { range } from '../../helpers/utils'
+import { SettingService } from '../../services/SettingService'
 
 export default {
   name: 'SetEvaluatorsForQuestion',
@@ -155,27 +191,34 @@ export default {
     evaluators: [],
     selectedEvaluator: '',
     selectedEvaluators: [],
-    savedEvaluators: []
+    savedEvaluators: [],
+    minRequiredElection: '',
+    electionRanges: []
   }),
-  beforeRouteEnter (to, from, next) {
+  async beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId
-    Promise.all([
-      QuestionService.findById(questionId),
-      QuestionEvaluationService.findByQuestionId(questionId)])
-      .then(([question, savedEvaluations]) => {
-        next(vm => {
-          vm.question = question
-          vm.savedEvaluators = savedEvaluations
-        })
+    try {
+      const [question, savedEvaluations, setting] = await Promise.all([
+        QuestionService.findById(questionId),
+        QuestionEvaluationService.findByQuestionId(questionId),
+        SettingService.getSettings()
+      ])
+      next(vm => {
+        vm.question = question
+        vm.savedEvaluators = savedEvaluations
+        vm.electionRanges = range(setting.min_elector_count, setting.max_elector_count)
+        vm.minElectorCount = setting.min_elector_count
+        vm.maxElectorCount = setting.max_elector_count
       })
+    } catch (reason) {}
   },
   computed: {
     checkForEvaluationReq () {
       if (this.question) {
         const res = (this.$isInRole('admin') && this.question.status === QuestionStatuses.WAITING_FOR_ACTION) ||
-                (this.$isInRole('admin') && this.question.status === QuestionStatuses.REVISION_COMPLETED) // &&
-                // (this.savedEvaluators !== null &&
-                // this.savedEvaluators.filter(se => se.point !== null || se.point > 0).length > 0))
+            (this.$isInRole('admin') && this.question.status === QuestionStatuses.REVISION_COMPLETED) // &&
+        // (this.savedEvaluators !== null &&
+        // this.savedEvaluators.filter(se => se.point !== null || se.point > 0).length > 0))
         return res
       }
       return false
@@ -186,7 +229,9 @@ export default {
   },
   created () {
     setTimeout(() => this.getFile(), 1500)
-    setTimeout(() => { this.findElectorsByBranchId() }, 1000)
+    setTimeout(() => {
+      this.findElectorsByBranchId()
+    }, 1000)
   },
   methods: {
     getFile () {
@@ -198,7 +243,9 @@ export default {
         .catch(reason => {
           Messenger.showError(reason.message)
         })
-        .finally(() => { loader.hide() })
+        .finally(() => {
+          loader.hide()
+        })
     },
     getQuestion () {
       const questionId = this.$route.params.questionId
@@ -211,47 +258,49 @@ export default {
     findElectorsByBranchId () {
       UserService.findElectorsByBranchId(this.question.branch_id)
         .then(electors => {
-          this.evaluators = electors
+          this.evaluators = electors.filter(elector => elector.id !== this.question.creator_id)
         })
         .catch(reason => Messenger.showError(reason.message))
     },
-    setElectors () {
+    async setElectors () {
       const res = this.selectedEvaluators
         .filter(elector => elector.branch_id === this.question.branch_id)
         .length >= 2
+      let loader = {}
       if (res) {
         const electors = this.selectedEvaluators.map(value => value.full_name).join(', ')
-        Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`)
-          .then(value => {
-            if (value.isConfirmed) {
-              const loader = this.$loading.show()
-              QuestionEvaluationService.saveElectors(this.question.id, this.selectedEvaluators)
-                .then(resp => {
-                  loader.hide()
-                  Messenger.showSuccess(resp.message)
-                    .then(() => {
-                      this.refreshQuestion()
-                    })
-                })
-                .catch(reason => Messenger.showError(reason.message))
-                .finally(() => {
-                  loader.hide()
-                  this.$refs.evaluatorsRef.clearSelection()
-                })
-            }
-          })
-          .catch(reason => {})
+        const promptRes = await Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`)
+        try {
+          if (promptRes.isConfirmed) {
+            loader = this.$loading.show()
+            OverlayHelper.setLoader(loader)
+            const data = { electors: this.selectedEvaluators, minRequiredElection: this.minRequiredElection }
+            const response = await QuestionEvaluationService.saveElectors(this.question.id, data)
+            await loader.hide()
+            await Messenger.showSuccess(response.message)
+            await this.refreshQuestion()
+          }
+        } catch (reason) {
+          // eslint-disable-next-line no-unused-expressions
+          await loader?.hide()
+          this.$refs.evaluatorsRef.clearSelection()
+          if (reason?.message) {
+            await Messenger.showError(reason.message)
+          }
+        }
       } else {
-        Messenger.showWarning('Aynı alandan olmak üzere lütfen en az iki tane değerlendirici seçiniz!')
+        await Messenger.showWarning('Aynı alandan olmak üzere lütfen en az iki tane değerlendirici seçiniz!')
       }
     },
-    refreshQuestion () {
-      Promise.all([QuestionService.findById(this.question.id), QuestionEvaluationService.findByQuestionId(this.question.id)])
-        .then(([question, savedEvaluators]) => {
-          this.question = question
-          this.savedEvaluators = savedEvaluators
-        })
-        .catch(reason => Messenger.showError(reason.message))
+    async refreshQuestion () {
+      try {
+        const [question, savedEvaluators] = await Promise.all([
+          QuestionService.findById(this.question.id),
+          QuestionEvaluationService.findByQuestionId(this.question.id)
+        ])
+        this.question = question
+        this.savedEvaluators = savedEvaluators
+      } catch (reason) {}
     }
   }
 }
