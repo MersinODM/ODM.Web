@@ -32,3 +32,7 @@ create table user_permitted_lesson
 
 INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
 SELECT u.id, u.branch_id, true, NOW(), NOW() from users as u;
+
+INSERT INTO user_permitted_lesson (user_id, lesson_id,  is_main, created_at, updated_at)
+SELECT u.id, 15, false, NOW(), NOW() FROM users as u
+WHERE u.branch_id IN (5, 10);

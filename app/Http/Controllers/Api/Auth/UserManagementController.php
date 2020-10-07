@@ -82,9 +82,19 @@ class UserManagementController extends ApiController
             $model = new User($requestedUser);
             $model->save();
             $model->assign('teacher');
+            $branchId = (int)$requestedUser['branch_id'];
+            //SB ve TAR branşlarına İnklap Tarihi otomatikman eklenşyor
+            if ($branchId === 5 || $branchId === 10) {
+                $model->lessons()
+                    ->attach([
+                        $branchId => ['is_main' => true],
+                        15 => ['is_main' => false]
+                    ]);
+            }else {
+                $model->lessons()
+                    ->attach($branchId, ['is_main' => true]);
+            }
 
-            $model->lessons()
-                ->attach($model->branch_id, ['is_main' => true]);
 
             //Burada kullanıca şifre oluşturma maili atılıyor
             event(new NewUserReqReceived($model));
@@ -115,12 +125,16 @@ class UserManagementController extends ApiController
             User::find($id)->update([
                 "activator_id" => Auth::id()
             ]);
-            $newUserReq = User::find($id);
-            $newUserReq->lessons()
-                ->updateExistingPivot($newUserReq->branch_id, ['creator_id' => Auth::id()]);
+            $newUser = User::find($id);
+            $relatedIds = $newUser->lessons()->allRelatedIds();
+
+            foreach ($relatedIds as $relatedId){
+                $newUser->lessons()
+                    ->updateExistingPivot($relatedId, ['creator_id' => Auth::id()]);
+            }
             //Bu sırada kullanıcıya şifre email olarak atıldı.
             //Bu işlem normalde java gibi dillerde asenkron yapılabilirdi
-            event(new ResetPasswordEvent($newUserReq));
+            event(new ResetPasswordEvent($newUser));
             DB::commit();
             return response()->json([ResponseKeys::MESSAGE => "Kullanıcı kayıt isteği onaylandı."], 200);
         } catch (Exception $exception) {
