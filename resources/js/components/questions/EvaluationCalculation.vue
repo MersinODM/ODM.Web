@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="row justify-content-md-center">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <button
                 class="btn btn-primary btn-block"
                 @click="manuallyCalculate"
@@ -101,7 +101,7 @@
             </div>
           </div>
           <div class="row justify-content-md-center mt-3">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <button
                 :class="{disabled : selectedEvaluators.length === 0}"
                 class="btn btn-success btn-block"
@@ -137,35 +137,35 @@ export default {
   computed: {
     hasPoint (currentElection) {
       return !!currentElection.point
+    },
+    canRemove (election) {
+      const res = this.questionEvaluations
+        .filter(elector => elector.branch_id === this.question.branch_id)
+        .length > Math.round(this.minRequiredElection / 2)
+      return res
     }
   },
-  watch: {
-    questionEvaluations () {
-      if (this.questionEvaluations.length <= 0) {
-        Messenger.showWarning('Mevcut gruptan tüm değerlendirciler silinmiş yeni değerlendirme grubu ataması yapmanız gerekiyor! Sizi bir önceki menüye yönlendiriyoruz')
-          .then(() => this.$router.push({ name: 'questionTableList' }))
-      }
-    }
-  },
-  created () {
-    setTimeout(() => {
-      this.loadData()
-    }, 1000)
+  async created () {
+    await this.loadData()
   },
   methods: {
-    removeEvalRequest (id) {
-      Messenger.showPrompt('Bu değerlendiriciye atanmış isteği silmek istiyor munuz?')
-        .then((result) => {
-          if (result.isConfirmed) {
-            QuestionEvaluationService.deleteById(id)
-              .then((response) => {
-                if (response.code === ResponseCodes.CODE_SUCCESS) {
-                  Messenger.showSuccess('Seçili istek başarıyla silindi.')
-                }
-              })
-              .finally(() => this.loadData())
+    async removeEvalRequest (id) {
+      const result = await Messenger.showPrompt('Bu değerlendiriciye atanmış isteği silmek istiyor munuz?')
+      if (result.isConfirmed) {
+        try {
+          const response = await QuestionEvaluationService.deleteById(id)
+          if (response.code === ResponseCodes.CODE_SUCCESS) {
+            await Messenger.showSuccess('Seçili istek başarıyla silindi.')
+            await this.loadData()
+            if (this.questionEvaluations.length <= 0) {
+              await Messenger.showWarning('Mevcut gruptan tüm değerlendirciler silinmiş yeni değerlendirme grubu ataması yapmanız gerekiyor! Sizi bir önceki menüye yönlendiriyoruz')
+              await this.$router.push({ name: 'questionTableList' })
+            }
           }
-        })
+        } catch (err) {
+          await Messenger.showError(err?.message)
+        }
+      }
     },
     addElectors () {
       if (!this.selectedEvaluators && this.selectedEvaluators.length === 0) return
@@ -220,20 +220,18 @@ export default {
           }
         })
     },
-    loadData () {
-      Promise.all([
-        QuestionEvaluationService.findByQuestionId(this.question.id, 1),
-        UserService.findElectorsByBranchId(this.question.branch_id)
-      ])
-        .then(([questionEvaluations, electors]) => {
-          this.questionEvaluations = questionEvaluations
-          this.allElectors = electors.filter(elector => !questionEvaluations.find(e => e.elector_id === elector.id))
-          this.code = questionEvaluations[0]?.code
-        })
-        .catch(reason => {
-          console.log(reason)
-          Messenger.showError('Üzgünüz bu soruyla ilgili gerekli yüklememleri yapamadık!')
-        })
+    async loadData () {
+      try {
+        const [questionEvaluations, electors] = await Promise.all([
+          QuestionEvaluationService.findByQuestionId(this.question.id, 1),
+          UserService.findElectorsByBranchId(this.question.branch_id)
+        ])
+        this.questionEvaluations = questionEvaluations
+        this.allElectors = electors.filter(elector => !questionEvaluations.find(e => e.elector_id === elector.id))
+        this.code = questionEvaluations[0]?.code
+      } catch (reason) {
+        await Messenger.showError('Üzgünüz bu soruyla ilgili gerekli yüklememleri yapamadık!')
+      }
     }
   }
 }

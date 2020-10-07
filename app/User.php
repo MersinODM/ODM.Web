@@ -5,6 +5,8 @@ namespace App;
 use App\Models\Branch;
 use App\Models\Institution;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Silber\Bouncer\Database\HasRolesAndAbilities;
@@ -61,11 +63,21 @@ class User extends Authenticatable implements JWTSubject
     return [];
   }
 
-  public function branch() {
+  public function branch(): BelongsTo
+  {
     return $this->belongsTo(Branch::class, "branch_id", "id");
   }
 
-  public function institution() {
+  public function institution(): BelongsTo
+  {
     return $this->belongsTo(Institution::class, "inst_id", "id");
+  }
+
+  public function lessons(): BelongsToMany
+  {
+      return $this->belongsToMany(Branch::class, 'user_permitted_lesson', 'user_id', 'lesson_id')
+          ->as('permittedLesson')
+          ->withTimestamps()
+          ->withPivot('is_main', 'creator_id');
   }
 }

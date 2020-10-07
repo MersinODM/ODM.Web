@@ -10,4 +10,25 @@ alter table settings
     add max_elector_count int null after min_elector_count;
 
 
-update settings set min_elector_count = 2, max_elector_count=5 where settings.min_elector_count IS NULL;
+update settings set min_elector_count = 2, max_elector_count=10 where settings.min_elector_count IS NULL;
+
+create table user_permitted_lesson
+(
+    user_id int unsigned null,
+    lesson_id int unsigned null,
+    creator_id int unsigned null,
+    is_main bool null,
+    created_at timestamp null,
+    updated_at timestamp null,
+    constraint user_permitted_lesson_pk
+        primary key (user_id, lesson_id),
+    constraint user_permitted_lesson_branches_id_fk
+        foreign key (lesson_id) references branches (id),
+    constraint user_permitted_lesson_users_id_fk
+        foreign key (user_id) references users (id),
+    constraint user_permitted_lesson_users_id_fk_2
+        foreign key (creator_id) references users (id)
+);
+
+INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
+SELECT u.id, u.branch_id, true, NOW(), NOW() from users as u;

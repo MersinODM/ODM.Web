@@ -283,6 +283,7 @@ class QuestionEvalRequestController extends ApiController
             ->where('qer.question_id', $questionId)
             ->select('qer.id', 'qer.elector_id',
                 DB::raw('CONCAT(u.full_name, " - ", b.name) as full_name'),
+                'u.branch_id',
                 'qer.code',
                 'qer.comment',
                 'qer.point',

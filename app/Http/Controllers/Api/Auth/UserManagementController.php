@@ -83,6 +83,9 @@ class UserManagementController extends ApiController
             $model->save();
             $model->assign('teacher');
 
+            $model->lessons()
+                ->attach($model->branch_id, ['is_main' => true]);
+
             //Burada kullanıca şifre oluşturma maili atılıyor
             event(new NewUserReqReceived($model));
             DB::commit();
@@ -113,6 +116,8 @@ class UserManagementController extends ApiController
                 "activator_id" => Auth::id()
             ]);
             $newUserReq = User::find($id);
+            $newUserReq->lessons()
+                ->updateExistingPivot($newUserReq->branch_id, ['creator_id' => Auth::id()]);
             //Bu sırada kullanıcıya şifre email olarak atıldı.
             //Bu işlem normalde java gibi dillerde asenkron yapılabilirdi
             event(new ResetPasswordEvent($newUserReq));
