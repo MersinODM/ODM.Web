@@ -148,9 +148,6 @@ export default {
             xhr.setRequestHeader('Authorization',
               `Bearer ${token}`)
           }
-          // error: function (jqXHR, textStatus, errorThrown) {
-          //   console.log(errorThrown)
-          // }
         },
         language: tr,
         columns: [
@@ -166,6 +163,7 @@ export default {
           },
           {
             data: 'phone',
+            name: 'u.phone',
             searchable: true
           },
           {
