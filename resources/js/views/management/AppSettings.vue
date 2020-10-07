@@ -360,7 +360,7 @@ export default {
       const settings = await SettingService.getSettings()
       next(vm => {
         vm.settings = settings
-        vm.minRange = [...Array(5).keys()].map(i => i + 2)
+        vm.minRange = [...Array(9).keys()].map(i => i + 2)
         vm.minElectorCount = settings.min_elector_count
         vm.maxElectorCount = settings.max_elector_count
       })
