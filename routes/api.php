@@ -111,7 +111,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('institutions/{id}/teachers', "Auth\UserQueryController@findByInstitutionIdWithStats");
 
     //Ayarlar ile ilgili route tanımlamaları
-    Route::get('settings', "Setting\SettingController@getSettings");
-    Route::put('settings', "Setting\SettingController@update");
-    Route::post('settings/migrate_up', "Setting\SettingController@migrateUp");
+    Route::get('settings', "Setting\SettingController@getSettings")->middleware('role:admin');
+    Route::put('settings', "Setting\SettingController@update")->middleware('role:admin');
+//    Route::post('settings/migrate_up', "Setting\SettingController@migrateUp");
 });

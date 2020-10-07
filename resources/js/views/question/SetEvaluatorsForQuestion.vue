@@ -90,7 +90,10 @@
                             <v-select
                               ref="evaluatorsRef"
                               v-model="selectedEvaluators"
+                              v-validate="'required'"
                               multiple
+                              name="evaluators"
+                              :class="{'is-invalid': errors.has('evaluators')}"
                               label="full_name"
                               :options="evaluators"
                               placeholder="Değerlendirici/leri seçebilirsiniz"
@@ -99,11 +102,16 @@
                                 Maalesef hiç değerlendiricimiz yok
                               </div>
                             </v-select>
+                            <span
+                              v-if="errors.has('evaluators')"
+                              class="error invalid-feedback"
+                            >{{ errors.first('evaluators') }}</span>
                           </div>
                           <div class="col-md-12 col-xs-12">
                             <button
                               class="btn btn-primary btn-block"
                               style="margin-bottom: 5em"
+                              :class="{'disabled': errors.any()}"
                               @click="setElectors"
                             >
                               Değerlendiricileri Kaydet
@@ -111,8 +119,6 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row" />
-                      <div class="row" />
                     </div>
                   </div>
                 </div>
@@ -193,7 +199,9 @@ export default {
     selectedEvaluators: [],
     savedEvaluators: [],
     minRequiredElection: '',
-    electionRanges: []
+    electionRanges: [],
+    minElectorCount: '',
+    maxElectorCount: ''
   }),
   async beforeRouteEnter (to, from, next) {
     const questionId = to.params.questionId
@@ -207,6 +215,7 @@ export default {
         vm.question = question
         vm.savedEvaluators = savedEvaluations
         vm.electionRanges = range(setting.min_elector_count, setting.max_elector_count)
+        vm.minRequiredElection = setting.min_elector_count
         vm.minElectorCount = setting.min_elector_count
         vm.maxElectorCount = setting.max_elector_count
       })
@@ -231,65 +240,67 @@ export default {
     setTimeout(() => this.getFile(), 1500)
     setTimeout(() => {
       this.findElectorsByBranchId()
-    }, 1000)
+    }, 500)
   },
   methods: {
-    getFile () {
+    async getFile () {
       const loader = this.$loading.show()
-      QuestionService.getFile(this.$route.params.questionId)
-        .then(value => {
-          this.questionFile = value
-        })
-        .catch(reason => {
-          Messenger.showError(reason.message)
-        })
-        .finally(() => {
-          loader.hide()
-        })
+      try {
+        this.questionFile = await QuestionService.getFile(this.$route.params.questionId)
+        loader.hide()
+      } catch (reason) {
+        loader.hide()
+        await Messenger.showError(reason.message)
+      }
     },
-    getQuestion () {
+    async getQuestion () {
       const questionId = this.$route.params.questionId
-      QuestionService.findById(questionId)
-        .then(value => {
-          this.question = value
-        })
-        .catch(reason => Messenger.showError(reason))
+      try {
+        this.question = await QuestionService.findById(questionId)
+      } catch (reason) {
+        await Messenger.showError(reason)
+      }
     },
-    findElectorsByBranchId () {
-      UserService.findElectorsByBranchId(this.question.branch_id)
-        .then(electors => {
-          this.evaluators = electors.filter(elector => elector.id !== this.question.creator_id)
-        })
-        .catch(reason => Messenger.showError(reason.message))
+    async findElectorsByBranchId () {
+      try {
+        const electors = await UserService.findElectorsByBranchId(this.question.branch_id)
+        this.evaluators = electors.filter(elector => elector.id !== this.question.creator_id)
+      } catch (reason) { await Messenger.showError(reason?.message) }
     },
-    async setElectors () {
+    calculateRule () {
       const res = this.selectedEvaluators
         .filter(elector => elector.branch_id === this.question.branch_id)
-        .length >= 2
-      let loader = {}
-      if (res) {
-        const electors = this.selectedEvaluators.map(value => value.full_name).join(', ')
-        const promptRes = await Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`)
-        try {
-          if (promptRes.isConfirmed) {
-            loader = this.$loading.show()
-            OverlayHelper.setLoader(loader)
-            const data = { electors: this.selectedEvaluators, minRequiredElection: this.minRequiredElection }
-            const response = await QuestionEvaluationService.saveElectors(this.question.id, data)
-            await loader.hide()
-            await Messenger.showSuccess(response.message)
-            await this.refreshQuestion()
+        .length >= Math.round(this.minRequiredElection / 2)
+      return res
+    },
+    async setElectors () {
+      const validationResult = await this.$validator.validateAll()
+      if (validationResult) {
+        let loader = {}
+        if (this.selectedEvaluators.length >= this.minRequiredElection && this.calculateRule()) {
+          const electors = this.selectedEvaluators.map(value => value.full_name).join(', ')
+          const promptRes = await Messenger.showPrompt(`Bu soruya değerlendirici olarak <b>${electors}</b> adlı kişileri seçtiniz. Onaylıyor musunuz?`)
+          try {
+            if (promptRes.isConfirmed) {
+              loader = this.$loading.show()
+              OverlayHelper.setLoader(loader)
+              const data = { electors: this.selectedEvaluators, minRequiredElection: this.minRequiredElection }
+              const response = await QuestionEvaluationService.saveElectors(this.question.id, data)
+              await loader.hide()
+              await Messenger.showSuccess(response.message)
+              await this.refreshQuestion()
+            }
+          } catch (reason) {
+            // eslint-disable-next-line no-unused-expressions
+            await loader?.hide()
+            this.$refs.evaluatorsRef.clearSelection()
+            if (reason?.message) {
+              await Messenger.showError(reason.message)
+            }
           }
-        } catch (reason) {
-          // eslint-disable-next-line no-unused-expressions
-          await loader?.hide()
-          this.$refs.evaluatorsRef.clearSelection()
-          if (reason?.message) {
-            await Messenger.showError(reason.message)
-          }
+        } else {
+          await Messenger.showWarning(`Aynı alandan olmak üzere lütfen en az ${Math.round(this.minRequiredElection / 2)} tane ve toplamda ${this.minRequiredElection} değerlendirici olacak şekilde seçim yapınız!`)
         }
-      } else {
-        await Messenger.showWarning('Aynı alandan olmak üzere lütfen en az iki tane değerlendirici seçiniz!')
       }
     },
     async refreshQuestion () {

@@ -53,7 +53,9 @@ const dictionary = {
       examPurpose: 'Sınav genel amacı',
       plannedDate: 'Planlan tarih',
       minElectorCount: 'Min. puanlayıcı',
-      maxElectorCount: 'Maks. puanlayıcı'
+      maxElectorCount: 'Maks. puanlayıcı',
+      mre: 'Manuel hesaplama için gereken geçerli değerlendirme sayısı',
+      evaluators: 'Değerlendirici/Puanlayıcı'
     }
   }
 }
