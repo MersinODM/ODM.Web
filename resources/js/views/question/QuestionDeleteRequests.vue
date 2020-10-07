@@ -80,6 +80,8 @@ export default {
         processing: true,
         serverSide: true,
         responsive: true,
+        stateSave: true,
+        stateDuration: -1,
         ajax: {
           url: `${vm.$getBasePath()}/api/questions/delete_requests`,
           dataType: 'json',
