@@ -51,8 +51,8 @@ class CheckElectorCount implements Rule
     {
         // TODO Toplam değerlendirici sayısı Settings tablosu içine atılıp parametrik hale getirilebilir.
         // Toplam değerlendirici sayısı 5 i geçemez
-        $max = Setting::select('max_elector_count')->first()->max_elector_count;
-        return $max >= $this->count + count($value);
+        $this->max = Setting::select('max_elector_count')->first()->max_elector_count;
+        return $this->max >= $this->count + count($value);
     }
 
     /**

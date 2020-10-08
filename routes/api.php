@@ -65,6 +65,10 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('questions/last_saved/{size}', "Question\QuestionController@getLastQuestions");
     Route::post('questions/list', "Question\QuestionQueryController@getQuestionList");
     Route::post('questions/delete_requests', "Question\QuestionDeleteRequestController@getDeleteRequests"); //Silme isteği api route
+
+    //Constraints
+    Route::get('questions/constraints', "Setting\SettingController@getQuestionConstraints");
+
     Route::get('questions/{id}', "Question\QuestionController@findById");
     Route::get('questions/{id}/file', "Question\QuestionController@getFile");
     //Evals

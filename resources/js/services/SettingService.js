@@ -51,5 +51,11 @@ export const SettingService = {
         .then((response) => resolve(response.data))
         .catch((reason) => reject(reason))
     })
+  },
+  async getQuestionConstraints () {
+    try {
+      const response = await http.get('questions/constraints')
+      return response.data
+    } catch (error) {}
   }
 }

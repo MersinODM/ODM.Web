@@ -192,9 +192,10 @@ class QuestionEvalRequestController extends ApiController
     {
         try {
             DB::beginTransaction();
-            QuestionEvalRequest::where('code', $code)->delete();
+            QuestionEvalRequest::where('code', $code)
+                ->where('question_id', $questionId)
+                ->delete();
             Question::where('id', $questionId)
-                ->where('status', Question::IN_ELECTION)
                 ->update(['status' => Question::WAITING_FOR_ACTION]);
             DB::commit();
             // Olası değerlendirme silinmesi durumunda yeniden hesaplama yapılması gerekir
@@ -202,7 +203,7 @@ class QuestionEvalRequestController extends ApiController
             // event(new QuestionEvalCalculateRequired($qer));
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                ResponseKeys::MESSAGE => 'Değerlendirme isteği başarıyla silindi.'
+                ResponseKeys::MESSAGE => 'Bu soruya ait tüm aktif değerlendirme istekleri başarıyla silindi.'
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();

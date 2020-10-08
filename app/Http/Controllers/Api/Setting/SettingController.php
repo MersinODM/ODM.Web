@@ -71,6 +71,13 @@ class SettingController extends ApiController
         ]));
     }
 
+    public function getQuestionConstraints() {
+        return response()->json(Setting::first([
+            'min_elector_count',
+            'max_elector_count'
+        ]));
+    }
+
     /**
      * Tüm ayarları geri döner
      * @return \Illuminate\Http\JsonResponse

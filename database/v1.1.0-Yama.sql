@@ -3,6 +3,10 @@ alter table questions
         comment 'Bu alan değerlendirmenin gerçekleşmesi için en az kaç değ. olacağına karar verir'
         after content_url;
 
+update questions as u
+set u.min_required_election = 3
+where u.min_required_election is null;
+
 alter table settings
     add min_elector_count int null after captcha_enabled;
 
@@ -10,16 +14,34 @@ alter table settings
     add max_elector_count int null after min_elector_count;
 
 
-update settings set min_elector_count = 2, max_elector_count=10 where settings.min_elector_count IS NULL;
+update settings
+set min_elector_count = 2,
+    max_elector_count=10
+where settings.min_elector_count IS NULL;
+
+
+CREATE TRIGGER checkMinMaxElectorCount
+    BEFORE UPDATE
+    ON settings
+    FOR EACH ROW
+BEGIN
+    IF NEW.min_elector_count < 2 THEN
+        SET NEW.min_elector_count = 2;
+    end if;
+    IF NEW.max_elector_count > 10 THEN
+        SET NEW.max_elector_count = 10;
+    end if;
+END;
+
 
 create table user_permitted_lesson
 (
-    user_id int unsigned null,
-    lesson_id int unsigned null,
+    user_id    int unsigned null,
+    lesson_id  int unsigned null,
     creator_id int unsigned null,
-    is_main bool null,
-    created_at timestamp null,
-    updated_at timestamp null,
+    is_main    bool         null,
+    created_at timestamp    null,
+    updated_at timestamp    null,
     constraint user_permitted_lesson_pk
         primary key (user_id, lesson_id),
     constraint user_permitted_lesson_branches_id_fk
@@ -31,8 +53,10 @@ create table user_permitted_lesson
 );
 
 INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
-SELECT u.id, u.branch_id, true, NOW(), NOW() from users as u;
+SELECT u.id, u.branch_id, true, NOW(), NOW()
+from users as u;
 
-INSERT INTO user_permitted_lesson (user_id, lesson_id,  is_main, created_at, updated_at)
-SELECT u.id, 15, false, NOW(), NOW() FROM users as u
+INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
+SELECT u.id, 15, false, NOW(), NOW()
+FROM users as u
 WHERE u.branch_id IN (5, 10);

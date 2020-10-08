@@ -127,6 +127,7 @@ class QuestionController extends ApiController
                 "q.correct_answer",
                 "q.is_design_required",
                 "q.status",
+                "q.min_required_election",
                 DB::raw("CASE
                                 WHEN status = 0 THEN 'İşleme alınmamış'
                                 WHEN status = 1 THEN 'Değerlendirme aşamasında'
