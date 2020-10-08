@@ -18,30 +18,24 @@
 
 <template>
   <div class="row">
-    <div class="col-md-8 col-sm-6">
+    <div class="col-md-10 col-sm-12">
       <slot />
     </div>
-    <div class="col-md-4 col-sm-6">
-      <div
+    <div class="col-md-2 col-sm-12">
+      <h4
         v-if="hasDeleteRequest"
         class=" center-block float-right"
       >
-        <h4>
-          <span class="badge badge-danger">Silme Talep Edilmiş</span>
-        </h4>
-      </div>
-      <div
+        <span class="badge badge-danger">Silme Talep Edilmiş</span>
+      </h4>
+      <button
         v-if="isOwner"
-        class="float-right"
+        class="btn btn-danger btn-block float-right"
+        style="margin-right: 10px"
+        @click="deleteRequest"
       >
-        <button
-          class="btn btn-danger float-right"
-          style="margin-right: 10px"
-          @click="deleteRequest"
-        >
-          Silme Talep Et
-        </button>
-      </div>
+        Silme Talep Et
+      </button>
     </div>
   </div>
 </template>
