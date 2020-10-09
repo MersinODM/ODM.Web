@@ -157,7 +157,7 @@ import Messenger from '../../helpers/messenger'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import { ResponseCodes } from '../../helpers/constants'
 import { SettingService } from '../../services/SettingService'
-import { createPopper } from '@popperjs/core'
+import { createPopper } from '@popperjs/core/dist/umd/popper-lite.min'
 
 export default {
   name: 'EvaluationCalculation',
