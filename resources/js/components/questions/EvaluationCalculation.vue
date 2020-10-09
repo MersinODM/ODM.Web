@@ -94,7 +94,7 @@
             </div>
           </div>
           <div
-            v-if="hasRequiredMinElections"
+            v-if="hasRequiredMinPointAndElector"
             class="row justify-content-md-center"
           >
             <div class="col-md-6">
@@ -157,7 +157,7 @@ import Messenger from '../../helpers/messenger'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import { ResponseCodes } from '../../helpers/constants'
 import { SettingService } from '../../services/SettingService'
-import { createPopper } from '@popperjs/core/dist/umd/popper-lite.min'
+import { createPopper } from '@popperjs/core/dist/umd/popper.min'
 
 export default {
   name: 'EvaluationCalculation',
@@ -176,7 +176,9 @@ export default {
     code: '',
     constraints: '',
     selectionMessage: '',
-    placement: 'top'
+    placement: 'top',
+    isEnableManualCalculation: true,
+    sameBranchEvals: []
   }),
   computed: {
     hasPoint (currentElection) {
@@ -187,8 +189,11 @@ export default {
       // eslint-disable-next-line no-unused-expressions
       return res
     },
-    hasRequiredMinElections () {
-      return this.questionEvaluations.filter(value => !!value.point).length >= this.question.min_required_election
+    hasRequiredMinPointAndElector () {
+      // Minimum alandan geçerli puana ve toplam gerekli puana bakılıyor
+      const rule1 = this.sameBranchEvals.filter(e => e.point).length >= Math.round(this.question.min_required_election / 2)
+      const rule2 = this.questionEvaluations.filter(e => e.point).length >= this.question.min_required_election
+      return rule1 && rule2
     }
   },
   watch: {
@@ -204,17 +209,22 @@ export default {
     this.constraints = await SettingService.getQuestionConstraints()
   },
   methods: {
-    calculate () {
-      const sameBranches = this.questionEvaluations.filter(elector => elector.branch_id === this.question.branch_id)
-      // const others = this.questionEvaluations.length - sameBranches.length
-      const rule1 = sameBranches.length <= Math.round(this.question.min_required_election / 2)
+    hasMinSameBranchElector () {
+      this.sameBranchEvals = this.questionEvaluations.filter(elector => elector.branch_id === this.question.branch_id)
+      const rule1 = this.sameBranchEvals.length <= Math.round(this.question.min_required_election / 2)
+      return rule1
+    },
+    hasRequiredMinEvals () {
       const rule2 = this.questionEvaluations.length <= this.question.min_required_election
-      if (rule1) {
+      return rule2
+    },
+    calculate () {
+      if (this.hasMinSameBranchElector()) {
         this.questionEvaluations.forEach((q) => {
-          if (sameBranches.find(a => a.id === q.id)) { q.canRemove = false }
+          if (this.sameBranchEvals.find(a => a.id === q.id)) { q.canRemove = false }
         })
       }
-      if (rule2) {
+      if (this.hasRequiredMinEvals()) {
         this.questionEvaluations.forEach((q) => { q.canRemove = false })
       }
     },
