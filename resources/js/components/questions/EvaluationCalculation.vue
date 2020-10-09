@@ -281,7 +281,8 @@ export default {
           const result = await QuestionEvaluationService.manuallyCalculate(this.question.id, this.questionEvaluations[0]?.code)
           switch (result.code) {
             case ResponseCodes.CODE_SUCCESS: {
-              await Messenger.showSuccess(result.message)
+              await Messenger.showSuccess(`${result?.message}.Şimdi sizi sorular sayfasına yönlendiriyoruz.`)
+              await this.$router.push({ name: 'questionTableList' })
               break
             }
             case ResponseCodes.CODE_WARNING: {
