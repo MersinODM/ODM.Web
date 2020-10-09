@@ -56,7 +56,7 @@
           <h6 v-if="question != null">
             <span style="font-weight: bold">Durumu: </span>
             <span
-              class="label"
+              class="badge"
               :class="getStatusClass"
             >{{ question.status_title }} </span>
           </h6>
@@ -87,12 +87,12 @@ export default {
   computed: {
     getStatusClass () {
       return {
-        'label-danger': this.question.status === QuestionStatuses.NOT_MUST_ASKED,
-        'label-info': this.question.status === QuestionStatuses.IN_ELECTION,
-        'label-primary': this.question.status === QuestionStatuses.REVISION_COMPLETED,
-        'label-warning': this.question.status === QuestionStatuses.NEED_REVISION,
-        'label-success': this.question.status === QuestionStatuses.APPROVED,
-        'label-default': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
+        'bg-danger': this.question.status === QuestionStatuses.NOT_MUST_ASKED,
+        'bg-info': this.question.status === QuestionStatuses.IN_ELECTION,
+        'bg-primary': this.question.status === QuestionStatuses.REVISION_COMPLETED,
+        'bg-warning': this.question.status === QuestionStatuses.NEED_REVISION,
+        'bg-success': this.question.status === QuestionStatuses.APPROVED,
+        'bg-default': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
       }
     }
   },

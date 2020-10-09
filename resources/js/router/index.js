@@ -39,6 +39,8 @@ import examRoutes from './examRoutes'
 import questionRoutes from './questionRoutes'
 import institutionRoutes from './institutionRoutes'
 import loRoutes from './loRoutes'
+import EditUser from '../views/user/EditUser'
+import userRoutes from './userRoute'
 // import Stats from '../views/info/Stats'
 
 Vue.use(Router)
@@ -70,25 +72,11 @@ const router = new Router({
         ...questionRoutes,
         ...institutionRoutes,
         ...loRoutes,
+        ...userRoutes,
         {
           path: '',
           name: 'stats',
           component: Stats
-        },
-        {
-          path: '/users/list',
-          name: 'users',
-          component: UserList
-        },
-        {
-          path: '/users/passives/list',
-          name: 'passiveUsers',
-          component: PassiveUserList
-        },
-        {
-          path: '/users/:id',
-          name: 'user',
-          component: User
         },
         {
           path: '/branches/new',

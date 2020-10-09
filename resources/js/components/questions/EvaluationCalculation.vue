@@ -39,7 +39,7 @@
           <div class="row">
             <div class="col-md-12">
               <h6 v-if="question">
-                Manuel hesaplama için gereken puanlama sayısı en az <b>{{ question.min_required_election }}</b> olmalıdır
+                Manuel hesaplama için gereken puanlama sayısı en az <span class="badge bg-gradient-warning"><b style="font-size:1.3em">{{ question.min_required_election }}</b></span> olmalıdır
               </h6>
             </div>
           </div>
@@ -158,6 +158,7 @@ import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import { ResponseCodes } from '../../helpers/constants'
 import { SettingService } from '../../services/SettingService'
 import { createPopper } from '@popperjs/core/dist/umd/popper.min'
+import { calculateWithPopper } from '../../helpers/utils'
 
 export default {
   name: 'EvaluationCalculation',
@@ -331,63 +332,11 @@ export default {
         }
       }
     },
-    withPopper (dropdownList, component, { width }) {
-      /**
-       * We need to explicitly define the dropdown width since
-       * it is usually inherited from the parent with CSS.
-       */
-      dropdownList.style.width = width
-
-      /**
-       * Here we position the dropdownList relative to the $refs.toggle Element.
-       *
-       * The 'offset' modifier aligns the dropdown so that the $refs.toggle and
-       * the dropdownList overlap by 1 pixel.
-       *
-       * The 'toggleClass' modifier adds a 'drop-up' class to the Vue Select
-       * wrapper so that we can set some styles for when the dropdown is placed
-       * above.
-       */
-      const popper = createPopper(component.$refs.toggle, dropdownList, {
-        placement: this.placement,
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [0, -1]
-            }
-          },
-          {
-            name: 'toggleClass',
-            enabled: true,
-            phase: 'write',
-            fn ({ state }) {
-              component.$el.classList.toggle('drop-up', state.placement === 'top')
-            }
-          }]
-      })
-
-      /**
-       * To prevent memory leaks Popper needs to be destroyed.
-       * If you return function, it will be called just before dropdown is removed from DOM.
-       */
-      return () => popper.destroy()
-    }
+    withPopper: calculateWithPopper
   }
 }
 </script>
 
 <style>
-.v-select.drop-up.vs--open .vs__dropdown-toggle {
-  border-radius: 0 0 4px 4px;
-  border-top-color: transparent;
-  border-bottom-color: rgba(60, 60, 60, 0.26);
-}
 
-[data-popper-placement='top'] {
-  border-radius: 4px 4px 0 0;
-  border-top-style: solid;
-  border-bottom-style: none;
-  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.15)
-}
 </style>

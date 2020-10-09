@@ -267,10 +267,7 @@
               </li>
             </ul>
           </li>
-          <li
-            v-if="$isInRole('admin')"
-            class="nav-item has-treeview"
-          >
+          <li class="nav-item has-treeview">
             <a
               href="#"
               class="nav-link"
@@ -281,7 +278,10 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
+              <li
+                v-if="$isInRole('admin')"
+                class="nav-item"
+              >
                 <router-link
                   :to="{name: 'users' }"
                   class="nav-link"
@@ -291,13 +291,27 @@
                   <p>Kullanıcıları Listele</p>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li
+                v-if="$isInRole('admin')"
+                class="nav-item"
+              >
                 <router-link
                   :to="{name: 'passiveUsers' }"
                   class="nav-link"
                 >
                   <i class="mdi mdi-table-row-remove" />
                   <p>Pasif Kull. Listele</p>
+                </router-link>
+              </li>
+              <li
+                class="nav-item"
+              >
+                <router-link
+                  :to="{name: 'editMyInfo' }"
+                  class="nav-link"
+                >
+                  <i class="mdi mdi-account-edit" />
+                  <p>Bilgilerimi Güncelle</p>
                 </router-link>
               </li>
             </ul>
