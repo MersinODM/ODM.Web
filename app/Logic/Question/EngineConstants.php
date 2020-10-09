@@ -17,23 +17,10 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-namespace App\Models;
+namespace App\Logic\Question;
 
-use Illuminate\Database\Eloquent\Model;
-
-/**
- * @property mixed question_id
- * @property mixed code
- */
-class QuestionEvalRequest extends Model
+final class EngineConstants
 {
-    protected $fillable = [
-        'elector_id',
-        'creator_id',
-        'question_id',
-        'code',
-        'comment',
-        'point',
-        'is_open'
-    ];
+    public const AUTOMATIC = "auto";
+    public const MANUAL = "manual";
 }

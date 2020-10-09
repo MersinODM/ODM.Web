@@ -24,12 +24,13 @@ use App\Events\QuestionEvalCalculateRequired;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
+use App\Logic\Question\EngineConstants;
+use App\Logic\Question\QuestionEvalEngine;
 use App\Models\Branch;
 use App\Models\Question;
 use App\Models\QuestionEvalRequest;
 use App\Models\Setting;
 use App\Rules\CheckElectorCount;
-use App\Traits\QuestionEvalTraits;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,15 +42,13 @@ use Yajra\DataTables\DataTables;
 
 class QuestionEvalRequestController extends ApiController
 {
-    use QuestionEvalTraits;
-
     /**
      * Soru değerlendirme isteğini ilgili değerlendiricilere ekleyen api
      * @param $questionId
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function create($questionId, Request $request)
+    public function create($questionId, Request $request): ?JsonResponse
     {
         $setting = Setting::select('max_elector_count', 'min_elector_count')->first();
 
@@ -109,10 +108,12 @@ class QuestionEvalRequestController extends ApiController
     /**
      * Olası bir değerlendirme isteği silinmesinde aynı gruba yeni
      * değerlendirici ekleyebilen api
+     * @param $questionId
+     * @param $code
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addElectors($questionId, $code, Request $request): ?\Illuminate\Http\JsonResponse
+    public function addElectors($questionId, $code, Request $request): ?JsonResponse
     {
         $validationResult = $this->apiValidator($request, [
             'electors' => [
@@ -251,24 +252,28 @@ class QuestionEvalRequestController extends ApiController
 
     /**
      * Bu fonksiyon manuel hesaplama için kullanılacaktır
-     * @param Request $request
+     * @param $questionId
+     * @param $code
      * @return JsonResponse
      */
     public function manualCalculate($questionId, $code): ?JsonResponse
     {
         try {
             $questionId = (int)$questionId;
-            if ($this->checkQuestionEval($questionId, $code)) {
-                // TODO Refactoring yapılacak
-                $this->setQuestionState($this->calculateQuestionEval($questionId, $code), $questionId);
+            $res = QuestionEvalEngine::getInstance()
+                ->setQuestionId($questionId)
+                ->setCode($code)
+                ->setCalculationType(EngineConstants::MANUAL)
+                ->calculate();
+            if ($res) {
                 return response()->json([
                     ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                    ResponseKeys::MESSAGE => 'Soru değerlendirmesi maunel hesaplanmıştır.'
+                    ResponseKeys::MESSAGE => 'Bu soruya ait değerlendirme puanı elle hesaplanarak değerlendirme kapatılmıştır.'
                 ], 200);
             }
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-                ResponseKeys::MESSAGE => 'Maalesef yeterli değerlendirici eklenmemiş veya değerlendirme yapılmamıştır.'
+                ResponseKeys::MESSAGE => 'Maalesef yeterli puanlama yapılmamıştır.'
             ], 200);
         } catch (\Exception $exception) {
             return response()->json($this->apiException($exception), 500);

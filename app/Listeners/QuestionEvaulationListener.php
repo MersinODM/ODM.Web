@@ -20,6 +20,8 @@
 namespace App\Listeners;
 
 use App\Events\QuestionEvalCalculateRequired;
+use App\Logic\Question\EngineConstants;
+use App\Logic\Question\QuestionEvalEngine;
 use App\Models\Question;
 use App\Models\QuestionEvalRequest;
 use App\Traits\QuestionEvalTraits;
@@ -31,7 +33,6 @@ use Illuminate\Support\Facades\Log;
 
 class QuestionEvaulationListener
 {
-    use QuestionEvalTraits;
 
     /**
      * Create the event listener.
@@ -50,11 +51,15 @@ class QuestionEvaulationListener
      * @return void
      * @throws Exception
      */
-    public function handle(QuestionEvalCalculateRequired $event)
+    public function handle(QuestionEvalCalculateRequired $event): void
     {
         try {
             $qer = $event->getRequest();
-            $this->setQuestionStatusIfRequired($qer->question_id, $qer->code);
+            QuestionEvalEngine::getInstance()
+                ->setQuestionId($qer->question_id)
+                ->setCode($qer->code)
+                ->setCalculationType(EngineConstants::AUTOMATIC)
+                ->calculate();
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             // throw $exception;
