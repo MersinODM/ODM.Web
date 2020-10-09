@@ -402,31 +402,31 @@ export default {
       this.$validator.errors.remove('questionFile')
       this.$refs.qFile.value = null
     },
-    save () {
-      this.$validator.validateAll()
-        .then(valRes => {
-          if (valRes) {
-            this.isSending = true
-            const fd = new FormData()
-            fd.append('lesson_id', this.selectedBranch)
-            fd.append('learning_outcome_id', this.selectedLearningOutCome)
-            fd.append('difficulty', this.selectedDifficulty)
-            fd.append('keywords', this.keywords)
-            fd.append('correct_answer', this.selectedCorrectAnswer)
-            fd.append('is_design_required', this.isDesignRequired)
-            fd.append('question_file', this.questionFile, this.questionFile.name)
-            QuestionService.save(fd, progress => {})
-              .then(value => {
-                this.isSending = false
-                Messenger.showInfo('Soru kaydı başarılı')
-                  .then(() => this.$router.push({ name: 'questionTableList' }))
-              })
-              .catch(reason => {
-                this.isSending = false
-                Messenger.showError()
-              })
+    async save () {
+      const validationResult = await this.$validator.validateAll()
+      if (validationResult) {
+        const promptRes = await Messenger.showPrompt('Bakanlığımız Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü ve ilimiz Ölçme Değerlendirme merkezi tarafından kullanılmak amacıyla hazırladığım soruya/sorulara ait metin, görsel, tablo, grafik, vb. inde herhangi bir telif hakkı ihlali olmadığını, Seçenekler dâhil, sorunun tamamıyla özgün, hiçbir yerde kullanılmamış ve kullanılmayacak olduğunu beyan ve kabul ederim.')
+        if (promptRes.isConfirmed) {
+          this.isSending = true
+          const fd = new FormData()
+          fd.append('lesson_id', this.selectedBranch)
+          fd.append('learning_outcome_id', this.selectedLearningOutCome)
+          fd.append('difficulty', this.selectedDifficulty)
+          fd.append('keywords', this.keywords)
+          fd.append('correct_answer', this.selectedCorrectAnswer)
+          fd.append('is_design_required', this.isDesignRequired)
+          fd.append('question_file', this.questionFile, this.questionFile.name)
+          try {
+            await QuestionService.save(fd, progress => {})
+            this.isSending = false
+            await Messenger.showInfo('Soru kaydı başarılı')
+            await this.$router.push({ name: 'questionTableList' })
+          } catch (reason) {
+            this.isSending = false
+            await Messenger.showError()
           }
-        })
+        }
+      }
     }
   }
 }
