@@ -50,7 +50,7 @@ create table user_permitted_lesson
         foreign key (user_id) references users (id),
     constraint user_permitted_lesson_users_id_fk_2
         foreign key (creator_id) references users (id)
-);
+) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
 
 INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
 SELECT u.id, u.branch_id, true, NOW(), NOW()
@@ -60,3 +60,24 @@ INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, upda
 SELECT u.id, 15, false, NOW(), NOW()
 FROM users as u
 WHERE u.branch_id IN (5, 10);
+
+create table help_desk
+(
+    id int unsigned auto_increment,
+    parent_id int unsigned null,
+    token varchar(255) not null,
+    creator_id int unsigned null,
+    status int null comment 'open, closed, in_progress vs...',
+    type int null comment 'cevap, şikayet, istek vs..',
+    title varchar(500) null,
+    comment varchar(5000) null,
+    created_at timestamp null,
+    updated_at timestamp null,
+    constraint help_desk_pk
+        primary key (id)
+) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
+
+alter table help_desk
+    add constraint help_desk_help_desk_id_fk
+        foreign key (parent_id) references help_desk (id);
+
