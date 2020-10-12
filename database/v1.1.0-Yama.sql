@@ -20,26 +20,12 @@ set min_elector_count = 2,
 where settings.min_elector_count IS NULL;
 
 
-CREATE TRIGGER checkMinMaxElectorCount
-    BEFORE UPDATE
-    ON settings
-    FOR EACH ROW
-BEGIN
-    IF NEW.min_elector_count < 2 THEN
-        SET NEW.min_elector_count = 2;
-    end if;
-    IF NEW.max_elector_count > 10 THEN
-        SET NEW.max_elector_count = 10;
-    end if;
-END;
-
-
 create table user_permitted_lesson
 (
-    user_id    int unsigned null,
-    lesson_id  int unsigned null,
+    user_id    int unsigned not null,
+    lesson_id  int unsigned not null,
     creator_id int unsigned null,
-    is_main    bool         null,
+    is_main    tinyint(1)   null,
     created_at timestamp    null,
     updated_at timestamp    null,
     constraint user_permitted_lesson_pk
@@ -50,7 +36,8 @@ create table user_permitted_lesson
         foreign key (user_id) references users (id),
     constraint user_permitted_lesson_users_id_fk_2
         foreign key (creator_id) references users (id)
-) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
+) ENGINE=InnoDB CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_turkish_ci;
 
 INSERT INTO user_permitted_lesson (user_id, lesson_id, is_main, created_at, updated_at)
 SELECT u.id, u.branch_id, true, NOW(), NOW()
@@ -63,19 +50,20 @@ WHERE u.branch_id IN (5, 10);
 
 create table help_desk
 (
-    id int unsigned auto_increment,
-    parent_id int unsigned null,
-    token varchar(255) not null,
-    creator_id int unsigned null,
-    status int null comment 'open, closed, in_progress vs...',
-    type int null comment 'cevap, şikayet, istek vs..',
-    title varchar(500) null,
-    comment varchar(5000) null,
-    created_at timestamp null,
-    updated_at timestamp null,
+    id         int unsigned auto_increment,
+    parent_id  int unsigned  null,
+    token      varchar(255)  not null,
+    creator_id int unsigned  null,
+    status     int           null comment 'open, closed, in_progress vs...',
+    type       int           null comment 'cevap, şikayet, istek vs..',
+    title      varchar(500)  null,
+    comment    varchar(5000) null,
+    created_at timestamp     null,
+    updated_at timestamp     null,
     constraint help_desk_pk
         primary key (id)
-) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_turkish_ci;
+) ENGINE=InnoDB CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_turkish_ci;
 
 alter table help_desk
     add constraint help_desk_help_desk_id_fk

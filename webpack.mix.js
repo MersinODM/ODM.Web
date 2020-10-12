@@ -68,7 +68,6 @@ if (mix.inProduction()) {
       new CompressionPlugin({
         algorithm: 'gzip',
         test: /\.js$|\.css$|\.html$|\.svg$/,
-        threshold: 10240,
         minRatio: 0.8
       })
     ]
