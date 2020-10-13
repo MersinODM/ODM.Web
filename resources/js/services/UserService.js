@@ -54,6 +54,13 @@ const UserService = {
         .catch(error => reject(error))
     })
   },
+  updateMyInfo (id, user) {
+    return new Promise((resolve, reject) => {
+      http.put(`/users/${id}/my_info`, user)
+        .then(resp => resolve(resp.data))
+        .catch(error => reject(error))
+    })
+  },
   delete (id) {
     return new Promise((resolve, reject) => {
       http.delete(`/users/${id}`)

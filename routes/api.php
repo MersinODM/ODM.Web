@@ -31,6 +31,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('users/current/permissions', "Auth\PermissionController@getCurrentUserPermissions");
     Route::get('users/{id}', "Auth\UserQueryController@getUser");
     Route::put('users/{id}', "Auth\UserManagementController@update");
+    Route::put('users/{id}/my_info', "Auth\UserManagementController@updateMyInformation");
     Route::delete('users/{id}', "Auth\UserManagementController@delete");
     Route::put('users/{id}/reactivate', "Auth\UserManagementController@reactivate");
     Route::post('users', "Auth\UserQueryController@getUsers");

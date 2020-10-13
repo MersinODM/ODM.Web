@@ -150,7 +150,8 @@ class UserManagementController extends ApiController
      * @param $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $validationResult = $this->apiValidator($request, [
             'branch_id' => 'required',
             "inst_id" => "required",
@@ -159,11 +160,9 @@ class UserManagementController extends ApiController
             "email" => "required",
             "role" => "required"
         ]);
-
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
-
         $data = $request->only("branch_id",
             "inst_id",
             "full_name",
@@ -178,12 +177,48 @@ class UserManagementController extends ApiController
             $user->assign($role);
             DB::commit();
             return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => "Kullanıcı güncelleme başarılı olmuştur."
+            ]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
+                ResponseKeys::MESSAGE => "Kullanıcı güncelleme başarısız oldu!",
+                ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
+        }
+    }
+
+    public function updateMyInformation(Request $request, $id) {
+        $validationResult = $this->apiValidator($request, [
+            "inst_id" => "required",
+            "full_name" => "required",
+            "phone" => "required",
+            "email" => "required"
+        ]);
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
+        }
+        $data = $request->only(
+            "inst_id",
+            "full_name",
+            "phone",
+            "email");
+        try {
+            DB::beginTransaction();
+            $user = User::find($id);
+            $user->update($data);
+            DB::commit();
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
+                ResponseKeys::MESSAGE => "Bilgileriniz başarıyla güncellenmiştir."
             ]);
         }
         catch (Exception $exception) {
             DB::rollBack();
-            return response()->json([ResponseKeys::MESSAGE=> "Kullanıcı güncelleme başarısız oldu!",
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
+                ResponseKeys::MESSAGE=> "Bilgilerinizin güncellemenmesi başarısız oldu!",
                 ResponseKeys::EXCEPTION => $this->apiException($exception)], 500);
         }
     }

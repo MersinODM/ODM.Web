@@ -338,5 +338,16 @@ export default {
 </script>
 
 <style>
+.v-select.drop-up.vs--open .vs__dropdown-toggle {
+  border-radius: 0 0 4px 4px;
+  border-top-color: transparent;
+  border-bottom-color: rgba(60, 60, 60, 0.26);
+}
 
+[data-popper-placement='top'] {
+  border-radius: 4px 4px 0 0;
+  border-top-style: solid;
+  border-bottom-style: none;
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.15)
+}
 </style>

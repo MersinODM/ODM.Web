@@ -85,22 +85,6 @@
                         </div>
                       </v-select>
                     </div>
-                    <div class="form-group has-feedback">
-                      <label>Branş/Ders Seçimi</label>
-                      <v-select
-                        v-model="selectedBranch"
-                        :options="branches"
-                        :value="selectedBranch.id"
-                        append-to-body
-                        :calculate-position="withPopper"
-                        label="name"
-                        placeholder="Alan/Ders seçiniz"
-                      >
-                        <div slot="no-options">
-                          Burada bişey bulamadık :-(
-                        </div>
-                      </v-select>
-                    </div>
                   </form>
                 </div>
               </div>
@@ -139,9 +123,6 @@ export default {
   components: { Page, vSelect },
   data: () => ({
     user: {},
-    branches: [],
-    selectedBranch: { },
-    branchId: null,
     institutions: [],
     selectedInst: { },
     instId: null
@@ -191,15 +172,13 @@ export default {
       const promptRes = await Messenger.showPrompt('Bilgilerinizi güncellemek istediğinize emin misiniz?')
       if (promptRes.isConfirmed) {
         const data = {
-          branch_id: this.selectedBranch.id,
           inst_id: this.selectedInst.id,
           full_name: this.user.full_name,
           phone: this.user.phone,
-          email: this.user.email,
-          role: this.selectedRole
+          email: this.user.email
         }
         try {
-          const response = await UserService.update(this.user.id, data)
+          const response = await UserService.updateMyInfo(this.user.id, data)
           await Messenger.showSuccess(response.message)
         } catch (error) { await Messenger.showError('Güncelleme işlemi başarısız!') }
       }
@@ -210,4 +189,16 @@ export default {
 </script>
 
 <style>
+.v-select.drop-up.vs--open .vs__dropdown-toggle {
+  border-radius: 0 0 4px 4px;
+  border-top-color: transparent;
+  border-bottom-color: rgba(60, 60, 60, 0.26);
+}
+
+[data-popper-placement='top'] {
+  border-radius: 4px 4px 0 0;
+  border-top-style: solid;
+  border-bottom-style: none;
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.15)
+}
 </style>
