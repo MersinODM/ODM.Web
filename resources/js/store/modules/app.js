@@ -84,6 +84,7 @@ const mutations = {
   [Mutations.LOGOUT] (state) {
     Object.keys(state).forEach(k => { state[k] = '' })
     localStorage.clear()
+    sessionStorage.clear()
     // localStorage.removeItem(Constants.GENERAL_INFO)
     // localStorage.removeItem(Constants.ACCESS_TOKEN)
     // localStorage.removeItem(Constants.EXPIRES_IN)

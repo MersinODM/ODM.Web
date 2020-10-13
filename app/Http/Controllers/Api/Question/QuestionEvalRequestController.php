@@ -98,7 +98,7 @@ class QuestionEvalRequestController extends ApiController
             }
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgli değerlendircilere iltildi.'], 201);
+                ResponseKeys::MESSAGE => 'Değerlendirme isteği ilgili değerlendircilere iletildi.'], 201);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json($this->apiException($exception), 500);
