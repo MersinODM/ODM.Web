@@ -5,7 +5,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
 require('dotenv').config()
-const path = require('path')
 
 // mix.config.fileLoaderDirs.fonts = 'public/fonts'
 /*
