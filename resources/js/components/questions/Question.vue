@@ -92,7 +92,7 @@ export default {
         'bg-primary': this.question.status === QuestionStatuses.REVISION_COMPLETED,
         'bg-warning': this.question.status === QuestionStatuses.NEED_REVISION,
         'bg-success': this.question.status === QuestionStatuses.APPROVED,
-        'bg-default': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
+        'bg-gradient-secondary': this.question.status === QuestionStatuses.WAITING_FOR_ACTION
       }
     }
   },
