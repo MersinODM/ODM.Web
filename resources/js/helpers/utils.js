@@ -16,7 +16,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-import { createPopper } from '@popperjs/core/dist/umd/popper.min'
+import { createPopper } from '@popperjs/core'
 
 const range = (start, end) => Array.from(
   Array(Math.abs(end - start) + 1),
