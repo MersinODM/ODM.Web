@@ -19,6 +19,9 @@
 import Constants, { Mutations, MessageKeys, ResponseCodes } from '../../helpers/constants'
 import AuthService from '../../services/AuthService'
 import { SettingService } from '../../services/SettingService'
+import router from '../../router'
+import Messenger from '../../helpers/messenger'
+import Auth from '../../services/AuthService'
 
 const state = () => ({
   user: null,
@@ -83,8 +86,8 @@ const mutations = {
   },
   [Mutations.LOGOUT] (state) {
     Object.keys(state).forEach(k => { state[k] = '' })
-    localStorage.clear()
-    sessionStorage.clear()
+    window.localStorage.clear()
+    window.sessionStorage.clear()
     // localStorage.removeItem(Constants.GENERAL_INFO)
     // localStorage.removeItem(Constants.ACCESS_TOKEN)
     // localStorage.removeItem(Constants.EXPIRES_IN)
@@ -131,11 +134,12 @@ const actions = {
         .catch((err) => reject(err))
     })
   },
-  logout ({ commit }) {
-    return new Promise((resolve) => {
+  async logout ({ commit }) {
+    const promptRes = await Messenger.showPrompt('Oturumu kapatmak istediğinizden emin misiniz?')
+    if (promptRes.isConfirmed) {
       commit(Mutations.LOGOUT)
-      resolve({ [ResponseCodes.CODE_SUCCESS]: 'Çıkış başarılı' })
-    })
+      await Auth.logout()
+    }
   }
 }
 

@@ -33,13 +33,8 @@ const AuthService = {
         })
     })
   },
-  logout: () => {
-    localStorage.removeItem(Constants.ACCESS_TOKEN)
-    localStorage.removeItem(Constants.EXPIRES_IN)
-    localStorage.removeItem(Constants.PERMISSIONS)
-    localStorage.removeItem(Constants.ROLES)
-    localStorage.removeItem(Constants.GENERAL_INFO)
-    router.push({ name: 'login' })
+  async logout () {
+    await router.push({ name: 'login' })
   },
   check: () => {
 

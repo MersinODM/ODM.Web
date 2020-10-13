@@ -44,9 +44,8 @@
 </template>
 
 <script>
-import Auth from '../../services/AuthService'
 import img from '../../../images/Logo.png'
-import Messenger from '../../helpers/messenger'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'NHeader',
@@ -59,14 +58,7 @@ export default {
     $('[data-widget="pushmenu"]').PushMenu()
   },
   methods: {
-    logout () {
-      Messenger.showPrompt('Oturumu kapatmak istediğinizden emin misiniz?')
-        .then(value => {
-          if (value.isConfirmed) {
-            Auth.logout()
-          }
-        })
-    }
+    ...mapActions('app', ['logout'])
   }
 }
 </script>
