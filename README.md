@@ -14,10 +14,10 @@ Dökümanlar için GitBook [bağlantısı](https://hgulen33.gitbook.io/odm-web/)
 
 Aşağıdaki isimler elbette birçok farklı alanda bu esere katkıda bulunmuşlardır ancak buraya en çok aktif desteği verdikleri alanları yazmayı uygun gördük.
 
-* [Özge ERSAN](http://nevsehirodm.meb.gov.tr/www/ozge-ersan/idari_personel/6) - Kazanımların sisteme tanımlanması ve testlerin yapılması
-* [Anıl Kadir ERANIL](http://nevsehirodm.meb.gov.tr/www/anil-kadir-eranil/idari_personel/4) - Mimari tasarım sürecinde aktif katılımı
-* [Abdullah ÖZÇİFÇİ](http://nevsehirodm.meb.gov.tr/www/abdullah-ozcifci/idari_personel/5) - Arayüz kısmına ve tasarım kısmına katkıları
-* [İlhami Selim BAYKÖSE](http://kayseriodm.meb.gov.tr/www/ilhami-selim-baykose/idari_personel/4) - Yazılımın kurulum dokümantasyonu, videoların hazırlanması ve github üzerinden hata gidermeye yaptığı aktif katkılar
+* [Özge ERSAN (Nevşehir ÖDM)](http://nevsehirodm.meb.gov.tr/www/ozge-ersan/idari_personel/6) - Kazanımların sisteme tanımlanması ve testlerin yapılması
+* [Anıl Kadir ERANIL (Nevşehir ÖDM)](http://nevsehirodm.meb.gov.tr/www/anil-kadir-eranil/idari_personel/4) - Mimari tasarım sürecinde aktif katılımı
+* [Abdullah ÖZÇİFÇİ (Nevşehir ÖDM)](http://nevsehirodm.meb.gov.tr/www/abdullah-ozcifci/idari_personel/5) - Arayüz kısmına ve tasarım kısmına katkıları
+* [İlhami Selim BAYKÖSE (Kayseri ÖDM)](http://kayseriodm.meb.gov.tr/www/ilhami-selim-baykose/idari_personel/4) - Yazılımın kurulum dokümantasyonu, videoların hazırlanması ve github üzerinden hata gidermeye yaptığı aktif katkılar
 
 Ayrıca  sistemi kullanarak destek olan  tüm öğretmenlerimize değerli geri bildirimleri için teşekkür ediyoruz.
 
