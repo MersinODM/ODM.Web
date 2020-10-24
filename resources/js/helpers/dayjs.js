@@ -16,7 +16,6 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/
  */
 
-import Vue from 'vue'
 import dayjs from 'dayjs'
 import formatLocalized from 'dayjs/plugin/localizedFormat'
 import 'dayjs/locale/tr'
@@ -24,20 +23,4 @@ import 'dayjs/locale/tr'
 dayjs.extend(formatLocalized)
 dayjs.locale('tr')
 
-Vue.filter('year', (value) => {
-  if (!value) return ''
-  // console.log('Moment Filter: ' + value)
-  return dayjs(value).format('YYYY')
-})
-
-Vue.filter('dateTime', (value) => {
-  if (!value) return ''
-  if (!dayjs(value).isValid()) return value
-  return dayjs(value).format('DD.MM.YYYY HH:mm')
-})
-
-Vue.filter('trDate', (value) => {
-  if (!value) return ''
-  // console.log('Moment Filter: ' + value)
-  return dayjs(value).format('L')
-})
+export default dayjs

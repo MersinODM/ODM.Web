@@ -46,6 +46,12 @@ const ExamService = {
           .trim()
       }
     } catch (error) {}
+  },
+  async getExam (examId = null, code = null) {
+    try {
+      const response = await http.get('exams', { params: { id: examId, code: code } })
+      return response.data
+    } catch (error) {}
   }
 }
 

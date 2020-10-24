@@ -21,6 +21,7 @@ import ExamList from '../views/exam/ExamList'
 import NewExam from '../views/exam/NewExam'
 import NewAutoExam from '../views/exam/NewAutoExam'
 import UnderConstruction from '../views/utils/UnderConstruction'
+import ShowExam from '../views/exam/ShowExam'
 
 const examRoutes = [
   {
@@ -42,6 +43,11 @@ const examRoutes = [
     path: '/exams/create/manual',
     name: 'newManualExam',
     component: UnderConstruction
+  },
+  {
+    path: '/exams/:examId',
+    name: 'showExam',
+    component: ShowExam
   }
 ]
 

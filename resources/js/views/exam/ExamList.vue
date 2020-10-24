@@ -247,8 +247,8 @@ export default {
 
     // Tablo içindeki belli bir css sınıfına sahip bir butona basınca çalışacak event
     table.on('click', '.btn-info', (e) => {
-      // const data = table.row($(e.toElement).parents('tr')[0]).data()
-      vm.$router.push({ name: 'underConstruction' })
+      const data = table.row($(e.toElement).parents('tr')[0]).data()
+      vm.$router.push({ name: 'showExam', params: { examId: data.id } })
       // vm.$router.push({ name: 'showQuestion', params: { questionId: data.id } })
     })
   },

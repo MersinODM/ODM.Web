@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from '../../helpers/dayjs'
 import QuestionEvaluationService from '../../services/QuestionEvaluationService'
 import Messenger from '../../helpers/messenger'
 import RevisionService from '../../services/CommentService'
@@ -151,7 +151,7 @@ export default {
         })
     },
     formatDate (date) {
-      return moment(date).fromNow()
+      return dayjs(date).fromNow()
     }
   }
 }
