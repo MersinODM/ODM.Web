@@ -24,8 +24,8 @@
     <template v-slot:content>
       <div class="row">
         <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
+          <tabs>
+            <tab title="Sınav Genel Bilgileri">
               <div class="row">
                 <div class="col-md-12">
                   <div class="row">
@@ -102,8 +102,11 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </tab>
+            <tab title="Sınav İçerik Bilgileri">
+              <under-construction />
+            </tab>
+          </tabs>
         </div>
       </div>
     </template>
@@ -113,10 +116,13 @@
 <script>
 import Page from '../../components/Page'
 import ExamService from '../../services/ExamService'
+import Tabs from '../../components/Tabs'
+import Tab from '../../components/Tab'
+import UnderConstruction from '../utils/UnderConstruction'
 
 export default {
   name: 'ShowExam',
-  components: { Page },
+  components: { UnderConstruction, Page, Tabs, Tab },
   data: () => ({
     exam: ''
   }),
