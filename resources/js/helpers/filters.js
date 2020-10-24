@@ -17,12 +17,7 @@
  */
 
 import Vue from 'vue'
-import dayjs from 'dayjs'
-import formatLocalized from 'dayjs/plugin/localizedFormat'
-import 'dayjs/locale/tr'
-
-dayjs.extend(formatLocalized)
-dayjs.locale('tr')
+import dayjs from '../helpers/dayjs'
 
 Vue.filter('year', (value) => {
   if (!value) return ''

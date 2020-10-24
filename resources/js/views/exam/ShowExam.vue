@@ -30,73 +30,73 @@
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Kod</label>
-                        <h6>{{ exam.code }}</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Kod</b></h6>
+                        <p>{{ exam.code }}</p>
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Başlık</label>
-                        <h6>{{ exam.title }}</h6>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Amaç</label>
-                        <h6>{{ exam.purpose }}</h6>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Durum</label>
-                        <h6>{{ exam.status }}</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Başlık</b></h6>
+                        <p>{{ exam.title }}</p>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Sınıf Seviyesi</label>
-                        <h6>{{ exam.class_level }}. Sınıf</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Amaç</b></h6>
+                        <p>{{ exam.purpose }}</p>
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Oluşturan</label>
-                        <h6>{{ exam.creator }}</h6>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Planlanan Tarih</label>
-                        <h6>{{ exam.planned_date | dateTime }}</h6>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Uygulama Tarihi</label>
-                        <h6>{{ exam.date_of_occurrence | dateTime }}</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Durum</b></h6>
+                        <p>{{ exam.status }}</p>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Oluşturma Tarihi</label>
-                        <h6>{{ exam.created_at | trDate }}</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Sınıf Seviyesi</b></h6>
+                        <p>{{ exam.class_level }}. Sınıf</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="callout callout-info">
+                        <h6><b>Oluşturan</b></h6>
+                        <p>{{ exam.creator }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="callout callout-info">
+                        <h6><b>Planlanan Tarih / Saat</b></h6>
+                        <p>{{ exam.planned_date | dateTime }}</p>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="callout callout-info">
+                        <h6><b>Uygulama Tarihi</b></h6>
+                        <p>{{ exam.date_of_occurrence | dateTime }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="callout callout-info">
+                        <h6><b>Oluşturma Tarihi</b></h6>
+                        <p>{{ exam.created_at | trDate }}</p>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-12">
-                      <div class="form-group">
-                        <label>Açıklamalar</label>
-                        <h6>{{ exam.description }}</h6>
+                      <div class="callout callout-info">
+                        <h6><b>Açıklamalar</b></h6>
+                        <p>{{ exam.description }}</p>
                       </div>
                     </div>
                   </div>
