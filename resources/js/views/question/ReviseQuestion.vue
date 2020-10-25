@@ -132,7 +132,6 @@ import QuestionService from '../../services/QuestionService'
 import Messenger from '../../helpers/messenger'
 import { MessengerConstants } from '../../helpers/constants'
 import RevisionService from '../../services/CommentService'
-import moment from 'moment'
 import { QuestionStatuses } from '../../helpers/QuestionStatuses'
 import Question from '../../components/questions/Question'
 import HeaderDeleteRequest from '../../components/HeaderDeleteRequest'
@@ -143,7 +142,6 @@ export default {
   name: 'ShowQuestion',
   components: { Page, Question, HeaderDeleteRequest, Timeline },
   data: () => ({
-    moment: moment,
     question: null,
     questionFile: null,
     oldQuestionFile: null,
