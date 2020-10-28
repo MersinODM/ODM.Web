@@ -45,11 +45,17 @@
                   <!-- /.widget-user-image -->
                   <ul class="nav flex-column">
                     <li class="nav-item">
-                      <a href="javascript:0">Soru Sayısı <span class="float-right badge bg-primary mt-1">{{ b.questionCount }}</span>
+                      <a
+                        href="#"
+                        @click.prevent
+                      >Soru Sayısı <span class="float-right badge bg-primary mt-1">{{ b.questionCount }}</span>
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a href="javascript:0">Öğretmen Sayısı <span class="float-right badge bg-primary mt-1">{{ b.userCount }}</span>
+                      <a
+                        href="#"
+                        @click.prevent
+                      >Öğretmen Sayısı <span class="float-right badge bg-primary mt-1">{{ b.userCount }}</span>
                       </a>
                     </li>
                     <!--                      <li><a href="#">Completed Projects <span class="pull-right badge bg-green">12</span></a></li>-->

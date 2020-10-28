@@ -27,9 +27,10 @@
           @click="selectTab(index)"
         >
           <a
-            href="javascript: void(0)"
+            href="#"
             class="nav-link"
             :class="{active: tab.isActive}"
+            @click.prevent
           >{{ tab.title }}</a>
         </li>
       </ul>

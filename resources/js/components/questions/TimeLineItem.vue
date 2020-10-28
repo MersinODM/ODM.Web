@@ -33,7 +33,10 @@
     <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
 
     <h3 class="timeline-header">
-      <a href="javascript:">Değerlendirici Grup Kodu: {{ detectHeader(event) }}</a>
+      <a
+        href="#"
+        @click.prevent
+      >Değerlendirici Grup Kodu: {{ detectHeader(event) }}</a>
     </h3>
 
     <div class="timeline-body">

@@ -25,18 +25,18 @@
             data-toggle="tooltip"
             data-placement="top"
             title="Tooltip on top"
-            href="javascript: void(0)"
+            href="#"
             class="page-link"
             :class="{disabled: isCurrentFirstPage}"
-            @click="onFirst"
+            @click.prevent="onFirst"
           >1</a>
         </li>
         <li class="paginate_button page-item previous">
           <a
-            href="javascript: void(0)"
+            href="#"
             class="page-link"
             :class="{disabled: !previousEnabled}"
-            @click="onPrevious"
+            @click.prevent="onPrevious"
           ><</a>
         </li>
         <li class="paginate_button page-item">
@@ -53,18 +53,18 @@
         </li>
         <li class="paginate_button page-item next">
           <a
-            href="javascript: void(0)"
+            href="#"
             class="page-link"
             :class="{disabled: !nextEnabled}"
-            @click="onNext"
+            @click.prevent="onNext"
           >></a>
         </li>
         <li class="paginate_button page-item next">
           <a
-            href="javascript: void(0)"
+            href="#"
             class="page-link"
             :class="{disabled: isCurrentLastPage}"
-            @click="onLast"
+            @click.prevent="onLast"
           >{{ lastPage }}</a>
         </li>
       </ul>

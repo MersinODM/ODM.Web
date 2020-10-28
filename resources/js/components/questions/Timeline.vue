@@ -54,7 +54,10 @@
                 <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
 
                 <h3 class="timeline-header">
-                  <a href="javascript:"><b>{{ event.code }}</b> grubundan değerlendirme</a>
+                  <a
+                    href="#"
+                    @click.prevent
+                  ><b>{{ event.code }}</b> grubundan değerlendirme</a>
                 </h3>
 
                 <div class="timeline-body">
@@ -71,7 +74,10 @@
                 <span class="time"><i class="fa fa-clock-o" /> {{ formatDate(event.date) }}</span>
 
                 <h3 class="timeline-header">
-                  <a href="javascript:">Revizyon</a>
+                  <a
+                    href="#"
+                    @click.prevent
+                  >Revizyon</a>
                 </h3>
 
                 <div class="timeline-body">

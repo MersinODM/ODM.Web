@@ -35,8 +35,9 @@
       <div class="user-panel mt-3 pb-3 mb-3 d-flex justify-content-center">
         <div class="info">
           <a
-            href="javascript:0;"
+            href="#"
             class="d-block"
+            @click.prevent
           >{{ user.full_name }} - {{ user.branch.code }}</a>
         </div>
       </div>
