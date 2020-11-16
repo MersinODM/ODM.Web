@@ -20,17 +20,17 @@
   <footer class="main-footer">
     <a
       rel="license"
-      href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
+      href="https://www.apache.org/licenses/LICENSE-2.0"
     >
       <img
-        alt="GPLv3"
-        style="border-width:0; width:81px; height:31px;"
-        src="https://www.gnu.org/graphics/gplv3-with-text-136x68.png"
+        style="height:35px;"
+        alt="Lisans"
+        src="https://www.apache.org/foundation/press/kit/feather.png"
       >
     </a> Bu eser <a
       rel="license"
-      href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
-    > GNU Genel Kamu Lisansı yani GPLv3</a> ile lisanslanmıştır. v1.1.0
+      href="https://www.apache.org/licenses/LICENSE-2.0"
+    >Apache Lisansı v2.0</a> ile lisanslanmıştır. v1.1.0
   </footer>
 </template>
 

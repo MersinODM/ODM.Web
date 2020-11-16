@@ -20,17 +20,17 @@
     <div class="card-body">
       <a
         rel="license"
-        href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
+        href="https://www.apache.org/licenses/LICENSE-2.0"
       >
         <img
-          alt="GPLv3"
+          alt="Apache Software License"
           style="border-width:0; height:1.25em"
-          src="https://www.gnu.org/graphics/gplv3-with-text-84x42.png"
+          src="https://www.apache.org/foundation/press/kit/feather.png"
         >
       </a> Bu eser özgür ve açık kaynak kod yazılım lisanslarıdan olan <a
         rel="license"
-        href="https://www.gnu.org/licenses/gpl-3.0.tr.html"
-      >GPLv3</a> ile lisanslanmıştır.
+        href="https://www.apache.org/licenses/LICENSE-2.0"
+      >Apache Lisansı v2.0</a> ile lisanslanmıştır.
       <a
         class="btn btn-block btn-secondary"
         href="https://github.com/electropsycho/ODM.Web"
