@@ -1,12 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "meb/odm.web",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Ölçme değerlendirme merkezleri soru havuzu ve sınav oluşturma otomasyonu",
     "keywords": [
-        "framework",
-        "laravel"
+        "odm",
+        "meb"
     ],
-    "license": "MIT",
+    "license": "Apache-2.0",
     "require": {
         "php": "^7.1.3",
         "ext-json": "*",
