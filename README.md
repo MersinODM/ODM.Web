@@ -1,3 +1,9 @@
+![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/hkngln/ODM.Web?color=green)
+![GitHub issues](https://img.shields.io/github/issues-raw/hkngln/ODM.Web)
+![GitHub repo size](https://img.shields.io/github/repo-size/hkngln/ODM.Web)
+![GitHub last commit](https://img.shields.io/github/last-commit/hkngln/ODM.Web)
+![GitHub](https://img.shields.io/github/license/hkngln/ODM.Web)
+
 # Başlangıç
 
 Bu yazılım ölçme değerlendirme merkezlerinin işlerini kolaylaştırmak amacıyla PHP/Laravel framework'ü kullanılarak web tabanlı ve açık kaynak olarak geliştirilmektedir. Yazılım içerisinde kullanıcı yönetimi, sınav yönetimi, soru yönetimi gibi moduller bulunmaktadır. Bütün modüller dokümantasyon kısmında açıklanacaktır.
@@ -24,7 +30,6 @@ Ayrıca  sistemi kullanarak destek olan  tüm öğretmenlerimize değerli geri b
 ## Lisans
 
 Bu yazılım Elektrik Elektronik Teknolojileri Alanı/Elektrik Öğretmeni Hakan GÜLEN tarafından geliştirilmiş olup geliştirilen bütün kaynak kodlar Apacche Yazılım Lisansı 2.0 ile lisanslanmıştır.
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Yararlanılan yazılım framework ya da kütüphaneleri
 
