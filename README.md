@@ -2,6 +2,7 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/hkngln/ODM.Web)
 ![GitHub repo size](https://img.shields.io/github/repo-size/hkngln/ODM.Web)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hkngln/ODM.Web)
+![GitHub all releases](https://img.shields.io/github/downloads/hkngln/ODM.Web/total?color=orange)
 ![GitHub](https://img.shields.io/github/license/hkngln/ODM.Web)
 
 # Başlangıç
