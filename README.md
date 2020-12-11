@@ -11,7 +11,7 @@ Bu yazılım ölçme değerlendirme merkezlerinin işlerini kolaylaştırmak ama
 
 ## Dökümanlar
 
-Dökümanlar için GitBook [bağlantısı](https://hgulen33.gitbook.io/odm-web/).
+Dökümanlar telegram grubunda paylaşılmıştır en kısa zamanda buradan da paylaşılacaktır.
 
 ## Nasıl katkıda bulunurum?
 
