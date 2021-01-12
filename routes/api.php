@@ -39,7 +39,7 @@ Route::group([
 Route::group(['middleware' => ['jwt.auth']], function () {
 
     //TODO Artisan Queue Work komutu için api yazılacak
-    Route::get('mails/sync', "Setting\MailSyncController@executeMailQueue");
+    //Route::get('mails/sync', "Setting\MailSyncController@executeMailQueue");
 
     //Kullanıcı ve Rol yönetim route tanımnlamaları
     Route::put('users/{id}/confirm_req', "Auth\UserManagementController@confirmNewUserReq");
