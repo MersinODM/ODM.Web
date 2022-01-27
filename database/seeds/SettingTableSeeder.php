@@ -14,14 +14,14 @@ class SettingTableSeeder extends Seeder
     {
         Setting::firstOrCreate(
           [
-            "inst_name" => "Nevşehir Ölçme Değerlendirme Merkezi",
-            "governor" => "Nevşehir Valiliği",
-            "directorate" => "Nevşehir Milli Eğitim Müdürlüğü",
-            "twitter_address" => "https://twitter.com/nevsehirodm",
-            "web_address" => "https://nevsehirodm.meb.gov.tr/",
-            "phone" => "0384 213 79 33 Dahili:178",
-            "email" => "odm50@meb.gov.tr",
-            "address" => "350 Evler Mah. Yeni Kayseri Cad. Hükümet Konağı Kat:2"
+            "inst_name" => "KURUM ADI",
+            "governor" => "VALİLİK",
+            "directorate" => "MÜDÜRLÜK",
+            "twitter_address" => "TWITTER",
+            "web_address" => "KURUMSAL_ADRES,
+            "phone" => "TELEFON",
+            "email" => "EMAIL",
+            "address" => "ADRES"
           ]);
     }
 }
